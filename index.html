@@ -74,8 +74,8 @@
             box-shadow: 0 12px 20px -5px rgba(5, 150, 105, 0.1);
         }
 
-        .trust-bar img { filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
-        .trust-bar img:hover { filter: grayscale(0%); opacity: 1; }
+        .trust-item { filter: grayscale(100%); opacity: 0.5; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .trust-item:hover { filter: grayscale(0%); opacity: 1; }
     </style>
 </head>
 <body class="antialiased">
@@ -100,20 +100,30 @@
         <div class="max-w-4xl mx-auto relative z-10 px-2 text-center">
             <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Arquitectura de Confianza Alimentaria</span>
             <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Evidencia Digital e<br><span class="text-corp-500">Identidad de Origen.</span></h1>
-            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto">Transformamos la trazabilidad en un activo estratégico. Si un producto tiene una historia real, nosotros la hacemos inmutable.</p>
+            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto text-center">Transformamos la trazabilidad en un activo estratégico. Si un producto tiene una historia real, nosotros la hacemos inmutable.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="#unete" class="btn-primary">Certifica tu origen</a>
                 <a href="#tecnologia" class="inline-block py-3 px-6 text-slate-600 font-semibold hover:text-corp-600 transition-colors">Cómo funciona →</a>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto mt-16 md:mt-24 trust-bar">
-            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-8">Infraestructura construida sobre estándares globales</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Polygon_logo.svg" alt="Polygon Network" class="h-6 md:h-8">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Fao-logo.svg" alt="FAO Standards" class="h-10 md:h-12">
-                <i class="fas fa-satellite-dish text-2xl text-slate-300"></i>
-                <i class="fas fa-microchip text-2xl text-slate-300"></i>
+        <div class="max-w-5xl mx-auto mt-16 md:mt-24 px-4">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-10 text-center">Infraestructura construida sobre estándares globales</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 items-center justify-items-center max-w-3xl mx-auto">
+                <div class="trust-item">
+                    <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029" alt="Polygon Network" class="h-6 md:h-8">
+                </div>
+                <div class="trust-item">
+                    <img src="https://www.fao.org/images/corporatelibraries/fao-logo/fao-logo-es.svg" alt="FAO Standards" class="h-10 md:h-12">
+                </div>
+                <div class="trust-item flex flex-col items-center gap-1">
+                    <i class="fas fa-satellite-dish text-2xl text-slate-400"></i>
+                    <span class="text-[8px] font-bold text-slate-400 uppercase">SAT-DATA</span>
+                </div>
+                <div class="trust-item flex flex-col items-center gap-1">
+                    <i class="fas fa-microchip text-2xl text-slate-400"></i>
+                    <span class="text-[8px] font-bold text-slate-400 uppercase">Web3 Auth</span>
+                </div>
             </div>
         </div>
     </section>
@@ -139,8 +149,8 @@
 
     <section id="tecnologia" class="py-16 md:py-24 bg-white px-4">
         <div class="max-w-5xl mx-auto text-center mb-10 md:mb-16">
-            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3 text-center">Tecnología de Verificación</h2>
-            <p class="text-slate-600 text-sm md:text-lg font-medium text-center">Un protocolo de confianza diseñado para la nueva economía.</p>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3">Tecnología de Verificación</h2>
+            <p class="text-slate-600 text-sm md:text-lg font-medium">Un protocolo de confianza diseñado para la nueva economía.</p>
         </div>
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
             <article class="card-corp">
@@ -164,21 +174,21 @@
     <section id="unete" class="py-16 md:py-24 px-4 bg-corp-900 text-white overflow-hidden">
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center text-center md:text-left">
             <div>
-                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight text-center md:text-left">Únete a la infraestructura de confianza.</h2>
-                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed text-center md:text-left">Si tu producto tiene origen, tiene valor. Te ayudamos a demostrarlo ante el mundo.</p>
+                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">Únete a la infraestructura de confianza.</h2>
+                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed">Si tu producto tiene origen, tiene valor. Te ayudamos a demostrarlo ante el mundo.</p>
                 
-                <div class="space-y-3 max-w-xs mx-auto md:mx-0">
+                <div class="space-y-3 max-w-xs mx-auto md:mx-0 text-left">
                     <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
                         <i class="fas fa-shield-alt text-corp-500 text-xs"></i>
-                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Solidez Institucional</span>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Solidez Institucional</span>
                     </div>
                     <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
                         <i class="fas fa-microchip text-corp-500 text-xs"></i>
-                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Precisión de Datos</span>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Precisión de Datos</span>
                     </div>
                     <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
                         <i class="fas fa-globe-americas text-corp-500 text-xs"></i>
-                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Estándar Global</span>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Estándar Global</span>
                     </div>
                 </div>
             </div>
@@ -220,7 +230,7 @@
                 <a href="tel:+56958799778" class="hover:text-corp-600 transition-colors"><i class="fas fa-phone-alt mr-2 text-corp-500"></i> +56 9 5879 9778</a>
                 <a href="https://www.linkedin.com/company/andeschain" target="_blank" rel="noopener noreferrer" class="hover:text-corp-600 transition-colors"><i class="fab fa-linkedin-in mr-2 text-corp-500"></i> LinkedIn</a>
             </div>
-            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest text-center">© 2026 AndesChain Tech</p>
+            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest">© 2026 AndesChain Tech</p>
         </div>
     </footer>
 
