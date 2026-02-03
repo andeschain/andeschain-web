@@ -3,20 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AndesChain.io | Trazabilidad Blockchain</title>
     
+    <title>AndesChain.io | Trazabilidad Blockchain</title>
+    <meta name="description" content="Infraestructura tecnológica para la certificación blockchain de alimentos.">
+    <meta name="keywords" content="blockchain agrícola, trazabilidad alimentos, certificación origen, agrotech chile, exportación frutas, seguridad alimentaria, FAO, smart contracts agricultura">
+    <meta name="author" content="AndesChain Technology">
+    <meta name="robots" content="index, follow">
+
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.andeschain.io/">
+    <meta property="og:title" content="AndesChain | Certificación de Origen">
+    <meta property="og:description" content="Tecnología para transformar promesas de valor en evidencia digital auditable. Únete a la red AndesChain.io.">
+    <meta property="og:image" content="https://andeschain.io/assets/social-preview.jpg"> 
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AndesChain.io | Trazabilidad de Origen Local">
+    <meta name="twitter:description" content="Certificación digital para la cadena de alimentos locales.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Corporation",
+      "name": "AndesChain",
+      "url": "https://www.andeschain.io",
+      "logo": "https://www.andeschain.io/assets/logo-header.png",
+      "description": "Infraestructura tecnológica para la certificación blockchain de alimentos.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Santiago",
+        "addressCountry": "CL"
+      }
+    }
+    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#059669', 600: '#047857', 800: '#065F46', 900: '#022C22' },
+                        'corp': {
+                            50: '#F0FDF4', 
+                            100: '#DCFCE7',
+                            500: '#059669', 
+                            600: '#047857', 
+                            800: '#065F46', 
+                            900: '#022C22', 
+                        },
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                 }
@@ -25,97 +64,204 @@
     </script>
 
     <style>
-        body { background-color: #FFFFFF; font-family: 'Inter', sans-serif; }
-        .btn-primary { background-color: #059669; color: white; font-weight: 600; padding: 14px 32px; border-radius: 8px; transition: all 0.2s; cursor: pointer; display: inline-block; }
-        .btn-primary:hover { background-color: #047857; transform: translateY(-1px); }
-        .input-corp { width: 100%; padding: 14px 16px; background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 8px; outline: none; transition: 0.2s; }
+        body { background-color: #FFFFFF; color: #1E293B; }
+        .btn-primary {
+            background-color: #059669; color: white; 
+            font-weight: 600; padding: 14px 32px; border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary:hover { background-color: #047857; box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.2); }
+        .card-corp {
+            background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+            padding: 32px; height: 100%; transition: all 0.3s ease;
+        }
+        .card-corp:hover { border-color: #059669; box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.1); }
+        .input-corp {
+            width: 100%; padding: 14px 16px; background: #F8FAFC;
+            border: 1px solid #CBD5E1; border-radius: 8px;
+            outline: none; transition: 0.2s; color: #0F172A; font-weight: 500;
+        }
         .input-corp:focus { border-color: #059669; background: white; }
+        
+        /* Efecto Scroll para la Nav */
+        nav.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        nav.scrolled img { height: 3.5rem; } /* Se achica un poco al bajar */
     </style>
 </head>
 <body class="antialiased">
 
     <nav id="navbar" class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-4 border-b border-slate-100 transition-all duration-300">
         <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
-            <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-14 md:h-20 transition-all duration-300">
-            <a href="#unete" class="text-sm font-bold text-corp-600 border border-corp-100 px-5 py-2.5 rounded-lg hover:bg-corp-50 transition">Registro</a>
+            <div class="flex items-center">
+                <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-14 md:h-20 w-auto object-contain transition-all duration-300">
+            </div>
+            <a href="#unete" class="text-sm font-bold text-corp-600 hover:text-corp-800 border border-corp-100 px-5 py-2.5 rounded-lg hover:bg-corp-50 transition">
+                Registro de Productores
+            </a>
         </div>
     </nav>
 
-    <section class="pt-56 pb-24 px-6 text-center">
-        <div class="max-w-4xl mx-auto">
-            <span class="py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-xs font-bold uppercase tracking-wider mb-6 inline-block">Infraestructura de Trazabilidad</span>
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-8 text-corp-900 leading-tight">Certificación de Origen <span class="text-corp-500">Blockchain.</span></h1>
-            <p class="text-xl text-slate-600 mb-12 max-w-2xl mx-auto">Apoyamos a productores a demostrar el valor de sus productos de manera digital y auditable.</p>
-            <a href="#unete" class="btn-primary text-lg">Obtén tu Sello de Confianza</a>
+    <section class="pt-56 pb-24 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-xs font-bold uppercase tracking-wider mb-6">
+                Infraestructura de Trazabilidad
+            </span>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-8 text-corp-900 leading-tight">
+                Certificación de Origen<br>
+                <span class="text-corp-500">Blockchain.</span>
+            </h1>
+            <p class="text-xl text-slate-600 font-medium mb-12 leading-relaxed max-w-2xl mx-auto">
+                Apoyamos a productores a demostrar el valor de sus productos de manera digital y auditable. Tecnología para la transparencia alimentaria, alineada con FAO y mercados locales y globales.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#unete" class="btn-primary text-lg">Obtén tu Sello de Confianza</a>
+            </div>
+            <p class="mt-6 text-sm text-slate-400 font-medium"> Sin Costo Inicial</p>
         </div>
     </section>
 
-    <section id="unete" class="py-24 px-6 bg-corp-900">
-        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <div class="text-white">
-                <h2 class="text-4xl font-extrabold mb-6">Únete a la Red AndesChain.</h2>
-                <p class="text-corp-100 text-lg mb-8">Lo que cultivas tiene valor. Envíanos tus datos y te contactaremos para integrar tu producción.</p>
-                <div class="p-6 bg-white/10 rounded-xl border border-white/10"><i class="fas fa-shield-alt text-corp-500 mr-2"></i> Sello Digital Inmutable</div>
+    <section class="py-24 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 h-full">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-corp-100 rounded-lg flex items-center justify-center text-corp-600">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-corp-900">Protección del Productor</h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Su esfuerzo es invisible. En el mercado global, su producto compite por precio al no poder demostrar eficientemente su origen, calidad y prácticas sostenibles.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 h-full">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-corp-900">Seguridad Alimentaria</h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Combatimos el "Greenwashing" y el fraude alimentario. Proveemos a empresas y Estados la data necesaria para cumplir normativas internacionales de trazabilidad.
+                    </p>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <div class="bg-white p-8 rounded-2xl shadow-2xl">
-                <form action="https://formspree.io/f/tu-id-aqui" method="POST" id="my-form" class="space-y-5">
+    <section class="py-24 bg-white">
+        <div class="max-w-5xl mx-auto px-6 text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-corp-900 mb-4">Tecnología de Verificación</h2>
+            <p class="text-slate-600 text-lg">Un protocolo simple para una verdad compleja.</p>
+        </div>
+        <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+            <article class="card-corp group">
+                <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md"><i class="fas fa-map-marker-alt"></i></div>
+                <h3 class="font-bold text-xl text-corp-900 mb-3">1. Geolocalización</h3>
+                <p class="text-slate-600">Validación satelital del predio productivo en tiempo real para asegurar el origen físico.</p>
+            </article>
+            <article class="card-corp group">
+                <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md"><i class="fas fa-cube"></i></div>
+                <h3 class="font-bold text-xl text-corp-900 mb-3">2. Inmutabilidad</h3>
+                <p class="text-slate-600">Registro criptográfico en Blockchain (Polygon). Datos imposibles de alterar o borrar.</p>
+            </article>
+            <article class="card-corp group">
+                <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md"><i class="fas fa-qrcode"></i></div>
+                <h3 class="font-bold text-xl text-corp-900 mb-3">3. Transparencia</h3>
+                <p class="text-slate-600">Acceso público mediante QR. El consumidor final viaja al origen del producto.</p>
+            </article>
+        </div>
+    </section>
+
+    <section id="unete" class="py-24 px-6 bg-corp-900 text-white">
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-4xl font-extrabold mb-6 leading-tight">Únete a la Red AndesChain.</h2>
+                <p class="text-corp-100 text-lg mb-8 leading-relaxed">Lo que cultivas tiene valor. Te ayudamos a demostrarlo respaldado por tecnología blockchain.</p>
+                <div class="p-6 bg-white/10 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <p class="font-semibold text-white mb-2"><i class="fas fa-shield-alt text-corp-500 mr-2"></i> Estándar Internacional</p>
+                    <p class="text-sm text-corp-100">Cumplimiento con ODS y normativas de exportación.</p>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl text-slate-900 shadow-2xl">
+                <form action="https://formsubmit.co/info@andeschain.io" method="POST" class="space-y-5">
+                    <input type="hidden" name="_next" value="https://andeschain.io">
+                    <input type="hidden" name="_captcha" value="false">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nombre Completo</label>
-                        <input type="text" name="name" class="input-corp" placeholder="Ej. Jorge" required>
+                        <input type="text" name="nombre" class="input-corp" placeholder="Ej: Jorge Muñoz" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Empresa</label>
-                        <input type="text" name="company" class="input-corp" placeholder="Quillagua" required>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Empresa / Predio</label>
+                        <input type="text" name="empresa" class="input-corp" placeholder="Ej: Comercial Rural SPA" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Email de contacto</label>
-                        <input type="email" name="email" class="input-corp" placeholder="hola@andeschain.io" required>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Contacto</label>
+                        <input type="text" name="contacto" class="input-corp" placeholder="Email o Teléfono" required>
                     </div>
-                    <button type="submit" id="my-form-button" class="btn-primary w-full text-lg mt-4 shadow-lg">Enviar Información</button>
-                    <p id="my-form-status" class="text-center text-sm font-bold mt-4"></p>
+                    <div class="pt-2">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Validación Geográfica</label>
+                        <button type="button" id="gpsBtn" onclick="capturarGPS()" class="w-full bg-slate-100 border border-slate-300 text-slate-600 font-bold py-4 rounded-lg hover:border-corp-500 transition flex items-center justify-center gap-3">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="gpsText">Capturar Coordenadas GPS</span>
+                        </button>
+                        <input type="hidden" name="coordenadas" id="coords">
+                    </div>
+                    <button type="submit" class="btn-primary w-full text-lg mt-4 shadow-lg">Solicitar Acceso</button>
                 </form>
             </div>
         </div>
     </section>
 
     <footer class="py-12 bg-white border-t border-slate-100">
-        <div class="max-w-6xl mx-auto px-6 text-center text-slate-500">
-            <p>© 2026 AndesChain Technology. Santiago de Chile.</p>
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <img src="assets/favicon.png" alt="AndesChain Icon" class="w-6 h-6">
+                    <span class="font-extrabold text-lg text-corp-900">AndesChain</span>
+                </div>
+                <p class="text-sm text-slate-500">© 2026 AndesChain Technology. Santiago de Chile.</p>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-slate-400 hover:text-corp-600"><i class="fab fa-linkedin text-xl"></i></a>
+                <a href="#" class="text-slate-400 hover:text-corp-600"><i class="fab fa-twitter text-xl"></i></a>
+            </div>
         </div>
     </footer>
 
     <script>
-        // Achicar logo al bajar
-        window.addEventListener('scroll', () => {
+        // Lógica de Scroll para Navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
             const logo = document.getElementById('nav-logo');
-            window.scrollY > 50 ? logo.classList.replace('h-20', 'h-14') : logo.classList.replace('h-14', 'h-20');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled', 'shadow-md');
+                logo.classList.replace('h-20', 'h-14');
+            } else {
+                navbar.classList.remove('scrolled', 'shadow-md');
+                logo.classList.replace('h-14', 'h-20');
+            }
         });
 
-        // Script para que el formulario no recargue la página
-        var form = document.getElementById("my-form");
-        async function handleSubmit(event) {
-          event.preventDefault();
-          var status = document.getElementById("my-form-status");
-          var data = new FormData(event.target);
-          fetch(event.target.action, {
-            method: form.method,
-            body: data,
-            headers: { 'Accept': 'application/json' }
-          }).then(response => {
-            if (response.ok) {
-              status.innerHTML = "¡Gracias! Recibimos tu información.";
-              status.classList.add("text-corp-600");
-              form.reset();
-            } else {
-              status.innerHTML = "Hubo un error. Reintenta.";
-              status.classList.add("text-red-500");
+        // GPS
+        function capturarGPS() {
+            const btn = document.getElementById('gpsBtn');
+            const txt = document.getElementById('gpsText');
+            txt.innerHTML = "<i class='fas fa-circle-notch fa-spin'></i> Conectando...";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const coords = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                        document.getElementById('coords').value = coords;
+                        btn.classList.add('bg-corp-50', 'text-corp-800', 'border-corp-500');
+                        txt.innerHTML = `Ubicación: ${coords}`;
+                    },
+                    () => { txt.innerText = "Error GPS. Ingrese manual."; },
+                    { enableHighAccuracy: true }
+                );
             }
-          }).catch(error => {
-            status.innerHTML = "Error de conexión.";
-          });
         }
-        form.addEventListener("submit", handleSubmit)
     </script>
 </body>
 </html>
