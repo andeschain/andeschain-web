@@ -188,7 +188,7 @@
                 <a href="tel:+56958799778" class="hover:text-corp-600 transition-colors"><i class="fas fa-phone-alt mr-2 text-corp-500"></i> +56 9 5879 9778</a>
                 <a href="https://www.linkedin.com/company/andeschain" target="_blank" rel="noopener noreferrer" class="hover:text-corp-600 transition-colors"><i class="fab fa-linkedin-in mr-2 text-corp-500"></i> LinkedIn</a>
             </div>
-            <p class="text-xs text-slate-400 font-medium uppercase tracking-widest text-center">© 2026 Hecho con humanidad (y tecnologia) por AndesChain Tech</p>
+            <p class="text-xs text-slate-400 font-medium uppercase tracking-widest text-center">© 2026 AndesChain Tech</p>
         </div>
     </footer>
 
@@ -234,14 +234,14 @@
                 body: JSON.stringify(data)
             })
             .then(r => r.json()).then(d => {
-                btn.innerHTML = 'Me quiero sumar!'; btn.disabled = false;
+                btn.innerHTML = 'Ya soy parte!.'; btn.disabled = false;
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#059669', '#ffffff'] });
                 responseDiv.classList.remove('hidden');
                 responseDiv.classList.add('bg-corp-50', 'text-corp-900', 'border-corp-500');
                 responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2 text-corp-500"></i> ¡Solicitud enviada con éxito!';
                 form.reset();
             }).catch(e => {
-                btn.innerHTML = 'Me quiero sumar!'; btn.disabled = false;
+                btn.innerHTML = 'Me quiero unir.!'; btn.disabled = false;
                 responseDiv.classList.remove('hidden');
                 responseDiv.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
                 responseDiv.innerText = "Error al enviar. Intenta nuevamente.";
