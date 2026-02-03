@@ -87,9 +87,22 @@
         /* Efecto Scroll para la Nav */
         nav.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         nav.scrolled img { height: 3.5rem; } 
+
+        /* Botón WhatsApp Flotante */
+        .whatsapp-float {
+            position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
+            background-color: #25d366; color: #FFF; border-radius: 50px;
+            text-align: center; font-size: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 100; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+        }
+        .whatsapp-float:hover { background-color: #128C7E; transform: scale(1.1); }
     </style>
 </head>
 <body class="antialiased">
+
+    <a href="https://wa.me/56958799778" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <nav id="navbar" class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-4 border-b border-slate-100 transition-all duration-300">
         <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
@@ -192,33 +205,48 @@
                     <input type="hidden" name="_next" value="https://andeschain.io">
                     <input type="hidden" name="_captcha" value="false">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Nombre Completo</label>
-                        <input type="text" name="nombre" class="input-corp" placeholder="Ej: Jorge Muñoz" required>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Nombre</label>
+                        <input type="text" name="nombre" class="input-corp" placeholder="Ej. Jorge" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Empresa / Predio</label>
-                        <input type="text" name="empresa" class="input-corp" placeholder="Ej: Comercial Rural SPA" required>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Empresa</label>
+                        <input type="text" name="empresa" class="input-corp" placeholder="Quillagua" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Contacto</label>
                         <input type="text" name="contacto" class="input-corp" placeholder="Email o Teléfono" required>
                     </div>
-                    <button type="submit" class="btn-primary w-full text-lg mt-4 shadow-lg">Solicitar Acceso</button>
+                    <button type="submit" class="btn-primary w-full text-lg mt-4 shadow-lg">Me quiero sumar!</button>
                 </form>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 bg-white border-t border-slate-100">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-                <div class="flex items-center gap-2 mb-2">
-                    <img src="assets/favicon.png" alt="AndesChain Icon" class="w-6 h-6">
-                    <span class="font-extrabold text-lg text-corp-900">AndesChain</span>
+    <footer class="py-16 bg-white border-t border-slate-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-12 text-center md:text-left">
+                <div>
+                    <div class="flex items-center gap-2 justify-center md:justify-start mb-4">
+                        <img src="assets/favicon.png" alt="AndesChain Icon" class="w-6 h-6">
+                        <span class="font-extrabold text-lg text-corp-900">AndesChain</span>
+                    </div>
+                    <p class="text-sm text-slate-500">© 2026 AndesChain Technology.<br>Santiago de Chile.</p>
                 </div>
-                <p class="text-sm text-slate-500">© 2026 AndesChain Technology. Santiago de Chile.</p>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4 tracking-wider text-sm uppercase">Contacto</h4>
+                    <ul class="text-slate-600 space-y-2 text-sm">
+                        <li><i class="fas fa-phone-alt text-corp-500 mr-2"></i> +56 9 5879 9778</li>
+                        <li><i class="fas fa-envelope text-corp-500 mr-2"></i> info@andeschain.io</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4 tracking-wider text-sm uppercase">Ubicación</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        <i class="fas fa-map-marker-alt text-corp-500 mr-2"></i> Miguel Claro 195, Oficina 810,<br>Providencia, Santiago.
+                    </p>
+                </div>
             </div>
-            <div class="flex gap-6">
+            <div class="mt-12 pt-8 border-t border-slate-50 flex justify-center md:justify-start gap-6">
                 <a href="#" class="text-slate-400 hover:text-corp-600"><i class="fab fa-linkedin text-xl"></i></a>
                 <a href="#" class="text-slate-400 hover:text-corp-600"><i class="fab fa-twitter text-xl"></i></a>
             </div>
