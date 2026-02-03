@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>AndesChain.io | Trazabilidad Blockchain</title>
-    <meta name="description" content="Infraestructura tecnológica para la certificación blockchain de alimentos.">
+    <meta name="description" content="Infraestructura tecnológica para la certificación de origen de los alimentos.">
     <meta name="author" content="AndesChain Technology">
 
     <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -95,7 +95,7 @@
             <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">Infraestructura de Trazabilidad</span>
             <h1 class="text-4xl md:text-7xl font-extrabold mb-8 text-corp-900 leading-tight">Certificación de Origen<br><span class="text-corp-500">Blockchain.</span></h1>
             <p class="text-lg md:text-xl text-slate-600 font-medium mb-12 max-w-2xl mx-auto">Apoyamos a productores a demostrar el valor de sus productos de manera digital y auditable.</p>
-            <a href="#unete" class="btn-primary">Obtén tu Sello de Confianza</a>
+            <a href="#unete" class="btn-primary">Obtén tu sello de origen</a>
         </div>
     </section>
 
@@ -127,7 +127,7 @@
         <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-center">
             <div>
                 <h2 class="text-3xl md:text-4xl font-extrabold mb-6">Únete a la Red AndesChain.</h2>
-                <p class="text-corp-100 text-lg mb-8">Lo que cultivas tiene valor. Te ayudamos a demostrarlo respaldado por tecnología blockchain.</p>
+                <p class="text-corp-100 text-lg mb-8">Lo que cultivas tiene valor. Te ayudamos a demostrarlo. Respaldado por tecnología blockchain.</p>
                 <div class="hidden md:block p-6 bg-white/10 rounded-xl border border-white/10">
                     <p class="font-semibold text-sm uppercase tracking-wider"><i class="fas fa-shield-alt text-corp-500 mr-2"></i> Estándar Internacional</p>
                 </div>
@@ -137,11 +137,11 @@
                     <input type="hidden" name="_captcha" value="false">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre</label>
-                        <input type="text" name="nombre" class="input-corp" placeholder="Ej. Jorge Muñoz" required>
+                        <input type="text" name="nombre" class="input-corp" placeholder="Ej. Jorge" required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Empresa</label>
-                        <input type="text" name="empresa" class="input-corp" placeholder="Nombre del predio" required>
+                        <input type="text" name="empresa" class="input-corp" placeholder="Nombre del tu proyecto" required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Email</label>
@@ -151,7 +151,7 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Celular</label>
                         <input type="tel" id="phone" name="celular_full" class="input-corp" required>
                     </div>
-                    <button type="submit" id="submitBtn" class="btn-primary w-full mt-2">Me quiero sumar!</button>
+                    <button type="submit" id="submitBtn" class="btn-primary w-full mt-2">Me quiero unir.</button>
                     <div id="formResponse" class="hidden mt-4 p-4 rounded-xl text-center font-bold text-sm border-2 transition-all"></div>
                 </form>
             </div>
@@ -218,13 +218,13 @@
                 body: JSON.stringify(data)
             })
             .then(r => r.json()).then(d => {
-                btn.innerHTML = 'Me quiero sumar!'; btn.disabled = false;
+                btn.innerHTML = 'Me quiero unir.'; btn.disabled = false;
                 // Efecto Confeti
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#059669', '#ffffff'] });
                 
                 responseDiv.classList.remove('hidden');
                 responseDiv.classList.add('bg-corp-50', 'text-corp-900', 'border-corp-500');
-                responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i> ¡Solicitud enviada con éxito!';
+                responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i> ¡Solicitud enviada con éxito! Pronto te contactaremos.';
                 form.reset();
             }).catch(e => {
                 btn.innerHTML = 'Me quiero sumar!'; btn.disabled = false;
