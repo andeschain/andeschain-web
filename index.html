@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>AndesChain | Trazabilidad Blockchain y Certificación de Origen Agrícola</title>
-    <meta name="description" content="Plataforma de trazabilidad blockchain del origen de tus alimentos. Certificación de origen inmutable, validación satelital para exportadores y productores.">
+    <meta name="description" content="Infraestructura tecnológica para la certificación blockchain de alimentos.">
     <meta name="keywords" content="blockchain agrícola, trazabilidad alimentos, certificación origen, agrotech chile, exportación frutas, seguridad alimentaria, FAO, smart contracts agricultura">
     <meta name="author" content="AndesChain Technology">
     <meta name="robots" content="index, follow">
+
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.andeschain.io/">
     <meta property="og:title" content="AndesChain | Certificación de Origen">
     <meta property="og:description" content="Tecnología para transformar promesas de valor en evidencia digital auditable. Únete a la red AndesChain.io.">
-    <meta property="og:image" content="https://andeschain.io/assets/social-preview.jpg"> <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://andeschain.io/assets/social-preview.jpg"> 
+    
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AndesChain.io | Trazabilidad de Origen Local">
     <meta name="twitter:description" content="Certificación digital para la cadena de alimentos locales.">
 
@@ -25,7 +29,7 @@
       "name": "AndesChain",
       "url": "https://www.andeschain.io",
       "logo": "https://www.andeschain.io/logo.png",
-      "description": "Infraestructura tecnológica para la certificación blockchain de aliemtnos.",
+      "description": "Infraestructura tecnológica para la certificación blockchain de alimentos.",
       "founders": [
         {
           "@type": "Person",
@@ -100,13 +104,7 @@
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-4 border-b border-slate-100">
         <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="flex items-center justify-center w-10 h-10 bg-corp-900 rounded-lg text-corp-500">
-                    <i class="fas fa-link text-lg mr-0.5"></i><i class="fas fa-leaf text-sm"></i>
-                </div>
-                <div class="leading-none">
-                    <span class="block font-extrabold text-xl text-corp-900 tracking-tight">AndesChain</span>
-                    <span class="text-[10px] font-bold text-corp-500 uppercase tracking-widest">Origen Verificado</span>
-                </div>
+                <img src="assets/logo-header.png" alt="AndesChain Logo" class="h-10">
             </div>
             <a href="#unete" class="text-sm font-bold text-corp-600 hover:text-corp-800 transition">Registro de Productores</a>
         </div>
@@ -206,18 +204,22 @@
                 </div>
             </div>
             <div class="bg-white p-8 rounded-2xl text-slate-900 shadow-2xl">
-                <form class="space-y-5" onsubmit="event.preventDefault(); registrarInteres();">
+                <form action="https://formsubmit.co/info@andeschain.io" method="POST" class="space-y-5">
+                    
+                    <input type="hidden" name="_next" value="https://andeschain.io">
+                    <input type="hidden" name="_captcha" value="false">
+
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nombre Completo</label>
-                        <input type="text" id="nombre" class="input-corp" placeholder="Ej: Jorge Munoz" required>
+                        <input type="text" name="nombre" id="nombre" class="input-corp" placeholder="Ej: Jorge Munoz" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Empresa / Predio</label>
-                        <input type="text" id="proyecto" class="input-corp" placeholder="Ej: Comercial Rural SPA" required>
+                        <input type="text" name="empresa" id="proyecto" class="input-corp" placeholder="Ej: Comercial Rural SPA" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Contacto</label>
-                        <input type="text" id="contacto" class="input-corp" placeholder="Email o Teléfono" required>
+                        <input type="text" name="contacto" id="contacto" class="input-corp" placeholder="Email o Teléfono" required>
                     </div>
                     <div class="pt-2">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Validación Geográfica</label>
@@ -227,7 +229,7 @@
                             </div>
                             <span id="gpsText">Capturar Coordenadas GPS</span>
                         </button>
-                        <input type="hidden" id="coords">
+                        <input type="hidden" name="coordenadas" id="coords">
                     </div>
                     <button type="submit" class="btn-primary w-full text-lg mt-4 shadow-lg shadow-corp-500/30">Solicitar Acceso</button>
                 </form>
@@ -240,6 +242,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                     <div class="flex items-center gap-2 justify-center md:justify-start mb-2">
+                        <img src="assets/favicon.png" alt="AndesChain Icon" class="w-6 h-6 opacity-80">
                         <span class="block font-extrabold text-lg text-corp-900">AndesChain</span>
                     </div>
                     <p class="text-sm text-slate-500">© 2026 AndesChain Technology. Santiago de Chile.</p>
@@ -270,17 +273,6 @@
                     { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else { txt.innerText = "GPS no disponible."; }
-        }
-        function registrarInteres() {
-            const nombre = document.getElementById('nombre').value;
-            const btn = document.querySelector('button[type="submit"]');
-            if(!nombre) return;
-            btn.innerHTML = "<i class='fas fa-circle-notch fa-spin mr-2'></i> Enviando...";
-            setTimeout(() => {
-                alert(`¡Gracias ${nombre}! Tu solicitud ha sido enviada al equipo de AndesChain.`);
-                btn.innerHTML = "Solicitud Enviada";
-                btn.classList.add('bg-slate-800', 'cursor-not-allowed');
-            }, 1500);
         }
     </script>
 </body>
