@@ -66,9 +66,17 @@
 
         .card-corp {
             background: white; border: 1px solid #E2E8F0; border-radius: 12px;
-            padding: 24px; height: 100%; transition: all 0.3s ease;
+            padding: 24px; height: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card-corp:hover { border-color: #059669; transform: translateY(-4px); }
+        .card-corp:hover { 
+            border-color: #059669; 
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(5, 150, 105, 0.1);
+        }
+
+        /* Animación suave para logos de confianza */
+        .trust-bar img { filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
+        .trust-bar img:hover { filter: grayscale(0%); opacity: 1; }
     </style>
 </head>
 <body class="antialiased">
@@ -88,29 +96,39 @@
         </div>
     </nav>
 
-    <section class="pt-32 md:pt-48 pb-12 md:pb-20 px-4 relative overflow-hidden text-center">
+    <section class="pt-32 md:pt-48 pb-12 md:pb-16 px-4 relative overflow-hidden text-center">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
         <div class="max-w-4xl mx-auto relative z-10 px-2">
             <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Arquitectura de Confianza Alimentaria</span>
             <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Evidencia Digital e<br><span class="text-corp-500">Identidad de Origen.</span></h1>
             <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto">Transformamos la trazabilidad en un activo estratégico. Si un producto tiene una historia real, nosotros la hacemos inmutable.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="#unete" class="btn-primary">Certifica tu origen</a>
                 <a href="#tecnologia" class="inline-block py-3 px-6 text-slate-600 font-semibold hover:text-corp-600 transition-colors">Cómo funciona →</a>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto mt-16 md:mt-24 trust-bar">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-8">Infraestructura construida sobre estándares globales</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Polygon_logo.svg" alt="Polygon Network" class="h-6 md:h-8">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Fao-logo.svg" alt="FAO Standards" class="h-10 md:h-12">
+                <i class="fas fa-satellite-dish text-2xl text-slate-300"></i>
+                <i class="fas fa-microchip text-2xl text-slate-300"></i>
             </div>
         </div>
     </section>
 
     <section class="py-12 md:py-20 bg-slate-50 border-y border-slate-200 px-4">
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 text-left">
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 card-corp">
+            <div class="card-corp">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-corp-100 rounded-lg flex items-center justify-center text-corp-600"><i class="fas fa-fingerprint text-xl"></i></div>
                     <h2 class="text-lg md:text-xl font-bold text-corp-900 leading-tight">Valorización del Origen</h2>
                 </div>
                 <p class="text-xs md:text-base text-slate-600 leading-relaxed">Protegemos la identidad de alimentos con valor agregado. Del campo a la mesa, nos aseguramos de que el esfuerzo del productor sea visible y auditable para el mundo.</p>
             </div>
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 card-corp">
+            <div class="card-corp">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600"><i class="fas fa-check-double text-xl"></i></div>
                     <h2 class="text-lg md:text-xl font-bold text-corp-900 leading-tight">Integridad Institucional</h2>
@@ -122,22 +140,23 @@
 
     <section id="tecnologia" class="py-16 md:py-24 bg-white px-4">
         <div class="max-w-5xl mx-auto text-center mb-10 md:mb-16">
-            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3 text-center">Precisión Técnica</h2>
-            <p class="text-slate-600 text-sm md:text-lg font-medium">Un protocolo de confianza diseñado para la nueva economía.</p>
+            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3 text-center">Tecnología de Verificación</h2>
+            <p class="text-slate-600 text-sm md:text-lg font-medium text-center">Un protocolo de confianza diseñado para la nueva economía.</p>
         </div>
+        
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
             <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-satellite"></i></div>
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-satellite"></i></div>
                 <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">1. Validación Satelital</h3>
                 <p class="text-slate-600 text-xs md:text-base leading-relaxed">Geolocalización en tiempo real para certificar la procedencia física y el cumplimiento territorial.</p>
             </article>
             <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-link"></i></div>
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-link"></i></div>
                 <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">2. Blockchain Inalterable</h3>
                 <p class="text-slate-600 text-xs md:text-base leading-relaxed">Registro criptográfico en la red Polygon. Construimos sobre una infraestructura que no permite alteraciones.</p>
             </article>
             <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-file-contract"></i></div>
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-file-contract"></i></div>
                 <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">3. Evidencia Pública</h3>
                 <p class="text-slate-600 text-xs md:text-base leading-relaxed">Sellos interactivos que permiten al mercado verificar cada dato. Transparencia radical al alcance de un QR.</p>
             </article>
@@ -147,8 +166,8 @@
     <section id="unete" class="py-16 md:py-24 px-4 bg-corp-900 text-white overflow-hidden">
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center text-center md:text-left">
             <div>
-                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">Únete a la infraestructura de confianza.</h2>
-                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed">Si tu producto tiene origen, tiene valor. Te ayudamos a demostrarlo ante el mundo.</p>
+                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight text-center md:text-left">Únete a la infraestructura de confianza.</h2>
+                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed text-center md:text-left">Si tu producto tiene origen, tiene valor. Te ayudamos a demostrarlo ante el mundo.</p>
                 
                 <div class="space-y-3 max-w-xs mx-auto md:mx-0">
                     <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
@@ -198,7 +217,7 @@
                 <span class="font-extrabold text-lg text-corp-900 tracking-tight">AndesChain.io</span>
             </div>
             
-            <blockquote class="mb-8 max-w-xl mx-auto italic text-slate-500 text-sm md:text-base border-l-4 border-corp-500 pl-4 py-2">
+            <blockquote class="mb-8 max-w-xl mx-auto italic text-slate-500 text-sm md:text-base border-l-4 border-corp-500 pl-4 py-2 text-left md:text-center">
                 "Tú eres lo que haces, no lo que dices que vas a hacer." <br>
                 <span class="font-bold text-xs uppercase tracking-tighter">— C.G. Jung</span>
             </blockquote>
@@ -208,7 +227,7 @@
                 <a href="tel:+56958799778" class="hover:text-corp-600 transition-colors"><i class="fas fa-phone-alt mr-2 text-corp-500"></i> +56 9 5879 9778</a>
                 <a href="https://www.linkedin.com/company/andeschain" target="_blank" rel="noopener noreferrer" class="hover:text-corp-600 transition-colors"><i class="fab fa-linkedin-in mr-2 text-corp-500"></i> LinkedIn</a>
             </div>
-            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest">© 2026 AndesChain Tech | Si es auditable, es real.</p>
+            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest">© 2026 AndesChain Tech</p>
         </div>
     </footer>
 
@@ -223,16 +242,22 @@
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
         });
 
+        // Optimización de scroll
+        let scrollTimeout;
         window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            const logo = document.getElementById('nav-logo');
-            if (window.scrollY > 30) {
-                navbar.classList.add('scrolled');
-                logo.classList.replace('h-9', 'h-7');
-            } else {
-                navbar.classList.remove('scrolled');
-                logo.classList.replace('h-7', 'h-9');
-            }
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                const navbar = document.getElementById('navbar');
+                const logo = document.getElementById('nav-logo');
+                if (window.scrollY > 30) {
+                    navbar.classList.add('scrolled');
+                    logo.classList.replace('h-9', 'h-7');
+                } else {
+                    navbar.classList.remove('scrolled');
+                    logo.classList.replace('h-7', 'h-9');
+                }
+                scrollTimeout = null;
+            }, 100);
         });
 
         const form = document.getElementById('andesForm');
