@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | La Verdad del Campo</title>
+    <meta name="description" content="Certificación de origen y trazabilidad para productores con historia.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Paleta Verde Corporativa (Trust & Sustainability)
+                        'corp': {
+                            50: '#F0FDF4', 
+                            100: '#DCFCE7',
+                            500: '#059669', // Verde Esmeralda (Acción principal)
+                            600: '#047857', // Hover
+                            800: '#065F46', 
+                            900: '#022C22', // Negro/Verde Institucional
+                        },
+                        'slate': {
+                            800: '#1E293B', 
+                            900: '#0F172A', 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'corp': '0 4px 6px -1px rgba(5, 150, 105, 0.1), 0 2px 4px -1px rgba(5, 150, 105, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FFFFFF; color: #1E293B; }
+        
+        /* Tipografía Corporativa */
+        h1, h2, h3, h4 { letter-spacing: -0.025em; }
+        
+        /* Botones Ejecutivos */
+        .btn-primary {
+            background-color: #059669; color: white; 
+            font-weight: 600; padding: 14px 32px; border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary:hover { background-color: #047857; box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.2); }
+        .btn-primary:active { transform: translateY(1px); }
+
+        /* Tarjetas Corporativas */
+        .card-corp {
+            background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+            padding: 32px; height: 100%; transition: all 0.3s ease;
+        }
+        .card-corp:hover { border-color: #059669; box-shadow: var(--tw-shadow-corp); }
+
+        /* Inputs Profesionales */
+        .input-corp {
+            width: 100%; padding: 14px 16px; background: #F8FAFC;
+            border: 1px solid #CBD5E1; border-radius: 8px;
+            font-size: 16px; outline: none; transition: 0.2s; color: #0F172A; font-weight: 500;
+        }
+        .input-corp:focus { border-color: #059669; background: white; ring: 2px solid #059669; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-4 border-b border-slate-100">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 bg-corp-900 rounded-lg text-corp-500">
+                    <i class="fas fa-link text-lg mr-0.5"></i><i class="fas fa-leaf text-sm"></i>
+                </div>
+                <div class="leading-none">
+                    <span class="block font-extrabold text-xl text-corp-900 tracking-tight">AndesChain</span>
+                    <span class="text-[10px] font-bold text-corp-500 uppercase tracking-widest">Origen Verificado</span>
+                </div>
+            </div>
+            
+            <a href="#unete" class="text-sm font-bold text-corp-600 hover:text-corp-800 transition">
+                Registro de Productores
+            </a>
+        </div>
+    </nav>
+
+    <section class="pt-48 pb-24 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-xs font-bold uppercase tracking-wider mb-6">
+                Infraestructura de Confianza
+            </span>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-8 text-corp-900 leading-tight">
+                Lo que cultivas<br>
+                <span class="text-corp-500">tiene valor.</span><br>
+                Demuéstralo.
+            </h1>
+            <p class="text-xl text-slate-600 font-medium mb-12 leading-relaxed max-w-2xl mx-auto">
+                No basta con decir que es orgánico, local o justo. 
+                <strong class="text-corp-900">Hay que mostrar la evidencia.</strong><br>
+                Creamos un sello digital que cuenta tu historia real, respaldado por tecnología inmutable.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#unete" class="btn-primary text-lg">
+                    Obtén tu Sello de Confianza
+                </a>
+            </div>
+            <p class="mt-6 text-sm text-slate-400 font-medium">Sin costos de entrada · Piloto FAO 2026</p>
+        </div>
+    </section>
+
+    <section class="py-24 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 h-full">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-corp-100 rounded-lg flex items-center justify-center text-corp-600">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-corp-900">Tu esfuerzo es invisible</h3>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Te levantas al alba, cuidas el suelo y produces calidad. Pero en el mercado, tu producto se ve igual al industrial. Compites por precio porque nadie ve tu historia ni tu origen real.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 h-full">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-corp-900">¿En quién confío?</h3>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        El "Greenwashing" confunde a todos. Las empresas y el Estado necesitan garantías reales de seguridad alimentaria y sustentabilidad. Los sellos de papel ya no bastan; se necesita transparencia radical.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold text-corp-900 mb-4">No es magia.<br>Es tecnología simple.</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-corp relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 text-8xl font-black text-slate-50 opacity-50 -z-10 leading-none select-none group-hover:text-corp-50 transition">1</div>
+                    <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h4 class="font-bold text-xl text-corp-900 mb-3">Geolocalizas</h4>
+                    <p class="text-slate-600">Usas nuestra web desde tu campo. El GPS valida satelitalmente que realmente estás produciendo ahí.</p>
+                </div>
+
+                <div class="card-corp relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 text-8xl font-black text-slate-50 opacity-50 -z-10 leading-none select-none group-hover:text-corp-50 transition">2</div>
+                    <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h4 class="font-bold text-xl text-corp-900 mb-3">Inmortalizas</h4>
+                    <p class="text-slate-600">La información se guarda en Blockchain (Polygon). Nadie la puede borrar, alterar ni falsificar jamás.</p>
+                </div>
+
+                <div class="card-corp relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 text-8xl font-black text-slate-50 opacity-50 -z-10 leading-none select-none group-hover:text-corp-50 transition">3</div>
+                    <div class="w-12 h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-xl mb-6 shadow-md">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h4 class="font-bold text-xl text-corp-900 mb-3">Compartes</h4>
+                    <p class="text-slate-600">Recibes un código único. Tu cliente lo escanea y viaja digitalmente a tu huerto en segundos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="unete" class="py-24 px-6 bg-corp-900 text-white">
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            
+            <div>
+                <h2 class="text-4xl font-extrabold mb-6 leading-tight">Comencemos.</h2>
+                <p class="text-corp-100 text-lg mb-8 leading-relaxed">
+                    Déjanos tus datos. No pedimos tarjetas de crédito ni contratos complicados. Solo ganas de transparentar tu producción.
+                </p>
+                <div class="p-6 bg-white/10 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <p class="font-semibold text-white mb-2"><i class="fas fa-shield-alt text-corp-500 mr-2"></i> Piloto Cerrado 2026</p>
+                    <p class="text-sm text-corp-100">Estamos seleccionando 100 productores líderes para iniciar la certificación digital gratuita.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl text-slate-900 shadow-2xl">
+                <form class="space-y-5" onsubmit="event.preventDefault(); registrarInteres();">
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Tu Nombre</label>
+                        <input type="text" id="nombre" class="input-corp" placeholder="Ej: María González" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Nombre de tu Proyecto / Campo</label>
+                        <input type="text" id="proyecto" class="input-corp" placeholder="Ej: Apiarios del Sur" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Correo o WhatsApp</label>
+                        <input type="text" id="contacto" class="input-corp" placeholder="Para contactarte" required>
+                    </div>
+
+                    <div class="pt-2">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">¿Dónde estás produciendo?</label>
+                        <button type="button" id="gpsBtn" onclick="capturarGPS()" class="w-full bg-slate-100 border border-slate-300 text-slate-600 font-bold py-4 rounded-lg hover:bg-white hover:border-corp-500 hover:text-corp-600 transition flex items-center justify-center gap-3 group">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center group-hover:bg-corp-100 transition">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span id="gpsText">Capturar Coordenadas GPS</span>
+                        </button>
+                        <input type="hidden" id="coords">
+                        <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                            <i class="fas fa-info-circle"></i> Esto nos ayuda a validar tu zona geográfica preliminarmente.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full text-lg mt-4 shadow-lg shadow-corp-500/30">
+                        Quiero mi Sello AndesChain
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="py-12 bg-white border-t border-slate-100">
+        <div class="max-w-6xl mx-auto px-6 text-center md:text-left">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <div class="flex items-center gap-2 justify-center md:justify-start mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 bg-corp-900 rounded-lg text-corp-500">
+                            <i class="fas fa-link text-sm mr-0.5"></i><i class="fas fa-leaf text-xs"></i>
+                        </div>
+                        <span class="block font-extrabold text-lg text-corp-900">AndesChain</span>
+                    </div>
+                    <p class="text-sm text-slate-500">© 2026 AndesChain Technology. Santiago, Chile.</p>
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="text-slate-400 hover:text-corp-600 transition"><i class="fab fa-linkedin text-xl"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-corp-600 transition"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-corp-600 transition"><i class="fab fa-github text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function capturarGPS() {
+            const btn = document.getElementById('gpsBtn');
+            const txt = document.getElementById('gpsText');
+            
+            txt.innerHTML = "<i class='fas fa-circle-notch fa-spin'></i> Conectando satélite...";
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const coords = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                        document.getElementById('coords').value = coords;
+                        
+                        // Feedback Visual Profesional
+                        btn.classList.remove('bg-slate-100', 'border-slate-300', 'text-slate-600');
+                        btn.classList.add('bg-corp-50', 'border-corp-500', 'text-corp-800');
+                        btn.querySelector('div').classList.remove('bg-slate-200');
+                        btn.querySelector('div').classList.add('bg-corp-100', 'text-corp-600');
+                        txt.innerHTML = `Ubicación Capturada: <span class="font-mono">${coords}</span>`;
+                    },
+                    (error) => {
+                        console.error(error);
+                        txt.innerText = "No pudimos obtener tu GPS. No importa, escríbelo luego.";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                txt.innerText = "Dispositivo no compatible con GPS.";
+            }
+        }
+
+        function registrarInteres() {
+            const nombre = document.getElementById('nombre').value;
+            const proyecto = document.getElementById('proyecto').value;
+            const coords = document.getElementById('coords').value || "No capturadas";
+            
+            if(!nombre || !proyecto) return alert("Por favor completa los campos básicos.");
+
+            const btn = document.querySelector('button[type="submit"]');
+            btn.innerHTML = "<i class='fas fa-circle-notch fa-spin mr-2'></i> Enviando...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert(`¡Gracias ${nombre}!\n\nHemos recibido tu solicitud para "${proyecto}".\nCoordenadas registradas: ${coords}\n\nTe contactaremos en breve para activar tu Sello.`);
+                btn.innerHTML = "<i class='fas fa-check-circle mr-2'></i> Solicitud Enviada";
+                btn.classList.remove('btn-primary');
+                btn.classList.add('bg-slate-800', 'text-white', 'cursor-not-allowed');
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
