@@ -74,7 +74,6 @@
             box-shadow: 0 12px 20px -5px rgba(5, 150, 105, 0.1);
         }
 
-        /* Animación suave para logos de confianza */
         .trust-bar img { filter: grayscale(100%); opacity: 0.6; transition: all 0.3s ease; }
         .trust-bar img:hover { filter: grayscale(0%); opacity: 1; }
     </style>
@@ -98,7 +97,7 @@
 
     <section class="pt-32 md:pt-48 pb-12 md:pb-16 px-4 relative overflow-hidden text-center">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
-        <div class="max-w-4xl mx-auto relative z-10 px-2">
+        <div class="max-w-4xl mx-auto relative z-10 px-2 text-center">
             <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Arquitectura de Confianza Alimentaria</span>
             <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Evidencia Digital e<br><span class="text-corp-500">Identidad de Origen.</span></h1>
             <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto">Transformamos la trazabilidad en un activo estratégico. Si un producto tiene una historia real, nosotros la hacemos inmutable.</p>
@@ -143,7 +142,6 @@
             <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3 text-center">Tecnología de Verificación</h2>
             <p class="text-slate-600 text-sm md:text-lg font-medium text-center">Un protocolo de confianza diseñado para la nueva economía.</p>
         </div>
-        
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
             <article class="card-corp">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-satellite"></i></div>
@@ -158,7 +156,7 @@
             <article class="card-corp">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-file-contract"></i></div>
                 <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">3. Evidencia Pública</h3>
-                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Sellos interactivos que permiten al mercado verificar cada dato. Transparencia radical al alcance de un QR.</p>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Sellos interactivos que permiten al mercado verificar cada dato. El consumidor final viaja al origen del producto mediante una transparencia radical al alcance de un QR.</p>
             </article>
         </div>
     </section>
@@ -212,22 +210,17 @@
 
     <footer class="py-12 bg-white border-t border-slate-100 px-4">
         <div class="max-w-6xl mx-auto text-center">
-            <div class="flex items-center gap-2 justify-center mb-6">
+            <div class="flex items-center gap-2 justify-center mb-10">
                 <img src="assets/favicon.png" class="w-5 h-5" alt="AndesChain">
                 <span class="font-extrabold text-lg text-corp-900 tracking-tight">AndesChain.io</span>
             </div>
-            
-            <blockquote class="mb-8 max-w-xl mx-auto italic text-slate-500 text-sm md:text-base border-l-4 border-corp-500 pl-4 py-2 text-left md:text-center">
-                "Tú eres lo que haces, no lo que dices que vas a hacer." <br>
-                <span class="font-bold text-xs uppercase tracking-tighter">— C.G. Jung</span>
-            </blockquote>
 
             <div class="flex flex-col md:flex-row flex-wrap justify-center gap-x-8 gap-y-4 mb-8 text-[11px] md:text-sm font-semibold text-slate-600">
                 <a href="mailto:info@andeschain.io" class="hover:text-corp-600 transition-colors"><i class="fas fa-envelope mr-2 text-corp-500"></i> info@andeschain.io</a>
                 <a href="tel:+56958799778" class="hover:text-corp-600 transition-colors"><i class="fas fa-phone-alt mr-2 text-corp-500"></i> +56 9 5879 9778</a>
                 <a href="https://www.linkedin.com/company/andeschain" target="_blank" rel="noopener noreferrer" class="hover:text-corp-600 transition-colors"><i class="fab fa-linkedin-in mr-2 text-corp-500"></i> LinkedIn</a>
             </div>
-            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest">© 2026 AndesChain Tech</p>
+            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest text-center">© 2026 AndesChain Tech</p>
         </div>
     </footer>
 
@@ -242,7 +235,6 @@
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
         });
 
-        // Optimización de scroll
         let scrollTimeout;
         window.addEventListener('scroll', function() {
             if (scrollTimeout) return;
