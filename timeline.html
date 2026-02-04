@@ -46,9 +46,9 @@
             display: block;
             width: 100%;
             aspect-ratio: 16 / 9;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             overflow: hidden;
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             border: 1px solid #F1F5F9;
             background-color: #F8FAFC;
         }
@@ -83,9 +83,9 @@
 
     <main class="max-w-xl mx-auto px-6 py-12">
         
-        <header class="mb-14 text-left">
-            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Papa Desirée</h1>
-            <p class="text-slate-500 font-medium leading-relaxed">Evidencia digital de origen: <span class="text-emerald-600 font-semibold">El Otro Huerto, Paine</span>.</p>
+        <header class="mb-14">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2 text-slate-900">Papa Desirée</h1>
+            <p class="text-slate-500 font-medium">Origen: <span class="text-emerald-600 font-semibold">El Otro Huerto, Paine</span></p>
         </header>
 
         <section class="mb-16">
@@ -99,7 +99,7 @@
                         </div>
                         <div class="flex-1">
                             <h4 class="font-bold text-sm uppercase tracking-tight">1. Preparación de Terreno</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Acondicionamiento del suelo en Paine. Registro de PH y nutrientes iniciales.</p>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Acondicionamiento agroecológico en Paine. Registro de PH y nutrientes iniciales.</p>
                             <div class="img-frame">
                                 <img src="assets/preparacion.jpg" alt="Preparación de terreno">
                             </div>
@@ -116,7 +116,7 @@
                             <h4 class="font-bold text-sm uppercase tracking-tight">2. Siembra y Trazabilidad</h4>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Incorporación de semilla certificada. Firma digital del hito en la red Polygon.</p>
                             <div class="img-frame">
-                                <img src="assets/siembra.jpg" alt="Siembra">
+                                <img src="assets/siembra.jpg" alt="Siembra de papas">
                             </div>
                         </div>
                     </div>
@@ -127,13 +127,14 @@
                         <div class="step-icon">
                             <i class="fas fa-satellite text-sm"></i>
                         </div>
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm uppercase tracking-tight text-slate-900">3. Georreferenciación Satelital</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Validación del polígono productivo en Paine, Región Metropolitana.</p>
+                        <div class="flex-1 text-left">
+                            <h4 class="font-bold text-sm uppercase tracking-tight text-slate-900">3. Validación Satelital</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ubicación exacta del polígono productivo en El Otro Huerto, Paine.</p>
+                            
                             <div class="img-frame">
                                 <iframe 
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.972322588373!2d-70.74100298478917!3d-33.89035698065038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUzJzI1LjMiUyA3MMKwNDQnMTkuNyJX!5e1!3m2!1ses!2scl!4v1620000000000!5m2!1ses!2scl&maptype=satellite" 
-                                    style="border:0;" allowfullscreen="" loading="lazy">
+                                    src="https://www.google.com/maps/place/Otro+Huerto/@-33.8462614,-70.8092585,771m/data=!3m2!1e3!4b1!4m6!3m5!1s0x966323e7a05a752b:0xc3bb6f744b9672fe!8m2!3d-33.8462614!4d-70.8092585!16s%2Fg%2F11ks2tfgd5?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoASAFQAw%3D%3D2" 
+                                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                                 </iframe>
                             </div>
                         </div>
@@ -147,9 +148,9 @@
                         </div>
                         <div class="flex-1">
                             <h4 class="font-bold text-sm uppercase tracking-tight text-emerald-600">4. Cosecha y Cierre</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección de lote finalizado. Generación de evidencia criptográfica.</p>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección de lote finalizado. Generación de certificado inmutable final.</p>
                             <div class="img-frame">
-                                <img src="assets/cosecha.jpg" alt="Cosecha">
+                                <img src="assets/cosecha.jpg" alt="Cosecha El Otro Huerto">
                             </div>
                         </div>
                     </div>
@@ -165,11 +166,11 @@
             <div class="space-y-4 font-mono text-[11px]">
                 <div class="flex justify-between border-b border-white/5 pb-2">
                     <span class="text-slate-500 uppercase">Red</span>
-                    <span class="text-slate-300 font-bold uppercase tracking-widest">Polygon</span>
+                    <span class="text-slate-300">Polygon Mainnet</span>
                 </div>
-                <div class="flex justify-between overflow-hidden">
+                <div class="flex justify-between overflow-hidden text-emerald-400">
                     <span class="text-slate-500 uppercase">ID</span>
-                    <span class="text-emerald-400 truncate ml-4">0x71C4...3D89FC92</span>
+                    <span class="truncate ml-4">0x71C4...3D89FC92</span>
                 </div>
             </div>
             <a href="https://polygonscan.com/" target="_blank" class="block w-full mt-8 bg-white/5 border border-white/10 text-center py-4 rounded-xl text-[10px] font-bold text-white hover:bg-white hover:text-slate-900 transition-all uppercase tracking-widest">
@@ -177,8 +178,8 @@
             </a>
         </div>
 
-        <div class="text-center bg-emerald-600 rounded-[2.5rem] p-8 text-white">
-            <h3 class="text-lg font-bold mb-2">Potencia tu origen.</h3>
+        <div class="text-center bg-emerald-600 rounded-[2rem] p-8 text-white">
+            <h3 class="text-lg font-bold mb-2 tracking-tight">Potencia tu origen.</h3>
             <p class="text-emerald-100 text-xs mb-6 leading-relaxed">Lleva la trazabilidad de AndesChain a tu propia marca agrícola.</p>
             <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-50 transition text-xs tracking-wide">
                 AGENDAR REUNIÓN
