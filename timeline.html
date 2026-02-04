@@ -9,53 +9,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #1E293B; }
-        .timeline-step { position: relative; padding-bottom: 3rem; }
+        
+        /* Ajuste de la línea de tiempo para que sea más limpia */
+        .timeline-step { position: relative; padding-bottom: 3.5rem; }
         .timeline-step:last-child { padding-bottom: 0; }
         .timeline-line { 
             position: absolute; 
-            left: 20px; 
+            left: 21px; 
             top: 44px; 
             bottom: 0; 
-            width: 2px; 
-            background: #F1F5F9; 
+            width: 1px; 
+            background: #E2E8F0; 
             z-index: 0;
         }
+        
         .step-icon {
             width: 42px;
             height: 42px;
-            border-radius: 12px;
-            background: white;
-            border: 2px solid #F1F5F9;
+            border-radius: 10px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
             position: relative;
-            color: #94A3B8;
+            color: #64748B;
         }
+        
         .step-active .step-icon {
             border-color: #059669;
             color: #059669;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08);
+            background: #F0FDF4;
         }
-        .img-container {
+
+        /* FIX: Contenedor de imagen centrado y con proporción fija */
+        .img-frame {
             width: 100%;
-            border-radius: 1.5rem;
+            max-width: 100%;
+            aspect-ratio: 16 / 9; /* Mantiene la proporción horizontal perfecta */
+            margin-top: 1.25rem;
+            border-radius: 1rem;
             overflow: hidden;
+            display: block;
             border: 1px solid #F1F5F9;
-            margin-top: 1rem;
-            background-color: #F8FAFC;
         }
-        .img-container img {
+        
+        .img-frame img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            aspect-ratio: 16 / 9;
-            transition: transform 0.5s ease;
+            object-fit: cover; /* Centra y corta el exceso sin deformar */
+            object-position: center;
+            display: block;
         }
-        .img-container img:hover { transform: scale(1.03); }
+
         .glass-header {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
@@ -73,16 +82,14 @@
         </div>
     </nav>
 
-    <main class="max-w-xl mx-auto px-6 py-10 md:py-16">
+    <main class="max-w-xl mx-auto px-6 py-12">
         
-        <header class="mb-12 text-center">
-            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-slate-900">Papa Desirée</h1>
-            <p class="text-slate-500 font-medium leading-relaxed">Evidencia digital de origen: <span class="text-emerald-600">El Otro Huerto, Paine</span>.</p>
+        <header class="mb-14">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2 text-slate-900">Papa Desirée</h1>
+            <p class="text-slate-500 font-medium leading-relaxed">Evidencia digital de origen: <span class="text-emerald-600 font-semibold">El Otro Huerto, Paine</span>.</p>
         </header>
 
         <section class="mb-16">
-            <h3 class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-10 text-center">Trayectoria Inmutable del Lote</h3>
-            
             <div class="relative">
                 <div class="timeline-line"></div>
 
@@ -94,8 +101,8 @@
                         <div class="flex-1">
                             <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">1. Preparación de Terreno</h4>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Acondicionamiento agroecológico del suelo en Paine. Registro de PH y nutrientes iniciales.</p>
-                            <div class="img-container">
-                                <img src="assets/preparacion.jpg" alt="Preparación de terreno en Paine">
+                            <div class="img-frame">
+                                <img src="assets/preparacion.jpg" alt="Preparación de terreno">
                             </div>
                         </div>
                     </div>
@@ -109,8 +116,8 @@
                         <div class="flex-1">
                             <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">2. Siembra y Trazabilidad</h4>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Incorporación de semilla certificada. Firma digital del hito de siembra en Polygon.</p>
-                            <div class="img-container">
-                                <img src="assets/siembra.jpg" alt="Siembra de papas El Otro Huerto">
+                            <div class="img-frame">
+                                <img src="assets/siembra.jpg" alt="Siembra de papas">
                             </div>
                         </div>
                     </div>
@@ -124,10 +131,10 @@
                         <div class="flex-1">
                             <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">3. Validación Satelital</h4>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Georreferenciación satelital del predio real en Paine, RM.</p>
-                            <div class="img-container">
+                            <div class="img-frame">
                                 <iframe 
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3313.434685959039!2d-70.7450!3d-33.8150!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662e59998656755%3A0x6b1f2e86a01b22e0!2sPaine%2C%20Regi%C3%B3n%20Metropolitana!5e1!3m2!1ses!2scl!4v1707000000000!5m2!1ses!2scl&t=k" 
-                                    class="w-full h-64 border-0 rounded-2xl" 
+                                    src="https://maps.app.goo.gl/zszy6m2PN4D4uewUA" 
+                                    class="w-full h-full border-0" 
                                     allowfullscreen="" 
                                     loading="lazy">
                                 </iframe>
@@ -139,13 +146,13 @@
                 <div class="timeline-step step-active">
                     <div class="flex gap-6">
                         <div class="step-icon bg-emerald-600 border-emerald-600 text-white">
-                            <i class="fas fa-check text-sm"></i>
+                            <i class="fas fa-check text-xs"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">4. Cosecha y Cierre</h4>
+                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight text-emerald-600">4. Cosecha y Cierre</h4>
                             <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección de lote final. Generación de evidencia criptográfica inalterable.</p>
-                            <div class="img-container">
-                                <img src="assets/cosecha.jpg" alt="Cosecha final El Otro Huerto">
+                            <div class="img-frame">
+                                <img src="assets/cosecha.jpg" alt="Cosecha final">
                             </div>
                         </div>
                     </div>
@@ -153,29 +160,29 @@
             </div>
         </section>
 
-        <div class="bg-slate-950 rounded-[2rem] p-8 mb-12 text-white shadow-2xl shadow-emerald-950/20">
+        <div class="bg-slate-900 rounded-3xl p-8 mb-12 text-white shadow-xl">
             <div class="flex justify-between items-center mb-6">
                 <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em]">Hash de Verificación Web3</span>
                 <i class="fab fa-ethereum text-emerald-500"></i>
             </div>
-            <div class="space-y-4 font-mono">
-                <div class="flex justify-between text-[10px]">
+            <div class="space-y-4 font-mono text-[11px]">
+                <div class="flex justify-between">
                     <span class="text-slate-500 uppercase">Red</span>
                     <span class="text-slate-300">Polygon Mainnet</span>
                 </div>
-                <div class="flex justify-between text-[10px] overflow-hidden">
+                <div class="flex justify-between overflow-hidden">
                     <span class="text-slate-500 uppercase">ID</span>
                     <span class="text-emerald-400 truncate ml-4">0x71C4...3D89FC92</span>
                 </div>
             </div>
-            <a href="https://polygonscan.com/" target="_blank" class="block w-full mt-8 bg-white/5 border border-white/10 text-center py-4 rounded-2xl text-[10px] font-bold text-white hover:bg-white hover:text-slate-900 transition-all duration-300 uppercase tracking-widest">
+            <a href="https://polygonscan.com/" target="_blank" class="block w-full mt-8 bg-white/5 border border-white/10 text-center py-4 rounded-xl text-[10px] font-bold text-white hover:bg-white hover:text-slate-900 transition-all uppercase tracking-widest">
                 Explorar Transacción
             </a>
         </div>
 
-        <div class="text-center bg-emerald-600 rounded-[2.5rem] p-10 text-white shadow-xl shadow-emerald-900/20">
+        <div class="text-center bg-emerald-600 rounded-[2.5rem] p-10 text-white shadow-xl">
             <h3 class="text-xl font-bold mb-3 tracking-tight">Potencia tu origen.</h3>
-            <p class="text-emerald-100 text-sm mb-8 leading-relaxed">Lleva la trazabilidad de AndesChain a tu propia marca agrícola.</p>
+            <p class="text-emerald-100 text-sm mb-8 leading-relaxed">Lleva la trazabilidad de AndesChain a tu propia marca.</p>
             <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition tracking-wide text-sm">
                 AGENDAR REUNIÓN
             </a>
