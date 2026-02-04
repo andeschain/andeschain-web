@@ -10,67 +10,66 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #1E293B; }
         
-        /* Ajuste de la línea de tiempo para que sea más limpia */
         .timeline-step { position: relative; padding-bottom: 3.5rem; }
         .timeline-step:last-child { padding-bottom: 0; }
+        
         .timeline-line { 
             position: absolute; 
             left: 21px; 
-            top: 44px; 
+            top: 48px; 
             bottom: 0; 
             width: 1px; 
-            background: #E2E8F0; 
+            background: #F1F5F9; 
             z-index: 0;
         }
         
         .step-icon {
             width: 42px;
             height: 42px;
-            border-radius: 10px;
-            background: #F8FAFC;
+            border-radius: 12px;
+            background: #FFFFFF;
             border: 1px solid #E2E8F0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
             position: relative;
-            color: #64748B;
+            flex-shrink: 0;
         }
         
         .step-active .step-icon {
             border-color: #059669;
             color: #059669;
-            background: #F0FDF4;
         }
 
-        /* FIX: Contenedor de imagen centrado y con proporción fija */
         .img-frame {
+            display: block;
             width: 100%;
-            max-width: 100%;
-            aspect-ratio: 16 / 9; /* Mantiene la proporción horizontal perfecta */
-            margin-top: 1.25rem;
+            aspect-ratio: 16 / 9;
             border-radius: 1rem;
             overflow: hidden;
-            display: block;
+            margin-top: 1rem;
             border: 1px solid #F1F5F9;
+            background-color: #F8FAFC;
         }
         
-        .img-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Centra y corta el exceso sin deformar */
-            object-position: center;
+        .img-frame img, .img-frame iframe {
             display: block;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            object-position: center;
+            border: none;
         }
 
         .glass-header {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased text-slate-900">
 
     <nav class="sticky top-0 z-50 glass-header border-b border-slate-100 py-4 px-6">
         <div class="max-w-xl mx-auto flex justify-between items-center">
@@ -84,8 +83,8 @@
 
     <main class="max-w-xl mx-auto px-6 py-12">
         
-        <header class="mb-14">
-            <h1 class="text-3xl font-extrabold tracking-tight mb-2 text-slate-900">Papa Desirée</h1>
+        <header class="mb-14 text-left">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Papa Desirée</h1>
             <p class="text-slate-500 font-medium leading-relaxed">Evidencia digital de origen: <span class="text-emerald-600 font-semibold">El Otro Huerto, Paine</span>.</p>
         </header>
 
@@ -99,8 +98,8 @@
                             <i class="fas fa-mountain text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">1. Preparación de Terreno</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Acondicionamiento agroecológico del suelo en Paine. Registro de PH y nutrientes iniciales.</p>
+                            <h4 class="font-bold text-sm uppercase tracking-tight">1. Preparación de Terreno</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Acondicionamiento del suelo en Paine. Registro de PH y nutrientes iniciales.</p>
                             <div class="img-frame">
                                 <img src="assets/preparacion.jpg" alt="Preparación de terreno">
                             </div>
@@ -114,10 +113,10 @@
                             <i class="fas fa-seedling text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">2. Siembra y Trazabilidad</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Incorporación de semilla certificada. Firma digital del hito de siembra en Polygon.</p>
+                            <h4 class="font-bold text-sm uppercase tracking-tight">2. Siembra y Trazabilidad</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Incorporación de semilla certificada. Firma digital del hito en la red Polygon.</p>
                             <div class="img-frame">
-                                <img src="assets/siembra.jpg" alt="Siembra de papas">
+                                <img src="assets/siembra.jpg" alt="Siembra">
                             </div>
                         </div>
                     </div>
@@ -129,14 +128,12 @@
                             <i class="fas fa-satellite text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">3. Validación Satelital</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Georreferenciación satelital del predio real en Paine, RM.</p>
+                            <h4 class="font-bold text-sm uppercase tracking-tight text-slate-900">3. Georreferenciación Satelital</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Validación del polígono productivo en Paine, Región Metropolitana.</p>
                             <div class="img-frame">
                                 <iframe 
-                                    src="https://maps.app.goo.gl/zszy6m2PN4D4uewUA" 
-                                    class="w-full h-full border-0" 
-                                    allowfullscreen="" 
-                                    loading="lazy">
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.972322588373!2d-70.74100298478917!3d-33.89035698065038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUzJzI1LjMiUyA3MMKwNDQnMTkuNyJX!5e1!3m2!1ses!2scl!4v1620000000000!5m2!1ses!2scl&maptype=satellite" 
+                                    style="border:0;" allowfullscreen="" loading="lazy">
                                 </iframe>
                             </div>
                         </div>
@@ -149,10 +146,10 @@
                             <i class="fas fa-check text-xs"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight text-emerald-600">4. Cosecha y Cierre</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección de lote final. Generación de evidencia criptográfica inalterable.</p>
+                            <h4 class="font-bold text-sm uppercase tracking-tight text-emerald-600">4. Cosecha y Cierre</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección de lote finalizado. Generación de evidencia criptográfica.</p>
                             <div class="img-frame">
-                                <img src="assets/cosecha.jpg" alt="Cosecha final">
+                                <img src="assets/cosecha.jpg" alt="Cosecha">
                             </div>
                         </div>
                     </div>
@@ -162,13 +159,13 @@
 
         <div class="bg-slate-900 rounded-3xl p-8 mb-12 text-white shadow-xl">
             <div class="flex justify-between items-center mb-6">
-                <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em]">Hash de Verificación Web3</span>
+                <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Hash de Verificación Web3</span>
                 <i class="fab fa-ethereum text-emerald-500"></i>
             </div>
             <div class="space-y-4 font-mono text-[11px]">
-                <div class="flex justify-between">
+                <div class="flex justify-between border-b border-white/5 pb-2">
                     <span class="text-slate-500 uppercase">Red</span>
-                    <span class="text-slate-300">Polygon Mainnet</span>
+                    <span class="text-slate-300 font-bold uppercase tracking-widest">Polygon</span>
                 </div>
                 <div class="flex justify-between overflow-hidden">
                     <span class="text-slate-500 uppercase">ID</span>
@@ -180,10 +177,10 @@
             </a>
         </div>
 
-        <div class="text-center bg-emerald-600 rounded-[2.5rem] p-10 text-white shadow-xl">
-            <h3 class="text-xl font-bold mb-3 tracking-tight">Potencia tu origen.</h3>
-            <p class="text-emerald-100 text-sm mb-8 leading-relaxed">Lleva la trazabilidad de AndesChain a tu propia marca.</p>
-            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition tracking-wide text-sm">
+        <div class="text-center bg-emerald-600 rounded-[2.5rem] p-8 text-white">
+            <h3 class="text-lg font-bold mb-2">Potencia tu origen.</h3>
+            <p class="text-emerald-100 text-xs mb-6 leading-relaxed">Lleva la trazabilidad de AndesChain a tu propia marca agrícola.</p>
+            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-50 transition text-xs tracking-wide">
                 AGENDAR REUNIÓN
             </a>
         </div>
