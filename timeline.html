@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lote #001 - El Otro Huerto | AndesChain.io</title>
+    <title>Lote #001 - El Otro Huerto Paine | AndesChain.io</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,7 +31,6 @@
             justify-content: center;
             z-index: 10;
             position: relative;
-            transition: all 0.3s ease;
         }
         .step-active .step-icon {
             border-color: #059669;
@@ -53,19 +52,19 @@
                 <img src="assets/favicon.png" class="w-5 h-5" alt="AndesChain">
                 <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400">Certificado Lote 001</span>
             </div>
-            <a href="index.html" class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Volver</a>
+            <a href="index.html" class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Cerrar Sesión</a>
         </div>
     </nav>
 
     <main class="max-w-xl mx-auto px-6 py-10">
         
-        <div class="mb-10">
+        <div class="mb-10 text-center md:text-left">
             <h1 class="text-3xl font-extrabold tracking-tight mb-2">Papa Desirée</h1>
-            <p class="text-slate-500 font-medium leading-relaxed">Producido por El Otro Huerto. Trazabilidad garantizada desde el origen hasta el empaque.</p>
+            <p class="text-slate-500 font-medium leading-relaxed italic">Producido por El Otro Huerto, Paine.</p>
         </div>
 
         <section class="mb-12">
-            <h3 class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-8 text-center">Trayectoria de este Lote</h3>
+            <h3 class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-10 text-center">Trayectoria Inmutable del Lote</h3>
             
             <div class="relative">
                 <div class="timeline-line"></div>
@@ -73,13 +72,13 @@
                 <div class="timeline-step step-active">
                     <div class="flex gap-6">
                         <div class="step-icon">
-                            <i class="fas fa-map-marked-alt text-sm"></i>
+                            <i class="fas fa-mountain text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Registro de Predio</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Polígono de cultivo validado en Valle de Quillagua. Coordenadas inmutables en Polygon.</p>
-                            <div class="mt-4 rounded-2xl overflow-hidden border border-slate-100">
-                                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800" alt="Huerto" class="w-full h-32 object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Preparación de Terreno</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Limpieza y oxigenación del suelo en el sector de Paine. Enriquecimiento con materia orgánica local.</p>
+                            <div class="mt-4 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                                <img src="assets/preparacion.jpg" alt="Preparación Terreno" class="w-full h-40 object-cover hover:scale-105 transition-transform duration-700">
                             </div>
                         </div>
                     </div>
@@ -91,8 +90,11 @@
                             <i class="fas fa-seedling text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Siembra y Manejo</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Uso de semilla Desirée certificada. Manejo agroecológico sin pesticidas sintéticos.</p>
+                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Siembra Seleccionada</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Incorporación de semilla Desirée certificada. Registro de densidades de siembra en Blockchain.</p>
+                            <div class="mt-4 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                                <img src="assets/siembra.jpg" alt="Siembra" class="w-full h-40 object-cover hover:scale-105 transition-transform duration-700">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,11 +102,16 @@
                 <div class="timeline-step step-active">
                     <div class="flex gap-6">
                         <div class="step-icon">
-                            <i class="fas fa-satellite text-sm"></i>
+                            <i class="fas fa-map-marker-alt text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Monitoreo Satelital</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Índice NDVI verificado. Crecimiento saludable detectado vía remota entre Oct-Dic.</p>
+                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Geolocalización Paine</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Validación del polígono productivo en El Otro Huerto, Paine, Región Metropolitana.</p>
+                            <div class="mt-4 rounded-2xl overflow-hidden border border-slate-100">
+                                <iframe 
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13264.444211181284!2d-70.7500!3d-33.8167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662e59999999999%3A0x0!2zT3RybyBIdWVydG8gUGFpbmU!5e0!3m2!1ses-419!2scl!4v1700000000000!5m2!1ses-419!2scl" 
+                                    class="w-full h-48 border-0" allowfullscreen="" loading="lazy"></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,49 +119,52 @@
                 <div class="timeline-step step-active">
                     <div class="flex gap-6">
                         <div class="step-icon bg-emerald-600 border-emerald-600 text-white">
-                            <i class="fas fa-barcode text-sm"></i>
+                            <i class="fas fa-box text-sm"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Cosecha y Certificado</h4>
-                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Lote finalizado el 28 de enero, 2026. Generación de evidencia digital única.</p>
+                            <h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Cosecha Finalizada</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">Recolección manual garantizando integridad. Lote sellado digitalmente en Polygon.</p>
+                            <div class="mt-4 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                                <img src="assets/cosecha.jpg" alt="Cosecha" class="w-full h-40 object-cover hover:scale-105 transition-transform duration-700">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="bg-slate-50 rounded-3xl p-6 mb-12 border border-slate-100">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Evidencia Técnica</span>
-                <i class="fab fa-ethereum text-slate-300"></i>
+        <div class="bg-slate-950 rounded-3xl p-8 mb-12 text-white shadow-2xl shadow-emerald-950/20">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em]">Cripto-Evidencia Web3</span>
+                <i class="fab fa-ethereum text-emerald-500"></i>
             </div>
-            <div class="space-y-3">
-                <div class="flex justify-between">
-                    <span class="text-[11px] text-slate-500">Blockchain</span>
-                    <span class="text-[11px] font-bold">Polygon Mainnet</span>
+            <div class="space-y-4 font-mono">
+                <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-500 uppercase">Network</span>
+                    <span class="text-slate-300 tracking-wider text-right">Polygon (Matic)</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-[11px] text-slate-500">Hash ID</span>
-                    <span class="text-[11px] font-mono text-emerald-600">0x4f2a...98b2</span>
+                <div class="flex justify-between text-[10px]">
+                    <span class="text-slate-500 uppercase">Hash ID</span>
+                    <span class="text-emerald-400 truncate ml-4 tracking-tighter">0x71C4B4360...3D89</span>
                 </div>
             </div>
-            <a href="#" class="block w-full mt-6 bg-white border border-slate-200 text-center py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 transition">
+            <a href="https://polygonscan.com/" target="_blank" class="block w-full mt-8 bg-white/5 border border-white/10 text-center py-4 rounded-2xl text-[10px] font-bold text-white hover:bg-white hover:text-slate-900 transition-all duration-300 uppercase tracking-widest">
                 Validar en Explorador
             </a>
         </div>
 
         <div class="text-center bg-emerald-600 rounded-[2.5rem] p-10 text-white shadow-xl shadow-emerald-900/20">
-            <h3 class="text-xl font-bold mb-3 tracking-tight">Lleva esta confianza a tu marca.</h3>
-            <p class="text-emerald-100 text-sm mb-8 leading-relaxed">¿Eres productor? Protege tu origen con nuestra tecnología Blockchain.</p>
-            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition tracking-wide">
-                AGENDAR UNA REUNIÓN
+            <h3 class="text-xl font-bold mb-3 tracking-tight">¿Quieres esta tecnología?</h3>
+            <p class="text-emerald-100 text-sm mb-8 leading-relaxed">Lleva la trazabilidad inmutable de AndesChain a tu propia marca.</p>
+            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="inline-block w-full bg-white text-emerald-600 font-bold py-4 rounded-2xl shadow-lg hover:bg-emerald-50 transition tracking-wide text-sm">
+                AGENDAR REUNIÓN
             </a>
         </div>
 
     </main>
 
-    <footer class="py-12 text-center text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em]">
-        © 2026 AndesChain Technology · Piloto El Otro Huerto
+    <footer class="py-12 text-center text-[9px] text-slate-400 font-medium uppercase tracking-[0.3em]">
+        © 2026 AndesChain.io · Piloto El Otro Huerto, El Vínculo, Paine
     </footer>
 
 </body>
