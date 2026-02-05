@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Confianza Radical en Alimentos</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-neutral: #FAFAFA;
+            --accent-green: #10B981;
+            --radius-xl: 32px;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-neutral); color: #1E293B; }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+
+        .fintual-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 10px 40px -15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .fintual-card:hover { transform: translateY(-5px); }
+
+        .reveal-map {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            height: 60px;
+            transition: height 0.5s ease;
+        }
+        .reveal-map:hover { height: 250px; }
+        
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #f0fdf4 0%, #fafafa 100%);
+        }
+
+        /* Estilo para el Logo */
+        .brand-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md px-6 py-5">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="assets/favicon.png" alt="AndesChain Logo" class="brand-logo">
+                <span class="font-extrabold text-xl tracking-tighter text-slate-900 uppercase">ANDESCHAIN</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-500">
+                <a href="#productores" class="hover:text-emerald-600 transition">Productores</a>
+                <a href="#tecnologia" class="hover:text-emerald-600 transition">Tecnología</a>
+            </div>
+            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-slate-800 transition">Agendar Demo</a>
+        </div>
+    </nav>
+
+    <section class="hero-gradient pt-20 pb-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-emerald-100">
+                <i class="fas fa-satellite"></i> Infraestructura de Verdad
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[0.9] mb-8">
+                Lo que dices de tu producto,<br> ahora es verdad.
+            </h1>
+            <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-12 font-light">
+                Eliminamos la neblina del <strong>Greenwashing</strong>. Usamos satélites y blockchain para certificar que tu esfuerzo por el planeta sea inmutable y visible.
+            </p>
+            
+            <div class="relative max-w-2xl mx-auto">
+                <div class="fintual-card p-2">
+                    <img src="assets/cosecha.jpg" class="rounded-[24px] w-full object-cover aspect-video" alt="Cosecha de Papas de Paine">
+                </div>
+                <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-gray-100 animate-bounce">
+                    <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Localización Verificada</p>
+                        <p class="text-sm font-bold text-slate-900">Paine, Chile (Lote 001)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-slate-900 text-white" id="productores">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+            <div>
+                <h2 class="text-4xl font-bold mb-6 text-white">El Esfuerzo Invisible.</h2>
+                <p class="text-slate-400 text-lg leading-relaxed mb-8">
+                    Cuidas el agua, regeneras el suelo y proteges la biodiversidad. Pero para el supermercado, tu producto es solo un código de barras más.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <i class="fas fa-times-circle text-red-500 mt-1"></i>
+                        <p class="text-sm text-slate-300">Las etiquetas "orgánicas" ya no generan confianza.</p>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <p class="text-sm text-slate-300 font-bold">AndesChain convierte tu ética en un activo digital certificable.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fintual-card bg-white p-6 text-slate-900">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-4">Demo: Pasa el mouse por la etiqueta</p>
+                <div class="reveal-map bg-gray-50 rounded-2xl p-4 flex flex-col justify-start border border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-tighter">Certificado Regenerativo</span>
+                        <i class="fas fa-mouse-pointer text-gray-300"></i>
+                    </div>
+                    <div class="mt-4 h-full rounded-xl overflow-hidden grayscale">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d21223.47954932029!2d-70.74100298478917!3d-33.89035698065038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2scl!4v1700000000000!5m2!1ses!2scl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <p class="text-center text-[10px] text-gray-400 mt-4 italic">Evidencia satelital vinculada al lote real.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6" id="tecnologia">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-bold mb-4">Claridad en tres pasos.</h2>
+                <p class="text-slate-500">Rigor tecnológico con simplicidad humana.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 text-left">
+                <div class="fintual-card p-10">
+                    <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-camera text-slate-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-3">1. Captura</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">Tomas una foto desde el huerto. Capturamos clima, humedad y posición satelital en un segundo.</p>
+                </div>
+                <div class="fintual-card p-10">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-lock text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-3">2. Inmortaliza</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">El dato viaja a la red Polygon. Ya no puede ser alterado por nadie, nunca.</p>
+                </div>
+                <div class="fintual-card p-10">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-qrcode text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-3">3. Conecta</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">El consumidor escanea y entra al huerto. La transparencia se vuelve lealtad inmediata.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-32 px-6">
+        <div class="max-w-4xl mx-auto bg-emerald-600 rounded-[40px] p-12 md:p-20 text-center text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-3xl md:text-5xl font-bold mb-6">¿Listo para diferenciarte?</h2>
+                <p class="text-emerald-100 mb-10 text-lg">Únete a los productores que están liderando la nueva era de la transparencia.</p>
+                <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="bg-white text-emerald-600 px-10 py-5 rounded-2xl font-bold text-lg shadow-xl hover:bg-emerald-50 transition inline-block">Agendar mi Piloto</a>
+            </div>
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500 rounded-full opacity-50"></div>
+        </div>
+    </section>
+
+    <footer class="py-20 border-t border-gray-100 text-center">
+        <p class="text-[10px] font-black tracking-[0.3em] text-gray-300 uppercase">AndesChain.io · Paine, Chile · 2026</p>
+    </footer>
+
+</body>
+</html>
