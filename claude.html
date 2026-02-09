@@ -18,11 +18,11 @@
         
         h1, h2, h3, .headline { font-family: 'Outfit', sans-serif; }
         
-        /* Visor de Fotos Dinámico */
+        /* Visor de Fotos Dinámico - Reparado */
         .photo-viewer {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 450px; /* Un poco más de aire */
             border-radius: 32px;
             overflow: hidden;
             background: #f1f5f9;
@@ -36,8 +36,8 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-            transform: scale(1.05);
+            transition: opacity 0.5s ease-in-out, transform 1.2s ease-out;
+            transform: scale(1.1); /* Zoom sutil de fondo */
         }
         
         .photo-viewer img.active {
@@ -46,7 +46,7 @@
             z-index: 1;
         }
         
-        /* Timeline Interactivo */
+        /* Timeline Interactivo - Optimizado para persistencia */
         .timeline-step {
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -54,9 +54,7 @@
             padding-left: 3rem;
         }
         
-        .timeline-step:hover {
-            transform: translateX(8px);
-        }
+        .timeline-step:hover { transform: translateX(8px); }
         
         .timeline-step::before {
             content: '';
@@ -72,8 +70,8 @@
             z-index: 2;
         }
         
-        .timeline-step:hover::before,
-        .timeline-step.active::before {
+        /* Estado Activo Persistente */
+        .timeline-step.active-state::before {
             background: #10b981;
             border-color: #d1fae5;
             box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
@@ -81,6 +79,11 @@
             height: 18px;
             left: 16px;
             top: 6px;
+        }
+
+        .timeline-step.active-state {
+            background: rgba(16, 185, 129, 0.03);
+            border-radius: 16px;
         }
         
         .timeline-line {
@@ -92,7 +95,6 @@
             background: linear-gradient(to bottom, #e2e8f0 0%, #cbd5e1 100%);
         }
         
-        /* Cards Premium */
         .card-premium {
             background: white;
             border-radius: 32px;
@@ -101,12 +103,6 @@
             transition: all 0.4s ease;
         }
         
-        .card-premium:hover {
-            box-shadow: 0 30px 80px -20px rgba(0,0,0,0.12);
-            transform: translateY(-4px);
-        }
-        
-        /* Trust Badge */
         .trust-badge {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             border-radius: 9999px;
@@ -130,17 +126,6 @@
             100% { left: 100%; }
         }
         
-        /* Pulse Animation */
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        .animate-pulse-slow {
-            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        /* Hero Gradient Text */
         .gradient-text {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             -webkit-background-clip: text;
@@ -148,21 +133,13 @@
             background-clip: text;
         }
         
-        /* Metric Cards */
-        .metric-card {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #bbf7d0;
-        }
-        
-        /* Mobile Optimization */
         @media (max-width: 768px) {
-            .photo-viewer { height: 280px; }
+            .photo-viewer { height: 300px; }
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Trust Badge Superior -->
     <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <div class="trust-badge text-white px-5 py-2.5 text-[10px] font-bold tracking-[0.15em] uppercase flex items-center gap-2.5 shadow-2xl">
             <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
@@ -172,7 +149,6 @@
 
     <main class="max-w-4xl mx-auto px-6 py-24 md:py-32">
         
-        <!-- HERO SECTION -->
         <header class="text-center mb-20 space-y-6">
             <div class="inline-block mb-4">
                 <span class="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-4 py-2 rounded-full border border-amber-100">
@@ -186,43 +162,19 @@
             </h1>
             
             <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
-                Cada alimento tiene un origen. Cada origen merece ser conocido. 
-                Esta es la historia inmutable de tu <strong class="font-semibold text-slate-900">Papa Desirée · Lote 001</strong>.
+                Cada origen merece ser conocido. Esta es la historia inmutable de tu <strong class="font-semibold text-slate-900">Papa Desirée · Lote 001</strong>.
             </p>
-            
-            <div class="flex items-center justify-center gap-3 text-sm text-slate-500 pt-4">
-                <i class="fas fa-map-marker-alt text-emerald-500"></i>
-                <span class="font-medium">Paine, Región Metropolitana, Chile</span>
-            </div>
         </header>
 
-        <!-- VISOR DE FOTOS DINÁMICO -->
-        <section class="mb-24">
-            <div class="card-premium p-8 md:p-12">
-                <div class="photo-viewer mb-6 shadow-2xl" id="photoViewer">
-                    <!-- Foto por defecto: Cosecha Final -->
-                    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&q=80" 
-                         alt="Cosecha Final" 
-                         class="active" 
-                         id="photo-harvest">
-                    
-                    <!-- Foto Siembra -->
-                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80" 
-                         alt="Siembra" 
-                         id="photo-sowing">
-                    
-                    <!-- Foto Crecimiento -->
-                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80" 
-                         alt="Crecimiento" 
-                         id="photo-growth">
-                    
-                    <!-- Foto Cuidado -->
-                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80" 
-                         alt="Cuidado Sostenible" 
-                         id="photo-care">
+        <section class="mb-12">
+            <div class="card-premium p-4 md:p-6">
+                <div class="photo-viewer shadow-2xl" id="photoViewer">
+                    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=1000&q=80" alt="Cosecha Final" id="photo-harvest" class="active">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1000&q=80" alt="Siembra" id="photo-sowing">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1000&q=80" alt="Crecimiento" id="photo-growth">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1000&q=80" alt="Cuidado Sostenible" id="photo-care">
                 </div>
-                
-                <div class="text-center">
+                <div class="text-center py-6">
                     <p class="text-sm text-slate-500 font-medium" id="photoCaption">
                         <i class="fas fa-camera text-emerald-500 mr-2"></i>
                         Cosecha Final — El triunfo del productor
@@ -231,258 +183,102 @@
             </div>
         </section>
 
-        <!-- TIMELINE INTERACTIVO -->
         <section class="mb-24">
             <div class="card-premium p-8 md:p-12">
-                <h2 class="headline text-3xl font-bold mb-10 text-center">
-                    Del Campo a tu Mesa
-                    <span class="block text-base font-normal text-slate-500 mt-2">Cada etapa, registrada para siempre</span>
-                </h2>
+                <h2 class="headline text-3xl font-bold mb-12 text-center">Del Campo a tu Mesa</h2>
                 
-                <div class="relative space-y-10 md:space-y-12">
-                    <div class="timeline-line hidden md:block"></div>
+                <div class="relative space-y-4">
+                    <div class="timeline-line"></div>
                     
-                    <!-- Día 0: Siembra -->
-                    <div class="timeline-step active" 
-                         onmouseenter="changePhoto('photo-sowing', 'Día 0 — Inicio del ciclo en suelo regenerado')"
-                         onmouseleave="changePhoto('photo-harvest', 'Cosecha Final — El triunfo del productor')">
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-sowing', 'Día 0 — Inicio del ciclo en suelo regenerado', this)" onmouseenter="changePhoto('photo-sowing', 'Día 0 — Inicio del ciclo en suelo regenerado', this)">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Día 0 · La Siembra</div>
-                                <p class="font-bold text-xl md:text-2xl text-slate-900">15 de Septiembre, 2025</p>
-                                <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                                    Inicio de ciclo en suelo regenerado. Georreferenciación satelital activa desde el momento cero.
-                                </p>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 0 · La Siembra</div>
+                                <p class="font-bold text-xl text-slate-900">15 de Septiembre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Georreferenciación satelital activa desde el momento cero.</p>
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold border border-emerald-200">
-                                    <i class="fas fa-seedling mr-1"></i> Semilla Certificada
-                                </div>
-                            </div>
+                            <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold border border-emerald-200 w-fit">Semilla Certificada</div>
                         </div>
                     </div>
 
-                    <!-- Día 45: Crecimiento -->
-                    <div class="timeline-step" 
-                         onmouseenter="changePhoto('photo-growth', 'Día 45 — Desarrollo vegetativo con riego tecnificado')"
-                         onmouseleave="changePhoto('photo-harvest', 'Cosecha Final — El triunfo del productor')">
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-growth', 'Día 45 — Desarrollo vegetativo controlado', this)" onmouseenter="changePhoto('photo-growth', 'Día 45 — Desarrollo vegetativo controlado', this)">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Día 45 · Crecimiento</div>
-                                <p class="font-bold text-xl md:text-2xl text-slate-900">30 de Octubre, 2025</p>
-                                <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                                    Desarrollo vegetativo con riego tecnificado. Monitoreo de humedad del suelo en tiempo real.
-                                </p>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 45 · Crecimiento</div>
+                                <p class="font-bold text-xl text-slate-900">30 de Octubre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Monitoreo de humedad del suelo en tiempo real.</p>
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-xs font-bold border border-blue-200">
-                                    <i class="fas fa-droplet mr-1"></i> 342L Agua Ahorrada
-                                </div>
-                            </div>
+                            <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-xs font-bold border border-blue-200 w-fit">Ahorro Hídrico</div>
                         </div>
                     </div>
 
-                    <!-- Día 80: Cuidado Sostenible -->
-                    <div class="timeline-step" 
-                         onmouseenter="changePhoto('photo-care', 'Día 80 — Control biológico sin químicos sintéticos')"
-                         onmouseleave="changePhoto('photo-harvest', 'Cosecha Final — El triunfo del productor')">
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-care', 'Día 80 — Control biológico sin químicos', this)" onmouseenter="changePhoto('photo-care', 'Día 80 — Control biológico sin químicos', this)">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Día 80 · Cuidado Sostenible</div>
-                                <p class="font-bold text-xl md:text-2xl text-slate-900">4 de Diciembre, 2025</p>
-                                <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                                    Control biológico sin químicos sintéticos. Cada intervención verificada y documentada.
-                                </p>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 80 · Cuidado</div>
+                                <p class="font-bold text-xl text-slate-900">4 de Diciembre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Control biológico documentado y verificado.</p>
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-full text-xs font-bold border border-amber-200">
-                                    <i class="fas fa-leaf mr-1"></i> 100% Orgánico
-                                </div>
-                            </div>
+                            <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-full text-xs font-bold border border-amber-200 w-fit">100% Orgánico</div>
                         </div>
                     </div>
 
-                    <!-- Día 125: Cosecha -->
-                    <div class="timeline-step" 
-                         onmouseenter="changePhoto('photo-harvest', 'Día 125 — Recolección manual con verificación de calidad')"
-                         onmouseleave="changePhoto('photo-harvest', 'Cosecha Final — El triunfo del productor')">
+                    <div class="timeline-step p-6 active-state" onclick="changePhoto('photo-harvest', 'Día 125 — Cosecha final verificada', this)" onmouseenter="changePhoto('photo-harvest', 'Día 125 — Cosecha final verificada', this)">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div>
-                                <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Día 125 · La Cosecha</div>
-                                <p class="font-bold text-xl md:text-2xl text-slate-900">18 de Enero, 2026</p>
-                                <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                                    Recolección manual. Calidad verificada in-situ por técnicos certificados.
-                                </p>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 125 · La Cosecha</div>
+                                <p class="font-bold text-xl text-slate-900">18 de Enero, 2026</p>
+                                <p class="text-sm text-slate-600 mt-2">Recolección manual con verificación de calidad.</p>
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg">
-                                    <i class="fas fa-check-circle mr-1"></i> Listo para Consumo
-                                </div>
-                            </div>
+                            <div class="bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg w-fit">Lote Verificado</div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Indicador de Días -->
-                <div class="mt-12 pt-8 border-t border-slate-100">
-                    <div class="bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 p-6 rounded-3xl text-center">
-                        <span class="text-5xl md:text-6xl font-black text-emerald-700 block mb-2">125 Días</span>
-                        <p class="text-xs font-bold uppercase tracking-widest text-emerald-600">De Crecimiento Natural</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TRUST SIGNALS: MÉTRICAS DE IMPACTO -->
-        <section class="mb-24">
-            <h2 class="headline text-3xl font-bold mb-10 text-center">
-                Impacto Verificable
-                <span class="block text-base font-normal text-slate-500 mt-2">Datos registrados en Polygon Blockchain</span>
-            </h2>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Métrica 1: Agua -->
-                <div class="card-premium p-8 text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-tint text-blue-600 text-2xl"></i>
-                    </div>
-                    <p class="text-4xl font-black text-slate-900 mb-2">342L</p>
-                    <p class="text-sm font-semibold text-slate-600">Agua Ahorrada</p>
-                    <p class="text-xs text-slate-400 mt-2">vs. riego tradicional</p>
-                </div>
-
-                <!-- Métrica 2: CO2 -->
-                <div class="card-premium p-8 text-center">
-                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-leaf text-emerald-600 text-2xl"></i>
-                    </div>
-                    <p class="text-4xl font-black text-slate-900 mb-2">12.5kg</p>
-                    <p class="text-sm font-semibold text-slate-600">CO₂ Capturado</p>
-                    <p class="text-xs text-slate-400 mt-2">por suelo regenerativo</p>
-                </div>
-
-                <!-- Métrica 3: Blockchain ID -->
-                <div class="card-premium p-8 text-center">
-                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-link text-slate-600 text-2xl"></i>
-                    </div>
-                    <p class="text-2xl font-black text-slate-900 mb-2 font-mono">0x7a9f...</p>
-                    <p class="text-sm font-semibold text-slate-600">Blockchain ID</p>
-                    <a href="https://polygonscan.com" target="_blank" class="text-xs text-emerald-600 mt-2 inline-block hover:underline">
-                        Verificar en Polygon <i class="fas fa-external-link-alt ml-1"></i>
-                    </a>
-                </div>
+        <section class="grid md:grid-cols-3 gap-6 mb-24">
+            <div class="card-premium p-8 text-center bg-blue-50/30 border-blue-100">
+                <i class="fas fa-tint text-blue-500 text-2xl mb-4"></i>
+                <p class="text-4xl font-black text-slate-900">342L</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Agua Ahorrada</p>
+            </div>
+            <div class="card-premium p-8 text-center bg-emerald-50/30 border-emerald-100">
+                <i class="fas fa-leaf text-emerald-500 text-2xl mb-4"></i>
+                <p class="text-4xl font-black text-slate-900">12kg</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">CO₂ Capturado</p>
+            </div>
+            <div class="card-premium p-8 text-center bg-slate-50 border-slate-200">
+                <i class="fas fa-link text-slate-500 text-2xl mb-4"></i>
+                <p class="text-2xl font-black text-slate-900 font-mono">0x7a...</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Polygon ID</p>
             </div>
         </section>
 
-        <!-- VIDA ÚTIL GARANTIZADA -->
-        <section class="mb-24">
-            <div class="card-premium p-10 text-center bg-gradient-to-br from-slate-50 to-white">
-                <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-box-archive text-amber-600 text-3xl"></i>
-                </div>
-                <h3 class="headline text-2xl font-bold text-slate-900 mb-4">Vida Útil Garantizada</h3>
-                <p class="text-base text-slate-600 leading-relaxed max-w-xl mx-auto">
-                    Gracias a nuestro proceso de curado controlado, estas papas mantienen su sabor, textura y valor nutricional por hasta <strong class="text-slate-900">90 días</strong> almacenadas en un lugar fresco, oscuro y seco.
-                </p>
-                <div class="mt-6 inline-block bg-amber-50 border border-amber-200 rounded-full px-6 py-3">
-                    <p class="text-sm font-bold text-amber-700">
-                        <i class="fas fa-calendar-check mr-2"></i>
-                        Válido hasta: 18 de Abril, 2026
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- STORYTELLING: MANIFIESTO -->
-        <section class="mb-16">
-            <div class="card-premium p-10 md:p-16 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-                <div class="text-center mb-10">
-                    <div class="inline-block mb-4">
-                        <span class="text-xs font-semibold tracking-widest uppercase text-emerald-400 bg-emerald-950/50 px-4 py-2 rounded-full border border-emerald-800">
-                            El Estándar Global de Confianza 2036
-                        </span>
-                    </div>
-                    <h2 class="headline text-3xl md:text-4xl font-bold mb-6 leading-tight">
-                        Transparencia Inmutable.<br>
-                        <span class="text-emerald-400">Esfuerzo Visible</span>.
-                    </h2>
-                </div>
-                
-                <div class="space-y-6 text-slate-300 leading-relaxed max-w-2xl mx-auto">
-                    <p class="text-lg">
-                        Durante décadas, el trabajo de los productores ha permanecido <strong class="text-white">invisible</strong>. 
-                        Los consumidores compraban productos sin rostro, sin historia, sin origen verificable.
-                    </p>
-                    <p class="text-lg">
-                        AndesChain.io rompe esa opacidad. Cada registro es <strong class="text-emerald-400">inmutable</strong>. 
-                        Cada dato está <strong class="text-emerald-400">verificado</strong>. Cada alimento tiene una <strong class="text-emerald-400">identidad digital</strong>.
-                    </p>
-                    <p class="text-lg font-semibold text-white">
-                        No vendemos tecnología. Vendemos <em>certeza</em>. Vendemos <em>verdad</em>.
-                    </p>
-                </div>
-
-                <div class="mt-12 pt-8 border-t border-slate-700 text-center">
-                    <p class="text-sm text-slate-400 mb-6">
-                        Invitamos a municipios, empresas y organizaciones a unirse al estándar global de trazabilidad ética.
-                    </p>
-                    <a href="https://andeschain.io" 
-                       target="_blank"
-                       class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 py-4 rounded-full transition-all shadow-xl hover:shadow-2xl hover:scale-105">
-                        Únete a AndesChain
-                        <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer class="pt-12 border-t border-slate-200 text-center">
-            <div class="mb-6">
-                <p class="text-xs text-slate-400 uppercase tracking-[0.2em] mb-4">
-                    Información registrada de forma inmutable en
-                </p>
-                <a href="https://andeschain.io" target="_blank" class="inline-block">
-                    <div class="bg-slate-900 text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-800 transition-colors">
-                        AndesChain.io
-                        <i class="fas fa-shield-halved ml-2 text-emerald-400"></i>
-                    </div>
-                </a>
-            </div>
-            
-            <p class="text-xs text-slate-400 leading-relaxed">
-                Powered by Polygon Blockchain · Verificable · Inmutable · Transparente
-            </p>
+        <footer class="text-center pt-12 border-t border-slate-100">
+            <img src="assets/favicon.png" alt="Logo" class="w-8 h-8 mx-auto mb-6 grayscale opacity-50">
+            <p class="text-[10px] font-black tracking-[0.3em] text-slate-300 uppercase">AndesChain.io · Paine, Chile · 2026</p>
         </footer>
 
     </main>
 
-    <!-- JAVASCRIPT: Control de Fotos Dinámicas -->
     <script>
-        function changePhoto(photoId, caption) {
-            // Remover clase active de todas las fotos
+        function changePhoto(photoId, caption, element) {
+            // 1. Cambiar fotos
             const allPhotos = document.querySelectorAll('.photo-viewer img');
             allPhotos.forEach(img => img.classList.remove('active'));
             
-            // Activar la foto seleccionada
             const targetPhoto = document.getElementById(photoId);
-            if (targetPhoto) {
-                targetPhoto.classList.add('active');
-            }
+            if (targetPhoto) targetPhoto.classList.add('active');
             
-            // Actualizar caption
-            const captionElement = document.getElementById('photoCaption');
-            if (captionElement) {
-                captionElement.innerHTML = `<i class="fas fa-camera text-emerald-500 mr-2"></i>${caption}`;
-            }
+            // 2. Actualizar caption
+            document.getElementById('photoCaption').innerHTML = `<i class="fas fa-camera text-emerald-500 mr-2"></i>${caption}`;
+            
+            // 3. Cambiar estado activo en el timeline
+            const allSteps = document.querySelectorAll('.timeline-step');
+            allSteps.forEach(step => step.classList.remove('active-state'));
+            element.classList.add('active-state');
         }
-        
-        // Inicializar con la foto de cosecha por defecto
-        document.addEventListener('DOMContentLoaded', function() {
-            changePhoto('photo-harvest', 'Cosecha Final — El triunfo del productor');
-        });
     </script>
-
 </body>
 </html>
