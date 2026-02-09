@@ -2,222 +2,137 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bitácora de Cultivo</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Extractor de Evidencia EXIF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #27ae60;
-            --bg: #f8f9fa;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
-            color: var(--primary);
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        h1 { font-size: 1.5rem; margin-bottom: 20px; color: var(--primary); }
-        
-        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-        }
-
-        /* Área del Mapa */
-        #map {
-            height: 250px;
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            z-index: 1;
-        }
-
-        .gps-status {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .dot {
-            width: 8px; height: 8px; background: #e74c3c; border-radius: 50%;
-            display: inline-block;
-        }
-        .dot.active { background: #27ae60; box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2); }
-
-        /* Botón Principal */
-        .btn-main {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-main:hover { background-color: #1a252f; }
-
-        /* Botón GPS */
-        .btn-gps {
-            background: #eef2f5;
-            color: var(--primary);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-gps:hover { background: #dfe4e8; }
-
+        :root { --emerald: #10B981; --slate-900: #0F172A; --bg: #FAFAFA; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--slate-900); }
+        .upload-zone { border: 2px dashed #cbd5e1; border-radius: 32px; transition: all 0.3s ease; }
+        .upload-zone.active { border-color: var(--emerald); background: #f0fdf4; }
+        .glass-panel { background: white; border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        .step-hidden { display: none; }
+        .sensor-pill { background: #f1f5f9; padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
+        .sensor-pill.ok { background: #dcfce7; color: #166534; }
     </style>
 </head>
-<body>
+<body class="p-6">
 
-    <div class="container">
-        <h1>🌱 Nueva Evidencia</h1>
+    <section id="step-1" class="max-w-md mx-auto space-y-8 pt-10">
+        <header class="text-center space-y-2">
+            <img src="assets/favicon.png" class="h-10 mx-auto mb-4">
+            <h1 class="text-3xl font-extrabold tracking-tighter">Cargar Origen</h1>
+            <p class="text-xs text-slate-400 font-light italic px-8 text-center leading-relaxed">
+                Selecciona la foto original del campo. AndesChain extraerá automáticamente la ubicación y el clima del momento.
+            </p>
+        </header>
 
-        <label>Producto / Cultivo</label>
-        <input type="text" id="cultivo" placeholder="Ej: Tomates Cherry, Hilera 4">
-
-        <label>Foto de Evidencia</label>
-        <input type="file" accept="image/*" capture="environment">
-
-        <label>Ubicación Georeferenciada</label>
-        <button class="btn-gps" onclick="obtenerUbicacion()">
-            📍 Actualizar GPS
-        </button>
-        
-        <div id="map"></div>
-        <div class="gps-status">
-            <span id="gpsDot" class="dot"></span>
-            <span id="gpsText">Esperando señal GPS...</span>
+        <div id="gps-checker" class="glass-panel p-5 flex items-center justify-between border-l-4 border-amber-500 bg-amber-50/30">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-location-crosshairs text-amber-500 animate-pulse"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-amber-700">GPS Desconectado</span>
+            </div>
+            <button onclick="requestGPS()" class="bg-amber-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-sm active:scale-95 transition-all">
+                Activar
+            </button>
         </div>
 
-        <input type="hidden" id="lat">
-        <input type="hidden" id="lng">
+        <div class="upload-zone p-12 flex flex-col items-center justify-center text-center space-y-4 cursor-pointer relative" id="drop-zone">
+            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" id="file-input" onchange="processFile(this)">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 text-2xl">
+                <i class="fas fa-image"></i>
+            </div>
+            <div>
+                <p class="font-bold text-slate-700">Seleccionar Imagen</p>
+                <p class="text-[10px] text-slate-400 mt-1 uppercase font-black">Galería o Archivos</p>
+            </div>
+        </div>
+    </section>
 
-        <button class="btn-main" onclick="guardarRegistro()">Guardar en Bitácora</button>
-    </div>
+    <section id="step-2" class="step-hidden max-w-md mx-auto space-y-6">
+        <div class="glass-panel p-2 overflow-hidden">
+            <img id="preview" class="w-full aspect-square object-cover rounded-[20px]">
+        </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <div class="glass-panel p-6">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Evidencia Extraída (EXIF)</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="sensor-pill ok"><i class="fas fa-map-pin"></i> <span id="exif-gps">Paine, CL</span></div>
+                <div class="sensor-pill ok"><i class="fas fa-thermometer-half"></i> <span id="exif-tmp">24.5°C</span></div>
+                <div class="sensor-pill ok"><i class="fas fa-droplet"></i> <span id="exif-hum">18%</span></div>
+                <div class="sensor-pill ok"><i class="fas fa-calendar-day"></i> <span id="exif-date">18 ENE 2026</span></div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <select id="select-type" class="w-full p-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold shadow-sm outline-none" onchange="toggleFields()">
+                <option value="cultivo">Es un Cultivo (Campo)</option>
+                <option value="producto">Es un Producto (Elaborado)</option>
+            </select>
+            
+            <input type="text" placeholder="Variedad (Ej. Desirée)" class="w-full p-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold shadow-sm outline-none">
+            
+            <button onclick="showFinal()" class="w-full bg-slate-900 text-white py-5 rounded-[24px] font-bold text-lg shadow-xl shadow-slate-200">
+                Firmar en Blockchain
+            </button>
+        </div>
+    </section>
+
+    <section id="step-3" class="step-hidden h-[80vh] flex flex-col items-center justify-center text-center p-6">
+        <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center text-3xl mb-8 shadow-2xl animate-bounce">
+            <i class="fas fa-check"></i>
+        </div>
+        <h2 class="text-3xl font-black tracking-tight">FOD Generada</h2>
+        <p class="text-sm text-slate-500 font-light mt-4 italic">Los datos originales de la imagen han sido vinculados al bloque. Origen inmutable asegurado.</p>
+        <button onclick="location.reload()" class="mt-12 bg-slate-100 text-slate-500 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest">Nueva Carga</button>
+    </section>
+
     <script>
-        // Inicializar Mapa centrado en Santiago por defecto (pero sin pin)
-        var map = L.map('map').setView([-33.4489, -70.6693], 10);
-        var marker;
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        // FUNCIÓN CLAVE: Obtener GPS Real
-        function obtenerUbicacion() {
-            const status = document.getElementById('gpsText');
-            const dot = document.getElementById('gpsDot');
-
-            status.textContent = "Buscando satélites...";
-            
-            if (!navigator.geolocation) {
-                status.textContent = "Tu navegador no soporta GPS";
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // ÉXITO
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const accuracy = position.coords.accuracy;
-
-                    // Guardar datos
-                    document.getElementById('lat').value = lat;
-                    document.getElementById('lng').value = lng;
-
-                    // Actualizar UI
-                    status.textContent = `Ubicación detectada (Precisión: ${Math.round(accuracy)}m)`;
-                    dot.classList.add('active');
-
-                    // Mover mapa
-                    map.setView([lat, lng], 16); // Zoom 16 es nivel calle/predio
-
-                    // Poner Pin
-                    if (marker) map.removeLayer(marker);
-                    marker = L.marker([lat, lng]).addTo(map)
-                        .bindPopup("<b>¡Estás aquí!</b><br>Evidencia registrada.").openPopup();
-                },
-                (error) => {
-                    // ERROR
-                    dot.classList.remove('active');
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            status.textContent = "❌ Debes permitir el acceso a la ubicación.";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            status.textContent = "❌ Señal GPS no disponible.";
-                            break;
-                        case error.TIMEOUT:
-                            status.textContent = "❌ Se agotó el tiempo de espera.";
-                            break;
+        // Función para solicitar GPS (Android / iPhone nativo)
+        function requestGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const checker = document.getElementById('gps-checker');
+                        checker.classList.remove('border-amber-500', 'bg-amber-50/30');
+                        checker.classList.add('border-emerald-500', 'bg-emerald-50/30');
+                        checker.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-circle-check text-emerald-500"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700">GPS Habilitado</span>
+                            </div>
+                        `;
+                    },
+                    function(error) {
+                        alert("Por favor, permite el acceso al GPS en los ajustes de tu navegador para certificar el origen.");
                     }
-                },
-                {
-                    enableHighAccuracy: true, // Forzar GPS real (no solo antenas)
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
+                );
+            }
         }
 
-        function guardarRegistro() {
-            const cultivo = document.getElementById('cultivo').value;
-            const lat = document.getElementById('lat').value;
-            
-            if(!cultivo) {
-                alert("Escribe el nombre del cultivo");
-                return;
+        // Simulación de procesamiento de metadatos EXIF al cargar imagen
+        function processFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('step-1').classList.add('step-hidden');
+                    document.getElementById('step-2').classList.remove('step-hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+                
+                // Aquí en una App real se usaría la librería 'exif-js' para extraer los datos
+                // Simulamos la extracción de data "congelada" en la imagen:
+                console.log("Extrayendo metadata EXIF de la imagen...");
             }
-            if(!lat) {
-                alert("Primero obtén la ubicación GPS");
-                return;
-            }
-
-            alert(`✅ Evidencia Guardada\nCultivo: ${cultivo}\nGPS: ${document.getElementById('lat').value}, ${document.getElementById('lng').value}`);
         }
 
-        // Intentar obtener ubicación al cargar la página
-        obtenerUbicacion();
-
+        function showFinal() {
+            document.getElementById('step-2').classList.add('step-hidden');
+            document.getElementById('step-3').classList.remove('step-hidden');
+        }
     </script>
 </body>
 </html>
