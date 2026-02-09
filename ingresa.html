@@ -3,117 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AndesChain | Captura de Origen Directa</title>
+    <title>AndesChain App | Validador de Origen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --emerald: #10B981; --slate-900: #0F172A; --bg: #0F172A; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; }
-        .camera-view { position: relative; width: 100%; height: 75vh; background: #000; overflow: hidden; border-radius: 0 0 40px 40px; }
-        .scan-line { position: absolute; width: 100%; height: 2px; background: rgba(16, 185, 129, 0.5); top: -2px; left: 0; pointer-events: none; }
-        .scanning .scan-line { animation: scan 2s linear infinite; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .data-badge { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 8px 12px; }
-        .shutter-btn { width: 70px; height: 70px; border-radius: 50%; border: 5px solid white; display: flex; items-center; justify-center; transition: all 0.2s; }
+        :root { --emerald: #10B981; --slate-900: #0F172A; --bg: #000000; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow: hidden; }
+        .camera-container { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+        .camera-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        .overlay-ui { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem; pointer-events: none; }
+        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 1.5rem; pointer-events: auto; }
+        .sensor-status { display: flex; items-center; gap: 0.5rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .status-ok { color: var(--emerald); }
+        .status-error { color: #ef4444; }
+        .shutter-btn { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: pointer; transition: transform 0.1s; }
         .shutter-btn:active { transform: scale(0.9); }
-        .shutter-inner { width: 50px; height: 50px; background: white; border-radius: 50%; }
-        .step-hidden { display: none; }
+        .shutter-inner { width: 60px; height: 60px; background: white; border-radius: 50%; transition: background 0.3s; }
+        .shutter-disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .step-hidden { display: none !important; }
+        @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-red { animation: pulse-red 1.5s infinite; }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <main id="camera-interface">
-        <div class="camera-view shadow-2xl" id="camera-container">
-            <img id="camera-stream" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover opacity-80">
-            
-            <div class="scan-line"></div>
+    <div id="step-capture" class="camera-container">
+        <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=1000" class="camera-preview">
 
-            <div class="absolute top-10 left-6 right-6 flex justify-between items-start">
-                <div class="data-badge">
-                    <p class="text-[8px] font-bold text-emerald-400 uppercase tracking-widest mb-1">GPS Satelital</p>
-                    <p class="text-xs font-mono" id="live-gps">Buscando señal...</p>
+        <div class="overlay-ui">
+            <div class="glass-panel flex justify-between items-center">
+                <div class="space-y-2">
+                    <div id="status-gps" class="sensor-status status-error animate-pulse-red">
+                        <i class="fas fa-location-dot"></i> GPS: Verificando...
+                    </div>
+                    <div id="status-temp" class="sensor-status status-error animate-pulse-red">
+                        <i class="fas fa-thermometer-half"></i> Termómetro: Ready
+                    </div>
                 </div>
-                <div class="data-badge text-right">
-                    <p class="text-[8px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Status</p>
-                    <p class="text-xs font-mono">LIVE_STREAM</p>
+                <img src="assets/favicon.png" class="h-6 opacity-50">
+            </div>
+
+            <div class="flex-1 flex items-center justify-center">
+                <div class="w-64 h-64 border-2 border-dashed border-white/20 rounded-3xl relative">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <p id="instruction-text" class="text-[10px] uppercase font-bold tracking-[0.2em] text-center px-4">Habilita el GPS para capturar origen</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="absolute bottom-10 left-6 right-6 grid grid-cols-2 gap-4">
-                <div class="data-badge">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1 italic">Temperatura Amb.</p>
-                    <p class="text-lg font-black" id="live-temp">--°C</p>
+            <div class="flex flex-col items-center gap-6">
+                <div id="live-metrics" class="flex gap-4 opacity-0 transition-opacity duration-500">
+                    <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] font-mono"><span id="live-lat">--</span>, <span id="live-lon">--</span></div>
+                    <div class="bg-white/10 px-3 py-1 rounded-lg text-[10px] font-mono"><span id="live-tmp">--</span>°C</div>
                 </div>
-                <div class="data-badge">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1 italic">Altitud</p>
-                    <p class="text-lg font-black" id="live-alt">--- m</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="p-8 flex flex-col items-center gap-6">
-            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-[0.3em]">Hito: Cosecha Lote 001</p>
-            <div class="flex items-center gap-12">
-                <button class="text-white text-xl opacity-50"><i class="fas fa-bolt"></i></button>
-                <button class="shutter-btn" onclick="captureAndRecollect()">
+                <div id="shutter" class="shutter-btn shutter-disabled" onclick="takeSnapshot()">
                     <div class="shutter-inner"></div>
-                </button>
-                <button class="text-white text-xl opacity-50"><i class="fas fa-sync"></i></button>
+                </div>
+                <p class="text-[9px] uppercase tracking-widest opacity-50">Recopilación de Evidencia Cruda</p>
             </div>
-            <p class="text-[9px] text-slate-500 italic">Toca el obturador para recopilar evidencia inmutable.</p>
         </div>
-    </main>
+    </div>
 
-    <section id="processing-view" class="step-hidden flex flex-col items-center justify-center h-screen p-12 text-center">
-        <div class="w-24 h-24 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-8"></div>
-        <h2 class="text-3xl font-bold mb-4 tracking-tighter">Recopilando Origen...</h2>
-        <div class="space-y-3 w-full max-w-xs text-left">
-            <p class="text-[10px] text-emerald-400 font-mono flex justify-between"><span>> GPS_COORDINATES:</span> <span id="log-gps">CAPTURED</span></p>
-            <p class="text-[10px] text-emerald-400 font-mono flex justify-between"><span>> AMBIENT_TEMP:</span> <span id="log-temp">CAPTURED</span></p>
-            <p class="text-[10px] text-emerald-400 font-mono flex justify-between"><span>> BLOCKCHAIN_HASH:</span> <span>PENDING</span></p>
+    <div id="step-classify" class="step-hidden h-screen bg-white text-slate-900 p-8 flex flex-col justify-between">
+        <div>
+            <h2 class="text-3xl font-extrabold tracking-tighter mb-2">Evidencia <span class="text-emerald-500">Asegurada.</span></h2>
+            <p class="text-xs text-slate-400 italic mb-8">Los datos ambientales han sido sellados. Ahora clasifica el registro.</p>
+
+            <div class="space-y-6">
+                <div class="space-y-3">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">¿Qué certificamos?</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="setSubject('Cultivo')" class="p-4 border-2 border-emerald-500 rounded-2xl text-xs font-bold bg-emerald-50">CULTIVO</button>
+                        <button onclick="setSubject('Producto')" class="p-4 border-2 border-slate-100 rounded-2xl text-xs font-bold">PRODUCTO</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="text" placeholder="Variedad / Nombre (Ej. Desirée)" class="w-full p-5 bg-slate-50 rounded-2xl text-sm font-bold outline-none border-none">
+                    <select class="w-full p-5 bg-slate-50 rounded-2xl text-sm font-bold border-none">
+                        <option>Hito: Siembra</option>
+                        <option>Hito: Cosecha</option>
+                        <option>Hito: Manejo</option>
+                    </select>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <section id="success-view" class="step-hidden flex flex-col items-center justify-center h-screen p-12 text-center">
-        <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-emerald-500/20">
+        <button onclick="showSuccess()" class="w-full bg-slate-900 text-white py-5 rounded-[24px] font-bold text-lg shadow-xl shadow-slate-200">
+            Acuñar en Polygon
+        </button>
+    </div>
+
+    <div id="step-success" class="step-hidden h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-12 text-center">
+        <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-8 shadow-2xl">
             <i class="fas fa-check text-3xl"></i>
         </div>
-        <h2 class="text-3xl font-bold mb-2 tracking-tighter">Éxito en Polygon</h2>
-        <p class="text-sm text-slate-400 font-light mb-12 italic">Juan, el hito ha sido acuñado. La FOD ya es pública.</p>
-        <button onclick="location.reload()" class="bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest">Siguiente Lote</button>
-    </section>
+        <h2 class="text-3xl font-bold tracking-tight">FOD Actualizada</h2>
+        <p class="text-sm text-slate-400 mt-4 leading-relaxed font-light italic">Juan, el registro de origen ya es inmutable. Los datos de temperatura y GPS fueron vinculados al bloque.</p>
+        <button onclick="location.reload()" class="mt-12 bg-white text-slate-900 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest">Nuevo Registro</button>
+    </div>
 
     <script>
-        // Simulación de búsqueda de GPS al cargar
-        setTimeout(() => {
-            document.getElementById('live-gps').innerText = "-33.8112, -70.7510";
-        }, 1500);
-
-        function captureAndRecollect() {
-            const container = document.getElementById('camera-container');
-            container.classList.add('scanning');
-            
-            // Simulación de recopilación de nuevos datos al momento de la foto
+        // Simulador de Validación de Sensores (Realidad Aumentada)
+        window.onload = () => {
             setTimeout(() => {
-                const temp = (22 + Math.random() * 5).toFixed(1);
-                const alt = 415 + Math.floor(Math.random() * 10);
+                // Simulación de que el usuario habilita el GPS
+                const gps = document.getElementById('status-gps');
+                const shutter = document.getElementById('shutter');
+                const instruction = document.getElementById('instruction-text');
+                const metrics = document.getElementById('live-metrics');
+
+                gps.innerHTML = '<i class="fas fa-circle-check"></i> GPS: Paine, Chile';
+                gps.classList.remove('status-error', 'animate-pulse-red');
+                gps.classList.add('status-ok');
                 
-                document.getElementById('live-temp').innerText = temp + "°C";
-                document.getElementById('live-alt').innerText = alt + " m";
-                
-                // Transición a procesamiento
-                setTimeout(() => {
-                    document.getElementById('camera-interface').classList.add('step-hidden');
-                    document.getElementById('processing-view').classList.remove('step-hidden');
-                    
-                    // Finalizar a éxito
-                    setTimeout(() => {
-                        document.getElementById('processing-view').classList.add('step-hidden');
-                        document.getElementById('success-view').classList.remove('step-hidden');
-                    }, 2500);
-                }, 1000);
-            }, 500);
+                document.getElementById('status-temp').classList.remove('status-error', 'animate-pulse-red');
+                document.getElementById('status-temp').classList.add('status-ok');
+
+                metrics.style.opacity = "1";
+                document.getElementById('live-lat').innerText = "-33.8118";
+                document.getElementById('live-lon').innerText = "-70.7513";
+                document.getElementById('live-tmp').innerText = "24.5";
+
+                shutter.classList.remove('shutter-disabled');
+                instruction.innerText = "Listo para capturar origen";
+                instruction.classList.add('text-emerald-500');
+            }, 3000);
+        };
+
+        function takeSnapshot() {
+            // Flash visual
+            document.body.style.backgroundColor = "white";
+            setTimeout(() => {
+                document.body.style.backgroundColor = "black";
+                document.getElementById('step-capture').classList.add('step-hidden');
+                document.getElementById('step-classify').classList.remove('step-hidden');
+            }, 150);
+        }
+
+        function showSuccess() {
+            document.getElementById('step-classify').classList.add('step-hidden');
+            document.getElementById('step-success').classList.remove('step-hidden');
         }
     </script>
 </body>
