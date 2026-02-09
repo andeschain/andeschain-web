@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bitácora de Cultivo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #27ae60;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 20px; color: var(--primary); }
+        
+        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* Área del Mapa */
+        #map {
+            height: 250px;
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            z-index: 1;
+        }
+
+        .gps-status {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px; height: 8px; background: #e74c3c; border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.active { background: #27ae60; box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2); }
+
+        /* Botón Principal */
+        .btn-main {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-main:hover { background-color: #1a252f; }
+
+        /* Botón GPS */
+        .btn-gps {
+            background: #eef2f5;
+            color: var(--primary);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-gps:hover { background: #dfe4e8; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🌱 Nueva Evidencia</h1>
+
+        <label>Producto / Cultivo</label>
+        <input type="text" id="cultivo" placeholder="Ej: Tomates Cherry, Hilera 4">
+
+        <label>Foto de Evidencia</label>
+        <input type="file" accept="image/*" capture="environment">
+
+        <label>Ubicación Georeferenciada</label>
+        <button class="btn-gps" onclick="obtenerUbicacion()">
+            📍 Actualizar GPS
+        </button>
+        
+        <div id="map"></div>
+        <div class="gps-status">
+            <span id="gpsDot" class="dot"></span>
+            <span id="gpsText">Esperando señal GPS...</span>
+        </div>
+
+        <input type="hidden" id="lat">
+        <input type="hidden" id="lng">
+
+        <button class="btn-main" onclick="guardarRegistro()">Guardar en Bitácora</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Inicializar Mapa centrado en Santiago por defecto (pero sin pin)
+        var map = L.map('map').setView([-33.4489, -70.6693], 10);
+        var marker;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // FUNCIÓN CLAVE: Obtener GPS Real
+        function obtenerUbicacion() {
+            const status = document.getElementById('gpsText');
+            const dot = document.getElementById('gpsDot');
+
+            status.textContent = "Buscando satélites...";
+            
+            if (!navigator.geolocation) {
+                status.textContent = "Tu navegador no soporta GPS";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // ÉXITO
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    // Guardar datos
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value = lng;
+
+                    // Actualizar UI
+                    status.textContent = `Ubicación detectada (Precisión: ${Math.round(accuracy)}m)`;
+                    dot.classList.add('active');
+
+                    // Mover mapa
+                    map.setView([lat, lng], 16); // Zoom 16 es nivel calle/predio
+
+                    // Poner Pin
+                    if (marker) map.removeLayer(marker);
+                    marker = L.marker([lat, lng]).addTo(map)
+                        .bindPopup("<b>¡Estás aquí!</b><br>Evidencia registrada.").openPopup();
+                },
+                (error) => {
+                    // ERROR
+                    dot.classList.remove('active');
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            status.textContent = "❌ Debes permitir el acceso a la ubicación.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            status.textContent = "❌ Señal GPS no disponible.";
+                            break;
+                        case error.TIMEOUT:
+                            status.textContent = "❌ Se agotó el tiempo de espera.";
+                            break;
+                    }
+                },
+                {
+                    enableHighAccuracy: true, // Forzar GPS real (no solo antenas)
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function guardarRegistro() {
+            const cultivo = document.getElementById('cultivo').value;
+            const lat = document.getElementById('lat').value;
+            
+            if(!cultivo) {
+                alert("Escribe el nombre del cultivo");
+                return;
+            }
+            if(!lat) {
+                alert("Primero obtén la ubicación GPS");
+                return;
+            }
+
+            alert(`✅ Evidencia Guardada\nCultivo: ${cultivo}\nGPS: ${document.getElementById('lat').value}, ${document.getElementById('lng').value}`);
+        }
+
+        // Intentar obtener ubicación al cargar la página
+        obtenerUbicacion();
+
+    </script>
+</body>
+</html>
