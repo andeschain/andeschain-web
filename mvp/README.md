@@ -45,9 +45,100 @@ Luego configura tu dominio: `andeschain.io`
 
 Sube los archivos HTML directamente a tu hosting existente en Cloudflare.
 
-## 🔗 Integración Blockchain (Polygon)
+## 🔗 Integración Blockchain (Polygon Mainnet) ✅
 
-### Fase 1: Smart Contract Básico
+### ¡YA DEPLOYADO EN MAINNET!
+
+Tu contrato está en producción. Ahora necesitas configurar el frontend:
+
+#### Paso 1: Actualizar `config.js`
+
+```javascript
+// En el archivo config.js, actualiza estos valores:
+
+const BLOCKCHAIN_CONFIG = {
+    network: 'polygon',
+    chainId: 137,
+    rpcUrl: 'https://polygon-rpc.com',
+    explorerUrl: 'https://polygonscan.com',
+    
+    // ACTUALIZA CON TU DIRECCIÓN REAL DEL CONTRATO:
+    contractAddress: '0xTU_DIRECCIÓN_AQUI', // La que obtuviste del deployment
+    
+    // El ABI está correcto, pero verifica que coincida con tu contrato
+    contractABI: [...]
+};
+```
+
+#### Paso 2: Obtener datos de tu deployment
+
+Si usaste Hardhat, busca en:
+```bash
+# Tu dirección del contrato está en:
+artifacts/deployment-address.txt
+
+# O en la salida del deployment:
+npx hardhat run scripts/deploy.js --network polygon
+# Contract deployed to: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+```
+
+Si usaste Remix:
+- Copia la dirección del contrato después del deployment
+- Descarga el ABI desde la pestaña "Compile"
+
+#### Paso 3: Verificar el contrato en PolygonScan
+
+```bash
+npx hardhat verify --network polygon TU_CONTRACT_ADDRESS
+```
+
+Esto hace que tu contrato sea público y verificable en:
+`https://polygonscan.com/address/TU_CONTRACT_ADDRESS`
+
+#### Paso 4: Registrar primer evento
+
+Usa la app de productor o ejecuta directo:
+
+```javascript
+// En la consola del navegador (con MetaMask conectado):
+await blockchain.init();
+await blockchain.registerEvent(
+    'PA-2602',              // productId
+    'siembra',              // eventType
+    '{"lat": -33.82, "lng": -70.79}',  // location
+    {
+        notes: 'Primera siembra de papas Astrid',
+        quantity: '0',
+        timestamp: new Date().toISOString()
+    }
+);
+```
+
+### Costos Reales en Polygon Mainnet:
+
+- **Gas por transacción**: ~0.001-0.003 MATIC (~$0.001 USD)
+- **100 eventos**: ~$0.10 USD
+- **1000 eventos/mes**: ~$1 USD
+
+*Mucho más barato que Ethereum mainnet (~$50-100 por transacción)*
+
+### URLs de Producción:
+
+Una vez que actualices `config.js`:
+
+```bash
+# Subir archivos actualizados
+git add config.js productor-app.html trazabilidad-live.html
+git commit -m "Connect to Polygon Mainnet contract"
+git push origin main
+```
+
+Cloudflare Pages desplegará automáticamente en ~2 minutos.
+
+**Nuevas URLs:**
+- Dashboard en vivo: `https://andeschain.io/trazabilidad-live.html?productId=PA-2602`
+- App productor: `https://andeschain.io/productor-app.html`
+- Landing: `https://andeschain.io`
 
 ```solidity
 // SPDX-License-Identifier: MIT

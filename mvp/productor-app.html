@@ -525,7 +525,21 @@
         </div>
     </div>
 
+    <!-- Web3 y Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="config.js"></script>
+    
     <script>
+        let currentPhoto = null;
+        
+        // Inicializar blockchain al cargar
+        window.addEventListener('load', async () => {
+            const initialized = await blockchain.init();
+            if (!initialized) {
+                console.warn('Blockchain no inicializado - modo demo');
+            }
+        });
+        
         // Capturar GPS automáticamente
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -551,6 +565,7 @@
         function previewPhoto(event) {
             const file = event.target.files[0];
             if (file) {
+                currentPhoto = file;
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.getElementById('photoPreview');
@@ -561,44 +576,80 @@
             }
         }
 
-        function submitEvent(e) {
+        async function submitEvent(e) {
             e.preventDefault();
             
-            // Simular envío a blockchain
             const btn = e.target.querySelector('button');
             btn.disabled = true;
-            btn.textContent = 'Registrando en Polygon...';
+            btn.textContent = 'Registrando en Polygon Mainnet...';
             
-            setTimeout(() => {
-                // Mostrar mensaje de éxito
-                const successMsg = document.getElementById('successMessage');
-                successMsg.style.display = 'block';
+            try {
+                // Recopilar datos del formulario
+                const eventData = {
+                    productId: 'ALM-2602', // Lote de almendras
+                    eventType: document.getElementById('eventType').value,
+                    location: {
+                        lat: document.getElementById('latitude').value,
+                        lng: document.getElementById('longitude').value
+                    },
+                    metadata: {
+                        quantity: document.getElementById('quantity').value,
+                        quality: document.getElementById('quality').value,
+                        notes: document.getElementById('notes').value,
+                        timestamp: new Date().toISOString(),
+                        producer: 'Productor Los Nogales'
+                    }
+                };
                 
-                // Generar TX hash simulado
-                const txHash = '0x' + Math.random().toString(16).substr(2, 64);
-                console.log('Transaction Hash:', txHash);
+                // Registrar en blockchain REAL
+                const result = await blockchain.registerEvent(
+                    eventData.productId,
+                    eventData.eventType,
+                    JSON.stringify(eventData.location),
+                    eventData.metadata
+                );
                 
-                // Resetear formulario
+                if (result.success) {
+                    // Mostrar mensaje de éxito con TX real
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.innerHTML = `✓ Evento registrado en Polygon Mainnet<br>
+                        <a href="${result.explorerUrl}" target="_blank" style="color: white; text-decoration: underline; font-size: 0.9rem;">
+                            Ver en PolygonScan: ${blockchain.formatAddress(result.txHash)}
+                        </a>`;
+                    successMsg.style.display = 'block';
+                    
+                    console.log('Transaction Hash:', result.txHash);
+                    console.log('Block Number:', result.blockNumber);
+                    
+                    // Resetear formulario
+                    e.target.reset();
+                    document.getElementById('photoPreview').style.display = 'none';
+                    currentPhoto = null;
+                    
+                    // Ocultar mensaje después de 10 segundos
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 10000);
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(result.error);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error al registrar evento: ${error.message}\n\nAsegúrate de:\n1. Tener MetaMask instalado\n2. Estar conectado a Polygon Mainnet\n3. Tener MATIC para gas`);
+            } finally {
                 btn.disabled = false;
                 btn.textContent = 'Registrar en Blockchain';
-                e.target.reset();
-                document.getElementById('photoPreview').style.display = 'none';
-                
-                // Ocultar mensaje después de 5 segundos
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                }, 5000);
-                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 2000);
+            }
         }
 
         // Actualizar hora actual
         function updateTime() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-            // Se puede usar para mostrar la hora actual en algún lugar
         }
         setInterval(updateTime, 1000);
     </script>
