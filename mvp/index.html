@@ -3,829 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AndesChain - Trazabilidad con Historia</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
-        
-        :root {
-            /* Paleta inspirada en tierra y cosecha */
-            --tierra: #2C1810;
-            --verde-campo: #4A7C59;
-            --trigo: #D4A574;
-            --cielo: #E8F1F5;
-            --blanco-puro: #FFFFFF;
-            --gris-suave: #F5F5F3;
-            --acento: #E67E22;
-            --texto-primario: #2C1810;
-            --texto-secundario: #666666;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--texto-primario);
-            line-height: 1.6;
-            overflow-x: hidden;
-            background: var(--blanco-puro);
-        }
-        
-        /* Header Navigation */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(74, 124, 89, 0.1);
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--verde-campo);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: var(--texto-primario);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: var(--verde-campo);
-        }
-        
-        /* Hero Section */
-        .hero {
-            margin-top: 80px;
-            min-height: 90vh;
-            display: flex;
-            align-items: center;
-            background: linear-gradient(135deg, var(--cielo) 0%, var(--blanco-puro) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M0,500 Q250,400 500,500 T1000,500 L1000,1000 L0,1000 Z" fill="%234A7C59" opacity="0.03"/></svg>');
-            background-size: cover;
-        }
-        
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero-text h1 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            color: var(--tierra);
-        }
-        
-        .hero-text .highlight {
-            color: var(--verde-campo);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .hero-text p {
-            font-size: 1.25rem;
-            color: var(--texto-secundario);
-            margin-bottom: 2rem;
-            line-height: 1.8;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
-        }
-        
-        .btn-primary {
-            background: var(--verde-campo);
-            color: var(--blanco-puro);
-        }
-        
-        .btn-primary:hover {
-            background: #3d6548;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(74, 124, 89, 0.3);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: var(--verde-campo);
-            border: 2px solid var(--verde-campo);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--verde-campo);
-            color: var(--blanco-puro);
-        }
-        
-        .hero-visual {
-            position: relative;
-        }
-        
-        .demo-card {
-            background: var(--blanco-puro);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .qr-preview {
-            width: 200px;
-            height: 200px;
-            background: var(--gris-suave);
-            border-radius: 12px;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: var(--texto-secundario);
-            border: 3px dashed var(--verde-campo);
-        }
-        
-        /* Historia Section */
-        .historia {
-            padding: 6rem 2rem;
-            background: var(--gris-suave);
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-family: 'Crimson Pro', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: var(--tierra);
-        }
-        
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            color: var(--texto-secundario);
-            margin-bottom: 3rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100%;
-            background: var(--verde-campo);
-            opacity: 0.3;
-        }
-        
-        .timeline-item {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            margin-bottom: 4rem;
-            position: relative;
-        }
-        
-        .timeline-item:nth-child(even) .timeline-content {
-            grid-column: 1;
-            grid-row: 1;
-        }
-        
-        .timeline-item:nth-child(even) .timeline-year {
-            grid-column: 2;
-            text-align: left;
-        }
-        
-        .timeline-year {
-            font-family: 'Crimson Pro', serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--trigo);
-            opacity: 0.7;
-            text-align: right;
-        }
-        
-        .timeline-content {
-            background: var(--blanco-puro);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        
-        .timeline-content h3 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--verde-campo);
-        }
-        
-        /* Beneficios Section */
-        .beneficios {
-            padding: 6rem 2rem;
-            background: var(--blanco-puro);
-        }
-        
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-        
-        .tab-btn {
-            padding: 1rem 2rem;
-            background: var(--gris-suave);
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--texto-primario);
-        }
-        
-        .tab-btn.active {
-            background: var(--verde-campo);
-            color: var(--blanco-puro);
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .beneficios-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .beneficio-card {
-            background: var(--gris-suave);
-            padding: 2rem;
-            border-radius: 12px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .beneficio-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(74, 124, 89, 0.2);
-        }
-        
-        .beneficio-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--verde-campo);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
-        }
-        
-        .beneficio-card h3 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: var(--tierra);
-        }
-        
-        .beneficio-card p {
-            color: var(--texto-secundario);
-            line-height: 1.7;
-        }
-        
-        /* Casos de Uso Section */
-        .casos {
-            padding: 6rem 2rem;
-            background: var(--tierra);
-            color: var(--blanco-puro);
-        }
-        
-        .casos .section-title,
-        .casos .section-subtitle {
-            color: var(--blanco-puro);
-        }
-        
-        .casos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .caso-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .caso-image {
-            width: 100%;
-            height: 200px;
-            background: var(--trigo);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--tierra);
-            font-weight: 600;
-        }
-        
-        .caso-card h3 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .caso-tag {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: var(--verde-campo);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-        }
-        
-        /* CTA Final Section */
-        .cta-final {
-            padding: 6rem 2rem;
-            background: linear-gradient(135deg, var(--verde-campo) 0%, #3d6548 100%);
-            text-align: center;
-            color: var(--blanco-puro);
-        }
-        
-        .cta-final h2 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .cta-final p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        
-        .form-registro {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .form-registro input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        
-        .form-registro button {
-            padding: 1rem 2rem;
-            background: var(--acento);
-            color: var(--blanco-puro);
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .form-registro button:hover {
-            background: #d35400;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--tierra);
-            color: var(--blanco-puro);
-            padding: 3rem 2rem 2rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-        
-        .footer-section h4 {
-            font-family: 'Crimson Pro', serif;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-section a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s;
-        }
-        
-        .footer-section a:hover {
-            color: var(--blanco-puro);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.7;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-            
-            .timeline-item {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .timeline::before {
-                left: 0;
-            }
-            
-            .timeline-year {
-                text-align: left;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .form-registro {
-                flex-direction: column;
-            }
-        }
-        
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
+    <title>AndesChain - Trazabilidad Blockchain para Alimentos</title>
+    <link rel="icon" href="/assets/favicon.png">
+    <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="#" class="logo">🌱 AndesChain</a>
-            <ul class="nav-links">
-                <li><a href="#home">Inicio</a></li>
-                <li><a href="#historia">Historia</a></li>
-                <li><a href="#beneficios">Soluciones</a></li>
-                <li><a href="#casos">Casos</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+    <!-- HEADER -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="/" class="logo">
+                <img src="/assets/logo.png" alt="AndesChain" class="logo-img">
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="active">Inicio</a></li>
+                <li><a href="/pages/historia.html">Historia</a></li>
+                <li><a href="/pages/soluciones.html">Soluciones</a></li>
+                <li><a href="/pages/casos.html">Casos</a></li>
+                <li><a href="/pages/contacto.html">Contacto</a></li>
             </ul>
+            <a href="/pages/productor-app.html" class="btn-primary">App Productor</a>
         </nav>
     </header>
 
     <!-- HERO -->
-    <section class="hero" id="home">
+    <section class="hero">
         <div class="hero-content">
-            <div class="hero-text">
-                <h1>Cada alimento tiene una <span class="highlight">historia</span></h1>
-                <p>Transformamos el esfuerzo del campo en evidencia digital inmutable. Trazabilidad blockchain que conecta productores con consumidores.</p>
-                <div class="cta-buttons">
-                    <a href="#contacto" class="btn btn-primary">Solicitar Demo</a>
-                    <a href="#casos" class="btn btn-secondary">Ver Casos</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="demo-card">
-                    <div class="qr-preview">
-                        <span>📱 Escanea y conoce<br>el origen</span>
-                    </div>
-                    <h4 style="text-align: center; color: var(--verde-campo); margin-bottom: 0.5rem;">Papas Astrid</h4>
-                    <p style="text-align: center; color: var(--texto-secundario); font-size: 0.9rem;">El Otro Huerto, Paine<br>Cosecha: Febrero 2026</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HISTORIA -->
-    <section class="historia" id="historia">
-        <div class="container">
-            <h2 class="section-title">De IBM al campo, del campo a la blockchain</h2>
-            <p class="section-subtitle">11 años conectando productores con consumidores. Ahora, llevamos esa experiencia a la era digital.</p>
-            
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">2014</div>
-                    <div class="timeline-content">
-                        <h3>Nace Quillagua</h3>
-                        <p>Después de mi carrera en IBM y Oracle, me mudé al campo. Comercial Rural Quillagua nace al ver las complejidades del mundo rural: falta de canales éticos, desperdicio de alimentos, desconexión con el origen.</p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-year">2015</div>
-                    <div class="timeline-content">
-                        <h3>Servicio de Suscripción Corporativa</h3>
-                        <p>Creamos un modelo de suscripción de fruta y snacks saludables para empresas como Mercado Libre, Deloitte, Oracle y Nestlé. Por primera vez, logramos trazabilidad completa de origen con +10 productores.</p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-year">2026</div>
-                    <div class="timeline-content">
-                        <h3>AndesChain: Trazabilidad Digital</h3>
-                        <p>Unimos 11 años de experiencia rural con tecnología blockchain. AndesChain digitaliza la trazabilidad, dándole valor a cada cultivo con historia verificable e inmutable.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- BENEFICIOS -->
-    <section class="beneficios" id="beneficios">
-        <div class="container">
-            <h2 class="section-title">Soluciones para cada actor</h2>
-            <p class="section-subtitle">AndesChain resuelve problemas reales en toda la cadena de suministro</p>
-            
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="productores">Productores</button>
-                <button class="tab-btn" data-tab="entidades">Entidades Públicas</button>
-                <button class="tab-btn" data-tab="consumidores">Consumidores</button>
-            </div>
-            
-            <div id="productores" class="tab-content active">
-                <div class="beneficios-grid">
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🏆</div>
-                        <h3>Identidad Digital</h3>
-                        <p>Tu producto mantiene su identidad desde el campo hasta el consumidor final. No más pérdida de valor en la cadena.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">✅</div>
-                        <h3>Certificación Accesible</h3>
-                        <p>Validación satelital y datos inmutables reducen costos de certificación hasta un 70%. Acceso a mercados premium.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">📈</div>
-                        <h3>Valorización Real</h3>
-                        <p>Demuestra prácticas agroecológicas con evidencia verificable. Tu esfuerzo tiene el valor que merece.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="entidades" class="tab-content">
-                <div class="beneficios-grid">
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🔍</div>
-                        <h3>Transparencia Presupuestaria</h3>
-                        <p>Verifica que subsidios de INDAP y bonos municipales se traduzcan en producción real. Evidencia biológica, no solo facturas.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🌍</div>
-                        <h3>Seguridad Alimentaria</h3>
-                        <p>Mapa de resiliencia en tiempo real: qué se produce, dónde y quién es responsable. Planificación basada en datos.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">📊</div>
-                        <h3>Reportabilidad ODS</h3>
-                        <p>Datos inmutables para ODS 2, 12 y 13. Reporte continuo, no estimaciones anuales. Prevención de greenwashing.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="consumidores" class="tab-content">
-                <div class="beneficios-grid">
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🔎</div>
-                        <h3>Transparencia Total</h3>
-                        <p>Escanea un QR y conoce el origen exacto: quién lo produjo, dónde, cómo y cuándo. Cero dudas.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🌱</div>
-                        <h3>Conexión con el Origen</h3>
-                        <p>Viaja virtualmente al campo. Conoce la historia detrás de cada alimento que consumes.</p>
-                    </div>
-                    <div class="beneficio-card">
-                        <div class="beneficio-icon">🛡️</div>
-                        <h3>Seguridad Verificable</h3>
-                        <p>Información inmutable en blockchain. Si hay problema, trazabilidad en segundos, no semanas.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CASOS DE USO -->
-    <section class="casos" id="casos">
-        <div class="container">
-            <h2 class="section-title">Casos en producción</h2>
-            <p class="section-subtitle">Productores reales usando AndesChain hoy</p>
-            
-            <div class="casos-grid">
-                <div class="caso-card">
-                    <div class="caso-image">🥔 Imagen de campo</div>
-                    <span class="caso-tag">En producción</span>
-                    <h3>Papas Astrid - El Otro Huerto</h3>
-                    <p>Trazabilidad completa desde la siembra en Paine hasta el consumidor. Cada lote certificado con coordenadas satelitales y registro inmutable.</p>
-                </div>
-                
-                <div class="caso-card">
-                    <div class="caso-image">🌰 Imagen de almendras</div>
-                    <span class="caso-tag">Cosecha en curso</span>
-                    <h3>Almendras Artesanales</h3>
-                    <p>Productor local subiendo datos en tiempo real durante la cosecha. App móvil simple para registro instantáneo.</p>
-                </div>
-                
-                <div class="caso-card">
-                    <div class="caso-image">🍎 Imagen de manzanas</div>
-                    <span class="caso-tag">Piloto</span>
-                    <h3>Sidra de Quintas Patrimoniales</h3>
-                    <p>Manzanas de quintas históricas en Valdivia. Historia patrimonial + trazabilidad moderna = producto único con certificación digital.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA FINAL -->
-    <section class="cta-final" id="contacto">
-        <div class="container">
-            <h2>¿Listo para dar el siguiente paso?</h2>
-            <p>Únete a los productores y municipios que están transformando la trazabilidad en Latinoamérica</p>
-            <form class="form-registro" onsubmit="handleSubmit(event)">
-                <input type="email" placeholder="Tu correo electrónico" required>
-                <button type="submit">Solicitar Demo</button>
-            </form>
-            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
-                📧 O escríbenos directamente a contacto@andeschain.io
+            <h1>Cada alimento tiene una <span class="highlight">historia</span></h1>
+            <p class="hero-subtitle">
+                Transformamos el esfuerzo del campo en evidencia digital inmutable. 
+                Trazabilidad blockchain que conecta productores con consumidores.
             </p>
+            <div class="hero-cta">
+                <a href="/pages/demo.html?productId=PA-2602" class="btn-large btn-primary">
+                    Ver Demo en Vivo
+                </a>
+                <a href="/pages/soluciones.html" class="btn-large btn-secondary">
+                    Conocer Más
+                </a>
+            </div>
+            
+            <!-- Stats -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalEvents">—</div>
+                    <div class="stat-label">Eventos Certificados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Polygon</div>
+                    <div class="stat-label">Blockchain Mainnet</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$0.001</div>
+                    <div class="stat-label">Costo por Evento</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="demo-card">
+                <div class="qr-preview">
+                    <div class="qr-placeholder">📱</div>
+                    <p>Escanea y conoce el origen</p>
+                </div>
+                <div class="product-info">
+                    <h4>Papas Astrid</h4>
+                    <p class="product-location">📍 El Otro Huerto, Paine</p>
+                    <p class="product-date">Cosecha: Febrero 2026</p>
+                    <a href="/pages/demo.html?productId=PA-2602" class="btn-small">
+                        Ver Trazabilidad →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">¿Por qué AndesChain?</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Inmutable</h3>
+                    <p>Una vez registrado en blockchain, ningún dato puede ser alterado. Garantía absoluta de trazabilidad.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Accesible</h3>
+                    <p>Costos bajísimos gracias a Polygon. $0.001 por evento vs. certificaciones tradicionales de cientos de dólares.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instantáneo</h3>
+                    <p>Confirmación en 5 segundos. No más esperas de días o semanas para certificaciones.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Transparente</h3>
+                    <p>Cualquier persona puede verificar los datos en PolygonScan. Confianza total sin intermediarios.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Verificable</h3>
+                    <p>GPS satelital, metadata EXIF de fotos, timestamps. Múltiples capas de verificación automática.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌱</div>
+                    <h3>Sustentable</h3>
+                    <p>Polygon Proof-of-Stake. Huella de carbono 99% menor que Bitcoin o Ethereum.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST BADGES -->
+    <section class="trust">
+        <div class="container">
+            <div class="trust-content">
+                <div class="trust-text">
+                    <h3>Tecnología Probada</h3>
+                    <p>Construido sobre Polygon, una de las blockchains más confiables del mundo. Más de 400M de transacciones procesadas.</p>
+                </div>
+                <div class="trust-badges">
+                    <div class="badge">
+                        <strong>Polygon Mainnet</strong>
+                        <span>Producción Real</span>
+                    </div>
+                    <div class="badge">
+                        <strong>Smart Contract Verificado</strong>
+                        <span>Código Auditable</span>
+                    </div>
+                    <div class="badge">
+                        <strong>Open Source</strong>
+                        <span>Transparente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>¿Listo para certificar tu producción?</h2>
+            <p>Únete a los productores que están transformando la trazabilidad en Latinoamérica</p>
+            <div class="cta-buttons">
+                <a href="/pages/contacto.html" class="btn-large btn-primary">Solicitar Demo</a>
+                <a href="/pages/productor-app.html" class="btn-large btn-secondary">Probar App</a>
+            </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>AndesChain</h4>
-                <p>Transformando el valor del campo en evidencia digital inmutable.</p>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>AndesChain</h4>
+                    <p>Trazabilidad blockchain para alimentos con historia.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/andeschain" target="_blank">GitHub</a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Producto</h4>
+                    <ul>
+                        <li><a href="/pages/soluciones.html">Soluciones</a></li>
+                        <li><a href="/pages/casos.html">Casos de Uso</a></li>
+                        <li><a href="/pages/productor-app.html">App Productor</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="/pages/historia.html">Nuestra Historia</a></li>
+                        <li><a href="/pages/contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Blockchain</h4>
+                    <ul>
+                        <li><a href="https://polygonscan.com/address/0x34fe41bd7a2a34597bd098f29e2256b86ca60611" target="_blank">Ver Contrato</a></li>
+                        <li><a href="https://polygon.technology/" target="_blank">Polygon Network</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Soluciones</h4>
-                <a href="#beneficios">Para Productores</a>
-                <a href="#beneficios">Para Entidades Públicas</a>
-                <a href="#beneficios">Para Consumidores</a>
+            
+            <div class="footer-bottom">
+                <p>© 2026 AndesChain Technologies. De Paine para Latinoamérica 🌱</p>
             </div>
-            <div class="footer-section">
-                <h4>Empresa</h4>
-                <a href="#historia">Nuestra Historia</a>
-                <a href="#casos">Casos de Uso</a>
-                <a href="#contacto">Contacto</a>
-            </div>
-            <div class="footer-section">
-                <h4>Proyectos</h4>
-                <p>El Otro Huerto - Paine<br>Comercial Rural Quillagua<br>AndesChain Technologies</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2026 AndesChain Technologies. De Paine para Latinoamérica 🌱</p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/blockchain.js"></script>
     <script>
-        // Tab functionality
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabId = btn.dataset.tab;
+        // Cargar estadísticas desde blockchain
+        async function loadStats() {
+            try {
+                const web3 = new Web3(ANDESCHAIN_CONFIG.rpcUrl);
+                const contract = new web3.eth.Contract(
+                    ANDESCHAIN_CONFIG.contractABI,
+                    ANDESCHAIN_CONFIG.contractAddress
+                );
                 
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                btn.classList.add('active');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-        
-        // Form submission
-        function handleSubmit(e) {
-            e.preventDefault();
-            const email = e.target.querySelector('input').value;
-            alert(`¡Gracias! Te contactaremos pronto a ${email}`);
-            e.target.reset();
+                const events = await contract.methods.getProductEvents('PA-2602').call();
+                document.getElementById('totalEvents').textContent = events.length;
+            } catch (error) {
+                console.error('Error cargando stats:', error);
+            }
         }
         
-        // Smooth scroll for nav links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
+        loadStats();
     </script>
 </body>
 </html>
