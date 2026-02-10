@@ -89,9 +89,11 @@
             <a href="index.html" class="block">
                 <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-9 md:h-16 w-auto object-contain transition-all duration-300">
             </a>
-            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" target="_blank" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
-                Agendar Reunión
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" target="_blank" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
+                    Agendar Reunión
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -194,7 +196,14 @@
             </div>
             <div class="bg-white p-6 md:p-8 rounded-2xl text-slate-900 shadow-2xl w-full max-w-sm mx-auto md:max-w-none text-left">
                 <form id="andesForm" action="https://formsubmit.co/ajax/info@andeschain.io" method="POST" class="space-y-4">
+                    
+                    <div class="hidden" aria-hidden="true">
+                        <input type="text" name="_address_confirm" id="honeypot" tabindex="-1" autocomplete="off">
+                    </div>
+                    
+                    <input type="hidden" name="_form_timer" id="form_timer">
                     <input type="hidden" name="_captcha" value="false">
+
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre</label>
                         <input type="text" name="nombre" class="input-corp" placeholder="Tu nombre" required>
@@ -225,9 +234,6 @@
                     <img src="assets/favicon.png" class="w-5 h-5" alt="AndesChain">
                     <span class="font-bold text-slate-900 tracking-tight">AndesChain.io</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em]">
-
-                </div>
             </div>
             
             <div class="max-w-4xl">
@@ -243,6 +249,7 @@
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 
     <script>
+        // Inicialización de teléfono
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: "cl",
@@ -250,6 +257,12 @@
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
         });
 
+        // Anti-Bot: Registrar tiempo de carga
+        window.onload = function() {
+            document.getElementById('form_timer').value = Date.now();
+        };
+
+        // Efecto scroll en Navbar
         let scrollTimeout;
         window.addEventListener('scroll', function() {
             if (scrollTimeout) return;
@@ -258,10 +271,10 @@
                 const logo = document.getElementById('nav-logo');
                 if (window.scrollY > 30) {
                     navbar.classList.add('scrolled');
-                    logo.classList.replace('h-9', 'h-7');
+                    logo.style.height = '40px';
                 } else {
                     navbar.classList.remove('scrolled');
-                    logo.classList.replace('h-7', 'h-9');
+                    logo.style.height = '';
                 }
                 scrollTimeout = null;
             }, 100);
@@ -273,12 +286,34 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // --- VALIDACIONES ANTI-BOT ---
+            
+            // 1. Honeypot check (Si está lleno, es un bot)
+            if (document.getElementById('honeypot').value !== "") {
+                console.log("Bot detectado por Honeypot");
+                return; 
+            }
+
+            // 2. Time-check check (Si es menos de 4 segundos, es un bot)
+            const loadTime = document.getElementById('form_timer').value;
+            const submitTime = Date.now();
+            if (submitTime - loadTime < 4000) {
+                alert("Por seguridad, por favor completa el formulario con calma.");
+                return;
+            }
+
+            // --- ENVÍO PROCESADO ---
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Procesando...';
             btn.disabled = true;
 
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             data.tel_full = iti.getNumber();
+
+            // Limpiar campos técnicos antes del envío para que no lleguen al mail
+            delete data._address_confirm;
+            delete data._form_timer;
 
             fetch("https://formsubmit.co/ajax/info@andeschain.io", {
                 method: "POST",
@@ -288,10 +323,12 @@
             .then(r => r.json()).then(d => {
                 btn.innerHTML = '¡SOLICITUD ENVIADA!'; btn.disabled = false;
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#059669', '#ffffff'] });
-                responseDiv.classList.remove('hidden');
+                responseDiv.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200');
                 responseDiv.classList.add('bg-corp-50', 'text-corp-900', 'border-corp-500');
                 responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2 text-corp-500"></i> Pronto nos pondremos en contacto.';
                 form.reset();
+                // Resetear timer por si quiere enviar otro
+                document.getElementById('form_timer').value = Date.now();
             }).catch(e => {
                 btn.innerHTML = 'INTENTAR DE NUEVO'; btn.disabled = false;
                 responseDiv.classList.remove('hidden');
