@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Productor - AndesChain</title>
+    <link rel="icon" href="/assets/favicon.png">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/productor.css">
+</head>
+<body>
+    <div class="app-header">
+        <a href="/" class="back-link">← Volver</a>
+        <h1>📱 Registro de Cosecha</h1>
+        <div class="network-status" id="networkStatus">
+            <span class="status-dot"></span>
+            <span>Polygon Mainnet</span>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- SUCCESS MESSAGE -->
+        <div class="success-banner" id="successBanner" style="display: none;">
+            <div class="success-icon">✅</div>
+            <div class="success-text">
+                <strong>Evento registrado en blockchain</strong>
+                <a href="#" id="txLink" target="_blank">Ver en PolygonScan →</a>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="eventForm" class="event-form">
+            <!-- Product ID -->
+            <div class="form-group">
+                <label>ID del Producto *</label>
+                <input type="text" id="productId" placeholder="Ej: PA-2602, ALM-2602" required>
+                <small>Identificador único de tu lote/producto</small>
+            </div>
+
+            <!-- Event Type -->
+            <div class="form-group">
+                <label>Tipo de Evento *</label>
+                <div class="event-type-grid">
+                    <button type="button" class="event-type-btn" data-type="Siembra">
+                        <span class="icon">🌱</span>
+                        <span>Siembra</span>
+                    </button>
+                    <button type="button" class="event-type-btn active" data-type="Cosecha">
+                        <span class="icon">🥔</span>
+                        <span>Cosecha</span>
+                    </button>
+                    <button type="button" class="event-type-btn" data-type="Riego">
+                        <span class="icon">💧</span>
+                        <span>Riego</span>
+                    </button>
+                    <button type="button" class="event-type-btn" data-type="Fertilización">
+                        <span class="icon">🌾</span>
+                        <span>Fertilización</span>
+                    </button>
+                    <button type="button" class="event-type-btn" data-type="Control">
+                        <span class="icon">🔬</span>
+                        <span>Control</span>
+                    </button>
+                    <button type="button" class="event-type-btn" data-type="Otro">
+                        <span class="icon">📝</span>
+                        <span>Otro</span>
+                    </button>
+                </div>
+                <input type="hidden" id="eventType" value="Cosecha" required>
+            </div>
+
+            <!-- Photo Upload with EXIF Extraction -->
+            <div class="form-group">
+                <label>Fotografía *</label>
+                <div class="photo-upload-area" id="photoUploadArea">
+                    <input type="file" id="photoInput" accept="image/*" capture="environment" required>
+                    <div class="photo-upload-prompt">
+                        <div class="upload-icon">📸</div>
+                        <p><strong>Toca para tomar foto o seleccionar</strong></p>
+                        <small>La foto incluirá metadata GPS, fecha/hora y más</small>
+                    </div>
+                    <div class="photo-preview" id="photoPreview" style="display: none;"></div>
+                </div>
+                
+                <!-- EXIF Data Display -->
+                <div class="exif-data" id="exifData" style="display: none;">
+                    <h4>📊 Datos Automáticos Extraídos:</h4>
+                    <div class="exif-grid">
+                        <div class="exif-item">
+                            <strong>📍 Ubicación GPS:</strong>
+                            <span id="exifGPS">—</span>
+                        </div>
+                        <div class="exif-item">
+                            <strong>📅 Fecha/Hora:</strong>
+                            <span id="exifDateTime">—</span>
+                        </div>
+                        <div class="exif-item">
+                            <strong>📱 Dispositivo:</strong>
+                            <span id="exifDevice">—</span>
+                        </div>
+                        <div class="exif-item">
+                            <strong>🌡️ Condiciones:</strong>
+                            <span id="exifConditions">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="form-group">
+                <label>Cantidad (kg) *</label>
+                <input type="number" id="quantity" placeholder="Ej: 150" step="0.1" required>
+            </div>
+
+            <!-- Quality -->
+            <div class="form-group">
+                <label>Calidad *</label>
+                <select id="quality" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Primera">Primera</option>
+                    <option value="Segunda">Segunda</option>
+                    <option value="Descarte">Descarte</option>
+                </select>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label>Observaciones</label>
+                <textarea id="notes" rows="4" placeholder="Describe cualquier detalle importante: clima, condiciones del suelo, particularidades..."></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span class="btn-text">Registrar en Blockchain</span>
+                <span class="btn-loading" style="display: none;">
+                    <span class="spinner"></span>
+                    Registrando en Polygon...
+                </span>
+            </button>
+        </form>
+
+        <!-- Recent Events -->
+        <div class="recent-events">
+            <h3>Eventos Recientes</h3>
+            <div id="recentEventsList">
+                <p class="loading">Cargando eventos desde blockchain...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/exif-extractor.js"></script>
+    <script src="/assets/js/blockchain.js"></script>
+    
+    <script>
+        let selectedEventType = 'Cosecha';
+        let currentPhotoFile = null;
+        let currentEXIFData = null;
+
+        // Event Type Selection
+        document.querySelectorAll('.event-type-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.event-type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedEventType = btn.dataset.type;
+                document.getElementById('eventType').value = selectedEventType;
+            });
+        });
+
+        // Photo Upload with EXIF Extraction
+        document.getElementById('photoInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            currentPhotoFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const preview = document.getElementById('photoPreview');
+                preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                preview.style.display = 'block';
+                document.querySelector('.photo-upload-prompt').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+            
+            // Extract EXIF data
+            try {
+                currentEXIFData = await exifExtractor.prepareForBlockchain(file);
+                displayEXIFData(currentEXIFData);
+            } catch (error) {
+                console.error('Error extrayendo EXIF:', error);
+                alert('No se pudieron extraer datos EXIF de la imagen. Se usará ubicación del navegador.');
+                // Fallback to browser geolocation
+                getCurrentLocationFallback();
+            }
+        });
+
+        function displayEXIFData(data) {
+            const exifContainer = document.getElementById('exifData');
+            exifContainer.style.display = 'block';
+            
+            // GPS
+            if (data.gps && data.gps.latitude) {
+                document.getElementById('exifGPS').textContent = 
+                    `${data.gps.latitude.toFixed(6)}, ${data.gps.longitude.toFixed(6)}`;
+            } else {
+                document.getElementById('exifGPS').textContent = 'No disponible (usando GPS del navegador)';
+                getCurrentLocationFallback();
+            }
+            
+            // DateTime
+            document.getElementById('exifDateTime').textContent = 
+                data.datetime.original || new Date().toLocaleString('es-CL');
+            
+            // Device
+            if (data.device.make && data.device.model) {
+                document.getElementById('exifDevice').textContent = 
+                    `${data.device.make} ${data.device.model}`;
+            } else {
+                document.getElementById('exifDevice').textContent = 'No disponible';
+            }
+            
+            // Conditions
+            const conditions = [];
+            if (data.environment.temperature) {
+                conditions.push(`🌡️ ${data.environment.temperature}°C`);
+            }
+            if (data.environment.humidity) {
+                conditions.push(`💧 ${data.environment.humidity}%`);
+            }
+            if (data.capture.iso) {
+                conditions.push(`ISO ${data.capture.iso}`);
+            }
+            
+            document.getElementById('exifConditions').textContent = 
+                conditions.length > 0 ? conditions.join(' • ') : 'No disponible';
+        }
+
+        function getCurrentLocationFallback() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        if (!currentEXIFData) currentEXIFData = {};
+                        currentEXIFData.gps = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            altitude: position.coords.altitude,
+                            precision: position.coords.accuracy
+                        };
+                        document.getElementById('exifGPS').textContent = 
+                            `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)} (navegador)`;
+                    },
+                    (error) => {
+                        console.error('Error obteniendo ubicación:', error);
+                    }
+                );
+            }
+        }
+
+        // Form Submission
+        document.getElementById('eventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentPhotoFile) {
+                alert('Por favor toma una foto primero');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'flex';
+            
+            try {
+                // Preparar metadata completa incluyendo EXIF
+                const metadata = {
+                    quantity: document.getElementById('quantity').value,
+                    quality: document.getElementById('quality').value,
+                    notes: document.getElementById('notes').value,
+                    timestamp: new Date().toISOString(),
+                    exif: currentEXIFData,
+                    imageHash: currentEXIFData.imageHash
+                };
+                
+                const location = currentEXIFData.gps ? {
+                    lat: currentEXIFData.gps.latitude,
+                    lng: currentEXIFData.gps.longitude,
+                    altitude: currentEXIFData.gps.altitude,
+                    precision: currentEXIFData.gps.precision
+                } : { error: 'No GPS data available' };
+                
+                // Connect to blockchain
+                if (typeof window.ethereum === 'undefined') {
+                    throw new Error('Por favor instala MetaMask para registrar eventos');
+                }
+                
+                const web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                const contract = new web3.eth.Contract(
+                    ANDESCHAIN_CONFIG.contractABI,
+                    ANDESCHAIN_CONFIG.contractAddress
+                );
+                
+                const accounts = await web3.eth.getAccounts();
+                
+                // Register event
+                const tx = await contract.methods.registerEvent(
+                    document.getElementById('productId').value,
+                    selectedEventType,
+                    JSON.stringify(location),
+                    JSON.stringify(metadata)
+                ).send({ from: accounts[0] });
+                
+                // Show success
+                const successBanner = document.getElementById('successBanner');
+                const txLink = document.getElementById('txLink');
+                txLink.href = `${ANDESCHAIN_CONFIG.explorerUrl}/tx/${tx.transactionHash}`;
+                txLink.textContent = `TX: ${tx.transactionHash.substring(0, 10)}...`;
+                successBanner.style.display = 'flex';
+                
+                // Reset form
+                e.target.reset();
+                currentPhotoFile = null;
+                currentEXIFData = null;
+                document.getElementById('photoPreview').style.display = 'none';
+                document.getElementById('exifData').style.display = 'none';
+                document.querySelector('.photo-upload-prompt').style.display = 'block';
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Hide success after 10s
+                setTimeout(() => {
+                    successBanner.style.display = 'none';
+                }, 10000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error al registrar evento: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.display = 'block';
+                btnLoading.style.display = 'none';
+            }
+        });
+
+        // Load recent events
+        async function loadRecentEvents() {
+            try {
+                const web3 = new Web3(ANDESCHAIN_CONFIG.rpcUrl);
+                const contract = new web3.eth.Contract(
+                    ANDESCHAIN_CONFIG.contractABI,
+                    ANDESCHAIN_CONFIG.contractAddress
+                );
+                
+                // Get events for PA-2602 as example
+                const events = await contract.methods.getProductEvents('PA-2602').call();
+                
+                const container = document.getElementById('recentEventsList');
+                if (events.length === 0) {
+                    container.innerHTML = '<p class="no-events">No hay eventos recientes</p>';
+                    return;
+                }
+                
+                container.innerHTML = events.slice(-5).reverse().map(event => {
+                    const date = new Date(event.timestamp * 1000);
+                    return `
+                        <div class="event-item">
+                            <div class="event-type">${event.eventType}</div>
+                            <div class="event-date">${date.toLocaleDateString('es-CL')}</div>
+                            <div class="event-product">${event.productId}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error cargando eventos:', error);
+            }
+        }
+        
+        loadRecentEvents();
+    </script>
+</body>
+</html>
