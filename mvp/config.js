@@ -6,7 +6,7 @@ const BLOCKCHAIN_CONFIG = {
     explorerUrl: 'https://polygonscan.com',
     
     // ACTUALIZA ESTOS VALORES CON TUS DATOS REALES:
-    contractAddress: 'TU_CONTRACT_ADDRESS_AQUI', // Ej: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+    contractAddress: '0x26509dd577f3f78c588751167814f5c5f770132c', // Ej: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
     
     // ABI del contrato (copia desde tu deployment)
     contractABI: [
