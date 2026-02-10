@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <title>AndesChain.io | Trazabilidad de origen con Blockchain</title>
+    <meta name="description" content="Infraestructura tecnológica para la certificación blockchain de alimentos.">
+    <meta name="author" content="AndesChain Technology">
+
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': {
+                            50: '#F0FDF4', 100: '#DCFCE7', 500: '#059669', 
+                            600: '#047857', 800: '#065F46', 900: '#022C22', 
+                        },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FFFFFF; color: #1E293B; overflow-x: hidden; width: 100%; }
+        .btn-primary {
+            background-color: #059669; color: white; 
+            font-weight: 600; padding: 12px 24px; border-radius: 8px;
+            transition: all 0.2s ease-in-out; cursor: pointer;
+            display: inline-block; font-size: 0.95rem;
+        }
+        @media (min-width: 768px) { .btn-primary { padding: 14px 32px; font-size: 1rem; } }
+        .btn-primary:hover { background-color: #047857; transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.2); }
+        
+        .input-corp {
+            width: 100%; padding: 12px 14px; background: #F8FAFC;
+            border: 1px solid #CBD5E1; border-radius: 8px;
+            outline: none; transition: 0.2s; color: #0F172A; font-weight: 500; font-size: 16px;
+        }
+        .input-corp:focus { border-color: #059669; background: white; box-shadow: 0 0 0 2px #DCFCE7; }
+
+        .iti { width: 100%; display: block; }
+        .iti__flag-container { padding-left: 8px; }
+        #phone { padding-left: 82px !important; }
+
+        nav.scrolled { padding-top: 0.4rem; padding-bottom: 0.4rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        
+        .whatsapp-float {
+            position: fixed; width: 48px; height: 48px; bottom: 16px; right: 16px;
+            background-color: #25d366; color: #FFF; border-radius: 50px;
+            text-align: center; font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+        }
+
+        .card-corp {
+            background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+            padding: 24px; height: 100%; transition: all 0.3s ease;
+        }
+        .card-corp:hover { border-color: #059669; transform: translateY(-4px); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <a href="https://wa.me/56958799778" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <nav id="navbar" class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-3 border-b border-slate-100 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="block">
+                <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-9 md:h-16 w-auto object-contain transition-all duration-300">
+            </a>
+            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" target="_blank" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
+                Agendar Reunión
+            </a>
+        </div>
+    </nav>
+
+    <section class="pt-32 md:pt-48 pb-12 md:pb-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10 px-2">
+            <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Infraestructura de Trazabilidad</span>
+            <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Certificación de Origen<br><span class="text-corp-500">Blockchain.</span></h1>
+            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto">Apoyamos a productores y emprendedores a demostrar el valor de sus productos de manera digital y auditable.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#unete" class="btn-primary">Obtén tu sello de origen</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 md:py-20 bg-slate-50 border-y border-slate-200 px-4">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 card-corp">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-corp-100 rounded-lg flex items-center justify-center text-corp-600"><i class="fas fa-tractor text-xl"></i></div>
+                    <h2 class="text-lg md:text-xl font-bold text-corp-900 leading-tight">Protección del Productor</h2>
+                </div>
+                <p class="text-xs md:text-base text-slate-600 leading-relaxed">Su esfuerzo es invisible. En el mercado global, su producto compite por precio al no poder demostrar eficientemente su origen, calidad y prácticas sostenibles.</p>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 card-corp">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600"><i class="fas fa-shield-virus text-xl"></i></div>
+                    <h2 class="text-lg md:text-xl font-bold text-corp-900 leading-tight">Seguridad Alimentaria</h2>
+                </div>
+                <p class="text-xs md:text-base text-slate-600 leading-relaxed">Combatimos el "Greenwashing" y el fraude alimentario. Proveemos a empresas y Estados la data necesaria para cumplir normativas internacionales de trazabilidad.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="tecnologia" class="py-16 md:py-24 bg-white px-4">
+        <div class="max-w-5xl mx-auto text-center mb-10 md:mb-16">
+            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3">Tecnología de Verificación</h2>
+            <p class="text-slate-600 text-sm md:text-lg font-medium">Un protocolo simple para una verdad compleja.</p>
+        </div>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <article class="card-corp">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-map-marker-alt"></i></div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">1. Geolocalización</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Validación satelital del predio productivo en tiempo real para asegurar el origen físico.</p>
+            </article>
+            <article class="card-corp">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-cube"></i></div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">2. Inmutabilidad</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Registro criptográfico en Blockchain (Polygon). Datos imposibles de alterar o borrar.</p>
+            </article>
+            <article class="card-corp">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-900 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-qrcode"></i></div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">3. Transparencia</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Acceso público mediante QR. El consumidor final viaja al origen del producto mediante un sello interactivo.</p>
+            </article>
+        </div>
+    </section>
+
+    <section id="unete" class="py-16 md:py-24 px-4 bg-corp-900 text-white overflow-hidden">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center text-center md:text-left">
+            <div>
+                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">Únete a la Red AndesChain.</h2>
+                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed">Lo que cultivas, compras o produces tiene valor. Te ayudamos a demostrarlo.</p>
+                
+                <div class="space-y-3 max-w-xs mx-auto md:mx-0">
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-shield-alt text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Estándar Internacional</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-fingerprint text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Identidad de Origen</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-file-signature text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider text-left">Cumplimiento Normativo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-2xl text-slate-900 shadow-2xl w-full max-w-sm mx-auto md:max-w-none text-left">
+                <form id="andesForm" action="https://formsubmit.co/ajax/info@andeschain.io" method="POST" class="space-y-4">
+                    <input type="hidden" name="_captcha" value="false">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre</label>
+                        <input type="text" name="nombre" class="input-corp" placeholder="Ej. Jorge" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Empresa</label>
+                        <input type="text" name="empresa" class="input-corp" placeholder="Quillagua" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                        <input type="email" name="email" class="input-corp" placeholder="tu@email.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Celular</label>
+                        <input type="tel" id="phone" name="celular_full" class="input-corp" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-primary w-full mt-2 uppercase tracking-wide">Me quiero unir</button>
+                    <div id="formResponse" class="hidden mt-4 p-4 rounded-xl text-center font-bold text-xs border-2 transition-all"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 bg-white border-t border-slate-100 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="flex items-center gap-2 justify-center mb-6">
+                <img src="assets/favicon.png" class="w-5 h-5" alt="AndesChain">
+                <span class="font-extrabold text-lg text-corp-900 tracking-tight">AndesChain.io</span>
+            </div>
+            <div class="flex flex-col md:flex-row flex-wrap justify-center gap-x-8 gap-y-4 mb-8 text-[11px] md:text-sm font-semibold text-slate-600">
+                <a href="mailto:info@andeschain.io" class="hover:text-corp-600 transition-colors"><i class="fas fa-envelope mr-2 text-corp-500"></i> info@andeschain.io</a>
+                <a href="tel:+56958799778" class="hover:text-corp-600 transition-colors"><i class="fas fa-phone-alt mr-2 text-corp-500"></i> +56 9 5879 9778</a>
+                <a href="https://www.linkedin.com/company/andeschain" target="_blank" rel="noopener noreferrer" class="hover:text-corp-600 transition-colors"><i class="fab fa-linkedin-in mr-2 text-corp-500"></i> LinkedIn</a>
+            </div>
+            <p class="text-[9px] md:text-xs text-slate-400 font-medium uppercase tracking-widest">© 2026 AndesChain Tech</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+
+    <script>
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "cl",
+            separateDialCode: true,
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+        });
+
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            if (window.scrollY > 30) {
+                navbar.classList.add('scrolled');
+                logo.classList.replace('h-9', 'h-7');
+            } else {
+                navbar.classList.remove('scrolled');
+                logo.classList.replace('h-7', 'h-9');
+            }
+        });
+
+        const form = document.getElementById('andesForm');
+        const responseDiv = document.getElementById('formResponse');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enviando...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.tel_full = iti.getNumber();
+
+            fetch("https://formsubmit.co/ajax/info@andeschain.io", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json()).then(d => {
+                btn.innerHTML = '¡YA ERES PARTE!'; btn.disabled = false;
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#059669', '#ffffff'] });
+                responseDiv.classList.remove('hidden');
+                responseDiv.classList.add('bg-corp-50', 'text-corp-900', 'border-corp-500');
+                responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2 text-corp-500"></i> ¡SOLICITUD EXITOSA!';
+                form.reset();
+            }).catch(e => {
+                btn.innerHTML = 'INTENTAR DE NUEVO'; btn.disabled = false;
+                responseDiv.classList.remove('hidden');
+                responseDiv.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+                responseDiv.innerText = "Error. Intenta nuevamente.";
+            });
+        });
+    </script>
+</body>
+</html>

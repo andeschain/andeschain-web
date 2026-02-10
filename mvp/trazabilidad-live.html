@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trazabilidad en Vivo - AndesChain</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+        
+        :root {
+            --tierra: #2C1810;
+            --verde-campo: #4A7C59;
+            --trigo: #D4A574;
+            --cielo: #E8F1F5;
+            --blanco-puro: #FFFFFF;
+            --gris-suave: #F5F5F3;
+            --acento: #E67E22;
+            --verde-activo: #27AE60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gris-suave);
+            color: var(--tierra);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--blanco-puro);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--verde-campo);
+        }
+        
+        .network-badge {
+            padding: 0.5rem 1rem;
+            background: #8247E5;
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .product-selector {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .selector-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-input {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .product-input input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .product-input button {
+            padding: 1rem 2rem;
+            background: var(--verde-campo);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .timeline-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--tierra);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--verde-campo);
+        }
+        
+        .timeline-event {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+        
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            background: var(--verde-activo);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--verde-activo);
+        }
+        
+        .event-date {
+            font-weight: 600;
+            color: var(--verde-campo);
+            margin-bottom: 0.3rem;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .event-details {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .event-tx {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--gris-suave);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .view-tx-btn {
+            background: var(--verde-campo);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--verde-campo);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🌱 AndesChain - Datos en Vivo</div>
+        <div class="network-badge">
+            ⬡ Polygon Mainnet
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- PRODUCT SELECTOR -->
+        <div class="product-selector">
+            <h2 class="selector-title">Consultar Trazabilidad</h2>
+            <div class="product-input">
+                <input type="text" id="productIdInput" placeholder="Ingresa ID del producto (ej: PA-2602, ALM-2602)" value="PA-2602">
+                <button onclick="loadProductHistory()">Buscar</button>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalEvents">-</div>
+                <div class="stat-label">Eventos Registrados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">-</div>
+                <div class="stat-label">Última Actualización</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="producer">-</div>
+                <div class="stat-label">Productor</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="network">Polygon</div>
+                <div class="stat-label">Red Blockchain</div>
+            </div>
+        </div>
+
+        <!-- LOADING -->
+        <div class="loading" id="loading" style="display: none;">
+            ⏳ Consultando blockchain...
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="timeline-container" id="timelineContainer" style="display: none;">
+            <h2 class="section-title">Historial de Trazabilidad</h2>
+            <div class="timeline" id="timeline"></div>
+        </div>
+
+        <!-- NO EVENTS -->
+        <div class="no-events" id="noEvents" style="display: none;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <div>No se encontraron eventos para este producto</div>
+            <div style="margin-top: 0.5rem; color: #999; font-size: 0.9rem;">
+                Verifica que el ID sea correcto o que el producto haya sido registrado en blockchain
+            </div>
+        </div>
+    </div>
+
+    <!-- Web3 y Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="config.js"></script>
+    
+    <script>
+        const eventTypeIcons = {
+            'siembra': '🌱',
+            'emergencia': '🌿',
+            'riego': '💧',
+            'fertilizacion': '🌾',
+            'control': '🔬',
+            'cosecha': '🥔',
+            'default': '📝'
+        };
+
+        async function loadProductHistory() {
+            const productId = document.getElementById('productIdInput').value.trim();
+            
+            if (!productId) {
+                alert('Ingresa un ID de producto');
+                return;
+            }
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('timelineContainer').style.display = 'none';
+            document.getElementById('noEvents').style.display = 'none';
+            document.getElementById('statsGrid').style.display = 'none';
+            
+            try {
+                // Inicializar blockchain
+                await blockchain.init();
+                
+                // Obtener eventos del producto
+                const events = await blockchain.getProductHistory(productId);
+                
+                // Ocultar loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (events.length === 0) {
+                    document.getElementById('noEvents').style.display = 'block';
+                    return;
+                }
+                
+                // Mostrar stats
+                document.getElementById('statsGrid').style.display = 'grid';
+                document.getElementById('totalEvents').textContent = events.length;
+                
+                const lastEvent = events[events.length - 1];
+                const daysSince = Math.floor((Date.now() - lastEvent.timestamp.getTime()) / (1000 * 60 * 60 * 24));
+                document.getElementById('lastUpdate').textContent = daysSince === 0 ? 'Hoy' : `Hace ${daysSince}d`;
+                document.getElementById('producer').textContent = blockchain.formatAddress(lastEvent.producer);
+                
+                // Mostrar timeline
+                document.getElementById('timelineContainer').style.display = 'block';
+                const timeline = document.getElementById('timeline');
+                timeline.innerHTML = '';
+                
+                events.forEach((event, index) => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'timeline-event';
+                    
+                    const icon = eventTypeIcons[event.eventType.toLowerCase()] || eventTypeIcons.default;
+                    const date = event.timestamp.toLocaleDateString('es-CL', { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    let metadata = {};
+                    try {
+                        metadata = typeof event.metadata === 'string' ? 
+                            JSON.parse(event.metadata) : event.metadata;
+                    } catch (e) {
+                        metadata = event.metadata;
+                    }
+                    
+                    eventDiv.innerHTML = `
+                        <div class="event-date">${date}</div>
+                        <div class="event-title">${icon} ${event.eventType}</div>
+                        <div class="event-details">
+                            <strong>Ubicación:</strong> ${event.location}<br>
+                            ${metadata.notes ? `<strong>Notas:</strong> ${metadata.notes}<br>` : ''}
+                            ${metadata.quantity ? `<strong>Cantidad:</strong> ${metadata.quantity} kg<br>` : ''}
+                            ${metadata.quality ? `<strong>Calidad:</strong> ${metadata.quality}<br>` : ''}
+                            <strong>Productor:</strong> ${blockchain.formatAddress(event.producer)}
+                        </div>
+                        <div class="event-tx">
+                            <span>Evento #${index + 1} verificado en Polygon</span>
+                            <a href="${BLOCKCHAIN_CONFIG.explorerUrl}/address/${BLOCKCHAIN_CONFIG.contractAddress}" 
+                               target="_blank" 
+                               class="view-tx-btn">Ver Contrato</a>
+                        </div>
+                    `;
+                    
+                    timeline.appendChild(eventDiv);
+                });
+                
+            } catch (error) {
+                console.error('Error cargando historial:', error);
+                document.getElementById('loading').style.display = 'none';
+                alert(`Error consultando blockchain: ${error.message}`);
+            }
+        }
+
+        // Cargar automáticamente al inicio si hay productId en URL
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('productId') || urlParams.get('lote');
+            
+            if (productId) {
+                document.getElementById('productIdInput').value = productId;
+                loadProductHistory();
+            }
+        });
+    </script>
+</body>
+</html>

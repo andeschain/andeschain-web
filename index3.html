@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain.io | Infraestructura de Confianza Alimentaria</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'slate': { 950: '#020617' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-card { background: white; border-radius: 24px; border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.1); }
+        .nav-link { cursor: pointer; position: relative; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background: #10B981; transition: width 0.3s; }
+        .nav-link:hover::after { width: 100%; }
+        .input-fintual { width: 100%; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; outline: none; transition: 0.2s; font-size: 15px; }
+        .input-fintual:focus { border-color: #10B981; background: white; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    </style>
+</head>
+<body class="antialiased text-slate-800 bg-slate-50/30">
+
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md py-4 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
+                <img src="assets/favicon.png" class="h-8">
+                <span class="font-display font-extrabold text-xl tracking-tighter uppercase">ANDESCHAIN</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                <span class="nav-link" onclick="showPage('historia')">Nosotros</span>
+                <span class="nav-link" onclick="showPage('onboarding')">Productor</span>
+                <span class="nav-link" onclick="showPage('dashboard')">Instituciones</span>
+                <span class="nav-link" onclick="showPage('fod-app')">FOD App</span>
+            </div>
+            <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" class="bg-corp-900 text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase hover:scale-105 transition-all shadow-lg">Agendar Demo</a>
+        </div>
+    </nav>
+
+    <main id="page-home" class="page-section active pt-32 pb-20">
+        <section class="max-w-6xl mx-auto px-6 text-center">
+            <span class="inline-block py-1.5 px-4 rounded-full bg-corp-50 text-corp-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">Infraestructura de Verdad Alimentaria</span>
+            <h1 class="font-display text-5xl md:text-8xl font-extrabold text-slate-950 tracking-tighter leading-[0.9] mb-10">
+                Si un producto tiene historia,<br><span class="text-corp-500">nosotros la certificamos.</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-slate-500 font-light max-w-3xl mx-auto mb-12">
+                AndesChain es el puente entre el esfuerzo del productor y la certeza del consumidor. Evidencia digital inmutable para alimentos con identidad.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="showPage('onboarding')" class="bg-corp-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-corp-500 transition-all shadow-xl">Certificar mi Origen</button>
+                <button onclick="showPage('dashboard')" class="bg-white border border-slate-200 text-slate-600 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">Ver Dashboard Público</button>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-6 mt-32">
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="glass-card p-8">
+                    <i class="fas fa-satellite text-corp-500 text-3xl mb-6"></i>
+                    <h3 class="font-bold text-xl mb-3">Satelital</h3>
+                    <p class="text-sm text-slate-500 font-light">Validación de predios mediante geocercas satelitales.</p>
+                </div>
+                <div class="glass-card p-8">
+                    <i class="fas fa-link text-corp-500 text-3xl mb-6"></i>
+                    <h3 class="font-bold text-xl mb-3">Blockchain</h3>
+                    <p class="text-sm text-slate-500 font-light">Registros inalterables en la red Polygon POS.</p>
+                </div>
+                <div class="glass-card p-8">
+                    <i class="fas fa-leaf text-corp-500 text-3xl mb-6"></i>
+                    <h3 class="font-bold text-xl mb-3">Ética</h3>
+                    <p class="text-sm text-slate-500 font-light">Visibilización real de la agricultura familiar.</p>
+                </div>
+                <div class="glass-card p-8">
+                    <i class="fas fa-qrcode text-corp-500 text-3xl mb-6"></i>
+                    <h3 class="font-bold text-xl mb-3">FOD</h3>
+                    <p class="text-sm text-slate-500 font-light">Ficha de Origen Digital para el consumidor final.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="page-historia" class="page-section pt-32 pb-20 bg-white">
+        <section class="max-w-4xl mx-auto px-6">
+            <h2 class="font-display text-4xl md:text-6xl font-extrabold mb-12 tracking-tight">Del IBM Aptiva al <span class="text-corp-500">Barro de Paine.</span></h2>
+            <div class="prose prose-lg text-slate-600 font-light space-y-8">
+                <p>Mi nombre es Jorge. En 1995, recibí mi primer computador IBM Aptiva. Ese fue el inicio de un viaje autodidacta por la tecnología que me llevó a Oracle e IBM en roles corporativos regionales.</p>
+                <div class="bg-slate-50 p-8 rounded-[32px] border-l-4 border-corp-500 italic">
+                    "AndesChain nace de la unión de mis 20 años en tecnología y mis 11 años viviendo y trabajando el mundo rural en Quillagua."
+                </div>
+                <p>En 2013, renuncié a la seguridad corporativa para vivir solo en mi parcela en El Vínculo, Paine. Allí descubrí el <strong>Esfuerzo Invisible</strong>: productores extraordinarios cuya identidad se perdía en camiones anónimos.</p>
+                <p>Hoy, AndesChain digitaliza esa verdad. No vendemos software; vendemos certeza para que el mundo sepa quién cultivó su comida.</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-onboarding" class="page-section pt-32 pb-20">
+        <section class="max-w-2xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Registro de Identidad Digital</h2>
+                <p class="text-slate-500">Comencemos el proceso de certificación. Solo te tomará 3 minutos.</p>
+            </div>
+            
+            <form id="onboardingForm" class="glass-card p-10 space-y-8 bg-white shadow-2xl">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Perfil</label>
+                        <select class="input-fintual"><option>Agricultor (Cultivo)</option><option>Emprendedor (Producto)</option></select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">RUT</label>
+                        <input type="text" placeholder="12.345.678-9" class="input-fintual">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Nombre Empresa / Predio</label>
+                    <input type="text" placeholder="Ej. El Otro Huerto" class="input-fintual">
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Variedad Cultivada</label>
+                        <input type="text" placeholder="Ej. Papa Astrid" class="input-fintual">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Ubicación (Comuna)</label>
+                        <input type="text" placeholder="Paine" class="input-fintual">
+                    </div>
+                </div>
+                <button type="button" onclick="alert('Datos guardados. Siguiente paso: Verificación Satelital.')" class="w-full bg-corp-600 text-white py-5 rounded-2xl font-bold shadow-lg shadow-corp-100">Crear mi Identidad Digital</button>
+            </form>
+        </section>
+    </div>
+
+    <div id="page-fod-app" class="page-section pt-32 pb-20 bg-slate-900">
+        <section class="max-w-md mx-auto px-6">
+            <div class="glass-card bg-white p-6 shadow-2xl overflow-hidden rounded-[40px]">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-[10px] font-bold bg-corp-100 text-corp-600 px-3 py-1 rounded-full uppercase italic">FOD Scanner Activo</span>
+                    <i class="fas fa-user-circle text-slate-300 text-2xl"></i>
+                </div>
+                
+                <div class="relative bg-slate-100 aspect-square rounded-[32px] overflow-hidden flex flex-col items-center justify-center border-2 border-dashed border-slate-200">
+                    <i class="fas fa-camera text-4xl text-slate-300 mb-4"></i>
+                    <p class="text-xs font-bold text-slate-400">Capturar Evidencia Cruda</p>
+                    
+                    <div class="absolute bottom-4 left-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-2xl">
+                        <div class="flex justify-between text-[8px] font-bold uppercase text-slate-500">
+                            <span>GPS: Paine (-33.8, -70.7)</span>
+                            <span>Temp: 24°C</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-4">
+                    <select class="input-fintual text-sm font-bold">
+                        <option>Hito: Siembra</option>
+                        <option>Hito: Cosecha</option>
+                        <option>Hito: Poda</option>
+                        <option>Hito: Floración</option>
+                    </select>
+                    <button onclick="alert('Registrando en Polygon...')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold">Firmar Hito en Blockchain</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-dashboard" class="page-section pt-32 pb-20">
+        <section class="max-w-6xl mx-auto px-6">
+            <header class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-xs font-bold text-corp-500 uppercase tracking-widest mb-2">Dashboard Institucional</h2>
+                    <h1 class="text-4xl font-extrabold tracking-tighter italic">Municipalidad de Paine</h1>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-8">
+                    <div class="text-center"><p class="text-[10px] font-bold text-slate-400 uppercase">Productores</p><p class="text-xl font-bold">42</p></div>
+                    <div class="text-center"><p class="text-[10px] font-bold text-slate-400 uppercase">Has Verificadas</p><p class="text-xl font-bold">120</p></div>
+                </div>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-8">
+                    <h3 class="font-bold mb-6 flex items-center gap-2"><i class="fas fa-map-marked-alt text-corp-500"></i> Mapa de Resiliencia Alimentaria</h3>
+                    <div class="bg-slate-100 h-64 rounded-3xl flex items-center justify-center">
+                        <p class="text-xs text-slate-400 italic">Cargando Capa Satelital (Paine Central)...</p>
+                    </div>
+                </div>
+                <div class="glass-card p-8">
+                    <h3 class="font-bold mb-6 flex items-center gap-2"><i class="fas fa-list-check text-corp-500"></i> Auditoría en Tiempo Real</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 border-b border-slate-50">
+                            <div><p class="text-xs font-bold">Lote #001 - Juan (Paine)</p><p class="text-[9px] text-slate-400">COSECHA VERIFICADA</p></div>
+                            <span class="text-[9px] font-mono bg-emerald-50 text-emerald-600 px-2 py-1 rounded">0x34f...</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 border-b border-slate-50">
+                            <div><p class="text-xs font-bold">Sidra Puchacay - Ana</p><p class="text-[9px] text-slate-400">PUNTO DE ORIGEN OK</p></div>
+                            <span class="text-[9px] font-mono bg-emerald-50 text-emerald-600 px-2 py-1 rounded">0x92e...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="py-20 border-t border-slate-100 bg-white">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-[10px] font-black tracking-[0.4em] text-slate-300 uppercase italic">AndesChain.io · 2026 · Paine, Chile</p>
+        </div>
+    </footer>
+
+    <script>
+        function showPage(id) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Historia Detrás de lo que Nutre a tu Familia | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;600&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+            color: #0f172a; 
+        }
+        
+        h1, h2, h3, .headline { font-family: 'Outfit', sans-serif; }
+        
+        /* Visor de Fotos Dinámico - Reparado */
+        .photo-viewer {
+            position: relative;
+            width: 100%;
+            height: 450px; /* Un poco más de aire */
+            border-radius: 32px;
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+        
+        .photo-viewer img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 1.2s ease-out;
+            transform: scale(1.1); /* Zoom sutil de fondo */
+        }
+        
+        .photo-viewer img.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 1;
+        }
+        
+        /* Timeline Interactivo - Optimizado para persistencia */
+        .timeline-step {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding-left: 3rem;
+        }
+        
+        .timeline-step:hover { transform: translateX(8px); }
+        
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 18px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        /* Estado Activo Persistente */
+        .timeline-step.active-state::before {
+            background: #10b981;
+            border-color: #d1fae5;
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
+            width: 18px;
+            height: 18px;
+            left: 16px;
+            top: 6px;
+        }
+
+        .timeline-step.active-state {
+            background: rgba(16, 185, 129, 0.03);
+            border-radius: 16px;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #e2e8f0 0%, #cbd5e1 100%);
+        }
+        
+        .card-premium {
+            background: white;
+            border-radius: 32px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 60px -20px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+        }
+        
+        .trust-badge {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 9999px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .trust-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @media (max-width: 768px) {
+            .photo-viewer { height: 300px; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="trust-badge text-white px-5 py-2.5 text-[10px] font-bold tracking-[0.15em] uppercase flex items-center gap-2.5 shadow-2xl">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+            Verificado por AndesChain.io
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-6 py-24 md:py-32">
+        
+        <header class="text-center mb-20 space-y-6">
+            <div class="inline-block mb-4">
+                <span class="text-xs font-semibold tracking-widest uppercase text-amber-600 bg-amber-50 px-4 py-2 rounded-full border border-amber-100">
+                    Trazabilidad Blockchain
+                </span>
+            </div>
+            
+            <h1 class="headline text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6">
+                La historia detrás de <br>
+                <span class="gradient-text">lo que nutre a tu familia</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
+                Cada origen merece ser conocido. Esta es la historia inmutable de tu <strong class="font-semibold text-slate-900">Papa Desirée · Lote 001</strong>.
+            </p>
+        </header>
+
+        <section class="mb-12">
+            <div class="card-premium p-4 md:p-6">
+                <div class="photo-viewer shadow-2xl" id="photoViewer">
+                    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=1000&q=80" alt="Cosecha Final" id="photo-harvest" class="active">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1000&q=80" alt="Siembra" id="photo-sowing">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1000&q=80" alt="Crecimiento" id="photo-growth">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1000&q=80" alt="Cuidado Sostenible" id="photo-care">
+                </div>
+                <div class="text-center py-6">
+                    <p class="text-sm text-slate-500 font-medium" id="photoCaption">
+                        <i class="fas fa-camera text-emerald-500 mr-2"></i>
+                        Cosecha Final — El triunfo del productor
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-24">
+            <div class="card-premium p-8 md:p-12">
+                <h2 class="headline text-3xl font-bold mb-12 text-center">Del Campo a tu Mesa</h2>
+                
+                <div class="relative space-y-4">
+                    <div class="timeline-line"></div>
+                    
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-sowing', 'Día 0 — Inicio del ciclo en suelo regenerado', this)" onmouseenter="changePhoto('photo-sowing', 'Día 0 — Inicio del ciclo en suelo regenerado', this)">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 0 · La Siembra</div>
+                                <p class="font-bold text-xl text-slate-900">15 de Septiembre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Georreferenciación satelital activa desde el momento cero.</p>
+                            </div>
+                            <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold border border-emerald-200 w-fit">Semilla Certificada</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-growth', 'Día 45 — Desarrollo vegetativo controlado', this)" onmouseenter="changePhoto('photo-growth', 'Día 45 — Desarrollo vegetativo controlado', this)">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 45 · Crecimiento</div>
+                                <p class="font-bold text-xl text-slate-900">30 de Octubre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Monitoreo de humedad del suelo en tiempo real.</p>
+                            </div>
+                            <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-xs font-bold border border-blue-200 w-fit">Ahorro Hídrico</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step p-6" onclick="changePhoto('photo-care', 'Día 80 — Control biológico sin químicos', this)" onmouseenter="changePhoto('photo-care', 'Día 80 — Control biológico sin químicos', this)">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 80 · Cuidado</div>
+                                <p class="font-bold text-xl text-slate-900">4 de Diciembre, 2025</p>
+                                <p class="text-sm text-slate-600 mt-2">Control biológico documentado y verificado.</p>
+                            </div>
+                            <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-full text-xs font-bold border border-amber-200 w-fit">100% Orgánico</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step p-6 active-state" onclick="changePhoto('photo-harvest', 'Día 125 — Cosecha final verificada', this)" onmouseenter="changePhoto('photo-harvest', 'Día 125 — Cosecha final verificada', this)">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 uppercase mb-2">Día 125 · La Cosecha</div>
+                                <p class="font-bold text-xl text-slate-900">18 de Enero, 2026</p>
+                                <p class="text-sm text-slate-600 mt-2">Recolección manual con verificación de calidad.</p>
+                            </div>
+                            <div class="bg-emerald-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg w-fit">Lote Verificado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid md:grid-cols-3 gap-6 mb-24">
+            <div class="card-premium p-8 text-center bg-blue-50/30 border-blue-100">
+                <i class="fas fa-tint text-blue-500 text-2xl mb-4"></i>
+                <p class="text-4xl font-black text-slate-900">342L</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Agua Ahorrada</p>
+            </div>
+            <div class="card-premium p-8 text-center bg-emerald-50/30 border-emerald-100">
+                <i class="fas fa-leaf text-emerald-500 text-2xl mb-4"></i>
+                <p class="text-4xl font-black text-slate-900">12kg</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">CO₂ Capturado</p>
+            </div>
+            <div class="card-premium p-8 text-center bg-slate-50 border-slate-200">
+                <i class="fas fa-link text-slate-500 text-2xl mb-4"></i>
+                <p class="text-2xl font-black text-slate-900 font-mono">0x7a...</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Polygon ID</p>
+            </div>
+        </section>
+
+        <footer class="text-center pt-12 border-t border-slate-100">
+            <img src="assets/favicon.png" alt="Logo" class="w-8 h-8 mx-auto mb-6 grayscale opacity-50">
+            <p class="text-[10px] font-black tracking-[0.3em] text-slate-300 uppercase">AndesChain.io · Paine, Chile · 2026</p>
+        </footer>
+
+    </main>
+
+    <script>
+        function changePhoto(photoId, caption, element) {
+            // 1. Cambiar fotos
+            const allPhotos = document.querySelectorAll('.photo-viewer img');
+            allPhotos.forEach(img => img.classList.remove('active'));
+            
+            const targetPhoto = document.getElementById(photoId);
+            if (targetPhoto) targetPhoto.classList.add('active');
+            
+            // 2. Actualizar caption
+            document.getElementById('photoCaption').innerHTML = `<i class="fas fa-camera text-emerald-500 mr-2"></i>${caption}`;
+            
+            // 3. Cambiar estado activo en el timeline
+            const allSteps = document.querySelectorAll('.timeline-step');
+            allSteps.forEach(step => step.classList.remove('active-state'));
+            element.classList.add('active-state');
+        }
+    </script>
+</body>
+</html>

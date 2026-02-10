@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Auditoría de Origen Lote #001</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --emerald: #10B981; --slate-900: #0F172A; --bg: #FAFAFA; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--slate-900); }
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+        .glass-card { background: white; border-radius: 32px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); }
+        .timeline-dot { transition: all 0.3s ease; cursor: pointer; }
+        .active-step { background-color: var(--emerald) !important; transform: scale(1.2); box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        #dynamic-viewer { transition: opacity 0.4s ease; object-fit: cover; }
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0.6; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6">
+        <div class="max-w-6xl mx-auto py-4 flex justify-between items-center">
+            <a href="https://andeschain.io" class="flex items-center gap-2 hover:opacity-70 transition-opacity">
+                <img src="assets/favicon.png" class="h-8 w-auto">
+                <span class="font-extrabold text-lg tracking-tighter uppercase">ANDESCHAIN</span>
+            </a>
+            <div class="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                <i class="fas fa-link mr-1"></i> Polygon Verified
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20">
+        <section class="max-w-6xl mx-auto px-6 mb-16">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight leading-none mb-8">
+                    Papa Desirée <br><span class="text-emerald-500">Lote #001</span>
+                </h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100">
+                        <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                            <i class="fas fa-user-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-slate-400">Productor Certificado</p>
+                            <p class="font-semibold text-slate-900 text-sm">Jorge — El Otro Huerto</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100">
+                        <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                            <i class="fas fa-location-dot text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-slate-400">Punto de Origen</p>
+                            <p class="font-semibold text-slate-900 text-sm italic">Paine, RM (-33.812, -70.741)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                
+                <div class="sticky top-32">
+                    <div class="glass-card overflow-hidden relative">
+                        <img id="dynamic-viewer" src="assets/papas.jpg" class="w-full aspect-[4/5] object-cover" alt="Evidencia de Lote">
+                        <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
+                            <p id="viewer-date" class="text-[10px] font-mono opacity-80 uppercase tracking-widest mb-1">18 Enero 2026</p>
+                            <h3 id="viewer-title" class="text-2xl font-bold">Cosecha Verificada</h3>
+                            <p id="viewer-desc" class="text-sm opacity-90 font-light leading-relaxed">Registro final de lote en El Otro Huerto.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="py-4">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-12">Logs de Trazabilidad</h2>
+                    
+                    <div class="relative space-y-12 pl-8 border-l-2 border-slate-100">
+                        
+                        <div class="timeline-item relative" onmouseover="updateViewer('siembra')">
+                            <div class="timeline-dot absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-slate-200 border-4 border-white"></div>
+                            <div class="cursor-pointer group">
+                                <h4 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Siembra Registrada</h4>
+                                <div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 inline-block px-2 py-0.5 rounded mt-1">15 de Septiembre, 2025</div>
+                                <p class="text-xs text-slate-500 mt-3 leading-relaxed">Sello satelital del predio. Coordenadas validadas en bloque.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item relative" onmouseover="updateViewer('cosecha')">
+                            <div class="timeline-dot active-step absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-slate-200 border-4 border-white"></div>
+                            <div class="cursor-pointer group">
+                                <h4 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Cosecha y Cierre de Lote</h4>
+                                <div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 inline-block px-2 py-0.5 rounded mt-1">18 de Enero, 2026</div>
+                                <p class="text-xs text-slate-500 mt-3 leading-relaxed">Fin de ciclo productivo. Lote #001 disponible para auditoría.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item relative" onmouseover="updateViewer('almacenamiento')">
+                            <div class="timeline-dot absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-slate-200 border-4 border-white"></div>
+                            <div class="cursor-pointer group">
+                                <h4 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Vigencia de Producto</h4>
+                                <div class="text-[10px] font-bold text-blue-600 bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">Exp: 18 de Abril, 2026</div>
+                                <p class="text-xs text-slate-500 mt-3 leading-relaxed">Ventana de consumo óptimo bajo condiciones de guarda estandarizadas.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-20 space-y-4">
+                        <div class="glass-card p-6 border-l-4 border-emerald-500">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Transaction Hash (Polygon)</p>
+                            <code class="text-[10px] font-mono text-emerald-700 break-all bg-emerald-50/50 p-2 rounded block">0x71c4b4360f9d89fc923dad89c63740284b3e8e2b</code>
+                        </div>
+                        <div class="text-center">
+                            <a href="https://polygonscan.com" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-emerald-600 transition-colors">
+                                VERIFICAR EN EXPLORADOR <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 border-t border-gray-100 text-center">
+        <p class="text-[9px] font-black tracking-[0.3em] text-slate-300 uppercase">AndesChain.io · 2026</p>
+    </footer>
+
+    <script>
+        const logs = {
+            siembra: {
+                img: 'assets/siembra.jpg',
+                date: '15 de Septiembre, 2025',
+                title: 'Siembra Registrada',
+                desc: 'Predio: El Otro Huerto. Coordenadas: -33.812, -70.741.'
+            },
+            cosecha: {
+                img: 'assets/papas.jpg',
+                date: '18 de Enero, 2026',
+                title: 'Cosecha Verificada',
+                desc: 'Lote #001 recolectado y firmado digitalmente por Jorge.'
+            },
+            almacenamiento: {
+                img: 'assets/papas.jpg',
+                date: 'Post-Cosecha 2026',
+                title: 'Vigencia de Producto',
+                desc: 'Ventana de frescura de 90 días registrada en el protocolo.'
+            }
+        };
+
+        function updateViewer(step) {
+            const viewer = document.getElementById('dynamic-viewer');
+            const title = document.getElementById('viewer-title');
+            const date = document.getElementById('viewer-date');
+            const desc = document.getElementById('viewer-desc');
+
+            viewer.classList.remove('fade-in');
+            void viewer.offsetWidth; 
+            viewer.src = logs[step].img;
+            viewer.classList.add('fade-in');
+
+            title.innerText = logs[step].title;
+            date.innerText = logs[step].date;
+            desc.innerText = logs[step].desc;
+
+            document.querySelectorAll('.timeline-dot').forEach(dot => dot.classList.remove('active-step'));
+            event.currentTarget.querySelector('.timeline-dot').classList.add('active-step');
+        }
+    </script>
+</body>
+</html>

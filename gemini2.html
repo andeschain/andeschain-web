@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Auditoría Inmutable #001</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --emerald: #10B981; --slate-900: #0F172A; --bg: #FAFAFA; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--slate-900); }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+        .glass-card { background: white; border-radius: 24px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        .active-step { background-color: var(--emerald) !important; transform: scale(1.1); }
+        .contract-gradient { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6">
+        <div class="max-w-6xl mx-auto py-4 flex justify-between items-center">
+            <a href="https://andeschain.io" class="flex items-center gap-2 hover:opacity-70 transition-opacity">
+                <img src="assets/favicon.png" class="h-8 w-auto">
+                <span class="font-extrabold text-lg tracking-tighter uppercase">ANDESCHAIN</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocolo V1.0 Activo</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-6">
+        <section class="max-w-6xl mx-auto mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-emerald-600 font-bold text-[10px] uppercase tracking-[0.2em] mb-4">
+                        <i class="fas fa-certificate"></i> Certificado de Origen Inmutable
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter leading-none">
+                        Juan <span class="text-emerald-500">| El Otro Huerto</span>
+                    </h1>
+                </div>
+                <div class="glass-card px-8 py-5 border-t-4 border-emerald-500 bg-white">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Emisión Registrada</p>
+                    <p class="text-3xl font-black text-slate-900">0.4 <span class="text-sm font-medium text-slate-500">kgCO2e</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-12">
+                <div class="p-5 glass-card bg-white">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Productor</p>
+                    <p class="font-bold text-slate-900 leading-tight">Juan</p>
+                </div>
+                <div class="p-5 glass-card bg-white">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Variedad</p>
+                    <p class="font-bold text-slate-900 leading-tight">Papa Desirée</p>
+                </div>
+                <div class="p-5 glass-card bg-white">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Ubicación</p>
+                    <p class="font-bold text-slate-900 leading-tight">Paine, Chile</p>
+                </div>
+                <div class="p-5 glass-card bg-white">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Lote ID</p>
+                    <p class="font-bold text-emerald-600 leading-tight">#001</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto mb-16">
+            <div class="contract-gradient rounded-[32px] p-8 md:p-12 text-white overflow-hidden relative">
+                <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-6 italic">Evidencia Criptográfica</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Contract Address (Polygon)</p>
+                                <code class="bg-white/5 p-4 rounded-xl block text-emerald-400 text-xs font-mono break-all border border-white/10">
+                                    0x34fe41bd7a2a34597bd098f29e2256b86ca60611
+                                </code>
+                            </div>
+                            <div class="flex gap-8">
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Token Standard</p>
+                                    <p class="text-sm font-semibold italic">ERC-721</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Network</p>
+                                    <p class="text-sm font-semibold italic">Polygon POS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <a href="https://polygonscan.com/address/0x34fe41bd7a2a34597bd098f29e2256b86ca60611" target="_blank" 
+                           class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-4 rounded-2xl text-center transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-search"></i> Explorar en PolygonScan
+                        </a>
+                        <p class="text-[10px] text-slate-400 text-center italic">Los datos mostrados arriba son extraídos directamente de la mainnet.</p>
+                    </div>
+                </div>
+                <i class="fas fa-shield-halved absolute -right-10 -bottom-10 text-[200px] opacity-5"></i>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div class="sticky top-32">
+                    <div class="glass-card overflow-hidden relative">
+                        <img id="dynamic-viewer" src="assets/papas.jpg" class="w-full aspect-square object-cover" alt="Evidencia Visual">
+                        <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-slate-900 to-transparent text-white">
+                            <h3 id="viewer-title" class="text-2xl font-bold mb-1 italic">Cosecha Final</h3>
+                            <p id="viewer-desc" class="text-sm opacity-80 font-light italic">Lote #001 verificado por Juan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-12 pl-6 border-l border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mb-8">Eventos del Lote</h3>
+                    
+                    <div class="relative cursor-pointer" onmouseover="updateViewer('siembra')">
+                        <div class="timeline-dot absolute -left-[31px] top-1 w-2 h-2 rounded-full bg-slate-300 border-4 border-white transition-all"></div>
+                        <h4 class="font-bold text-xl italic">Registro de Siembra</h4>
+                        <p class="text-emerald-600 font-bold text-xs mt-1 uppercase">15 Septiembre 2025</p>
+                        <p class="text-sm text-slate-500 mt-2 font-light italic">Bloque inicial acuñado por Juan en Paine.</p>
+                    </div>
+
+                    <div class="relative cursor-pointer" onmouseover="updateViewer('cosecha')">
+                        <div class="timeline-dot active-step absolute -left-[31px] top-1 w-2 h-2 rounded-full bg-slate-300 border-4 border-white transition-all"></div>
+                        <h4 class="font-bold text-xl italic">Certificación de Cosecha</h4>
+                        <p class="text-emerald-600 font-bold text-xs mt-1 uppercase">18 Enero 2026</p>
+                        <p class="text-sm text-slate-500 mt-2 font-light italic">Validación final de origen y calidad.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 text-center">
+        <p class="text-[10px] font-black tracking-[0.4em] text-slate-300 uppercase">AndesChain · Inmutable por Diseño</p>
+    </footer>
+
+    <script>
+        const realData = {
+            siembra: {
+                img: 'assets/siembra.jpg',
+                title: 'Registro de Siembra',
+                desc: 'Predio verificado: El Otro Huerto. Agricultor: Juan.'
+            },
+            cosecha: {
+                img: 'assets/papas.jpg',
+                title: 'Certificación de Cosecha',
+                desc: 'Lote #001 cerrado. Calidad y origen garantizados por Juan.'
+            }
+        };
+
+        function updateViewer(step) {
+            const viewer = document.getElementById('dynamic-viewer');
+            const title = document.getElementById('viewer-title');
+            const desc = document.getElementById('viewer-desc');
+            viewer.src = realData[step].img;
+            title.innerText = realData[step].title;
+            desc.innerText = realData[step].desc;
+            document.querySelectorAll('.timeline-dot').forEach(dot => dot.classList.remove('active-step'));
+            event.currentTarget.querySelector('.timeline-dot').classList.add('active-step');
+        }
+    </script>
+</body>
+</html>

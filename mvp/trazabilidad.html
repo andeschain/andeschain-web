@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trazabilidad: Papas Astrid - AndesChain</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+        
+        :root {
+            --tierra: #2C1810;
+            --verde-campo: #4A7C59;
+            --trigo: #D4A574;
+            --cielo: #E8F1F5;
+            --blanco-puro: #FFFFFF;
+            --gris-suave: #F5F5F3;
+            --acento: #E67E22;
+            --verde-activo: #27AE60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gris-suave);
+            color: var(--tierra);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--blanco-puro);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--verde-campo);
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            background: var(--verde-activo);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .product-hero {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--trigo), var(--verde-campo));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="60">🥔</text></svg>');
+            background-size: cover;
+        }
+        
+        .product-info h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-tag {
+            padding: 0.4rem 1rem;
+            background: var(--gris-suave);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--texto-secundario);
+        }
+        
+        .product-description {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            padding: 1rem;
+            background: var(--gris-suave);
+            border-radius: 8px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--verde-campo);
+        }
+        
+        .timeline-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--tierra);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--verde-campo);
+        }
+        
+        .timeline-event {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+        
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            background: var(--verde-campo);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--verde-campo);
+        }
+        
+        .timeline-event.verified::before {
+            background: var(--verde-activo);
+            box-shadow: 0 0 0 3px var(--verde-activo);
+        }
+        
+        .event-date {
+            font-weight: 600;
+            color: var(--verde-campo);
+            margin-bottom: 0.3rem;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .event-details {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .event-tx {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--gris-suave);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-btn {
+            background: var(--verde-campo);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        .blockchain-info {
+            background: linear-gradient(135deg, var(--verde-campo), #3d6548);
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .blockchain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .blockchain-stat {
+            text-align: center;
+        }
+        
+        .blockchain-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blockchain-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .map-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 400px;
+            background: var(--gris-suave);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-top: 1rem;
+        }
+        
+        .coordinates {
+            font-family: monospace;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            color: var(--verde-campo);
+            font-weight: 600;
+        }
+        
+        .producer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .producer-info {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .producer-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--trigo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .producer-details h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .producer-location {
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .certification-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 0.5rem 1rem;
+            background: var(--verde-campo);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .product-hero {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .blockchain-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🌱 AndesChain</div>
+        <div class="status-badge">
+            <div class="pulse"></div>
+            Verificado en Blockchain
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- PRODUCT HERO -->
+        <div class="product-hero">
+            <div class="product-image"></div>
+            <div class="product-info">
+                <h1>Papas Astrid</h1>
+                <div class="product-meta">
+                    <span class="meta-tag">📍 El Otro Huerto, Paine</span>
+                    <span class="meta-tag">🌱 Variedad: Astrid</span>
+                    <span class="meta-tag">⏱️ Ciclo: 90 días</span>
+                </div>
+                <p class="product-description">
+                    Papas de variedad Astrid cultivadas en El Otro Huerto, comuna de Paine. 
+                    Producción agroecológica con trazabilidad completa desde la siembra hasta la cosecha. 
+                    Cada etapa verificada y registrada en blockchain Polygon.
+                </p>
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Lote</div>
+                        <div class="stat-value">#PA-2602</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Superficie</div>
+                        <div class="stat-value">0.5 ha</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Rendimiento</div>
+                        <div class="stat-value">280 kg</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Estado</div>
+                        <div class="stat-value">✓ Activo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCKCHAIN INFO -->
+        <div class="blockchain-info">
+            <h2 class="section-title" style="color: white;">Certificación Blockchain</h2>
+            <div class="blockchain-grid">
+                <div class="blockchain-stat">
+                    <div class="blockchain-stat-label">Red</div>
+                    <div class="blockchain-stat-value">Polygon</div>
+                </div>
+                <div class="blockchain-stat">
+                    <div class="blockchain-stat-label">Eventos Registrados</div>
+                    <div class="blockchain-stat-value">6</div>
+                </div>
+                <div class="blockchain-stat">
+                    <div class="blockchain-stat-label">Hash de Lote</div>
+                    <div class="blockchain-stat-value" style="font-size: 1rem; font-family: monospace;">0x7a3f...c8d2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="timeline-section">
+            <h2 class="section-title">Trazabilidad Completa</h2>
+            <div class="timeline">
+                <div class="timeline-event verified">
+                    <div class="event-date">15 Noviembre 2025 • 09:30</div>
+                    <div class="event-title">🌱 Siembra</div>
+                    <div class="event-details">
+                        Siembra de semilla certificada variedad Astrid. Densidad: 40,000 plantas/ha.
+                        Coordenadas GPS verificadas satelitalmente.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x9f2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="timeline-event verified">
+                    <div class="event-date">28 Noviembre 2025 • 14:15</div>
+                    <div class="event-title">🌿 Emergencia</div>
+                    <div class="event-details">
+                        Primera emergencia confirmada. Tasa de germinación: 92%. 
+                        Imagen satelital adjunta al registro blockchain.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="timeline-event verified">
+                    <div class="event-date">10 Diciembre 2025 • 08:00</div>
+                    <div class="event-title">💧 Riego por Goteo</div>
+                    <div class="event-details">
+                        Sistema de riego activado. Consumo hídrico registrado: 120 m³.
+                        Eficiencia 95% vs riego tradicional.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="timeline-event verified">
+                    <div class="event-date">22 Diciembre 2025 • 16:30</div>
+                    <div class="event-title">🌾 Fertilización Orgánica</div>
+                    <div class="event-details">
+                        Aplicación de compost orgánico certificado. Origen verificado: 
+                        Cooperativa El Manzano, Pirque. Dosis: 2.5 ton/ha.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="timeline-event verified">
+                    <div class="event-date">25 Enero 2026 • 11:00</div>
+                    <div class="event-title">🔬 Inspección Fitosanitaria</div>
+                    <div class="event-details">
+                        Control preventivo realizado. Estado sanitario: Excelente.
+                        Sin presencia de tizón tardío ni plagas. Registros fotográficos adjuntos.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="timeline-event verified">
+                    <div class="event-date">08 Febrero 2026 • 07:00</div>
+                    <div class="event-title">🥔 Cosecha</div>
+                    <div class="event-details">
+                        Cosecha manual completada. Rendimiento total: 280 kg de calibre comercial.
+                        Temperatura de almacenaje: 8°C. Humedad relativa: 85%.
+                    </div>
+                    <div class="event-tx">
+                        <span>TX: 0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6</span>
+                        <button class="copy-btn" onclick="copyTx(this)">Copiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAP -->
+        <div class="map-section">
+            <h2 class="section-title">Ubicación Verificada</h2>
+            <div class="map-placeholder">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🗺️</div>
+                <div>El Otro Huerto - Localidad El Vínculo</div>
+                <div class="coordinates">33°49'12.5"S 70°47'23.8"W</div>
+                <div style="margin-top: 1rem; font-size: 0.9rem;">
+                    Validación satelital: Sentinel-2 | Última actualización: 05 Feb 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCER -->
+        <div class="producer-card">
+            <h2 class="section-title">Productor</h2>
+            <div class="producer-info">
+                <div class="producer-avatar">👨‍🌾</div>
+                <div class="producer-details">
+                    <h3>Jorge - El Otro Huerto</h3>
+                    <div class="producer-location">📍 El Vínculo, Comuna de Paine, Región Metropolitana</div>
+                    <div style="margin-top: 0.5rem; color: #666; line-height: 1.6;">
+                        11 años de experiencia en agricultura sustentable. Ex-IBM y Oracle. 
+                        Fundador de Comercial Rural Quillagua y AndesChain Technologies.
+                    </div>
+                </div>
+            </div>
+            <div class="certification-badges">
+                <span class="badge">✓ Productor Verificado</span>
+                <span class="badge">🌱 Prácticas Agroecológicas</span>
+                <span class="badge">💧 Uso Eficiente del Agua</span>
+                <span class="badge">📡 Blockchain Certificado</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyTx(btn) {
+            const tx = btn.parentElement.querySelector('span').textContent.replace('TX: ', '');
+            navigator.clipboard.writeText(tx);
+            btn.textContent = '✓ Copiado';
+            setTimeout(() => btn.textContent = 'Copiar', 2000);
+        }
+    </script>
+</body>
+</html>
