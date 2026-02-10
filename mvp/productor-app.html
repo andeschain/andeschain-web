@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cosecha - AndesChain</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+        
+        :root {
+            --tierra: #2C1810;
+            --verde-campo: #4A7C59;
+            --trigo: #D4A574;
+            --cielo: #E8F1F5;
+            --blanco-puro: #FFFFFF;
+            --gris-suave: #F5F5F3;
+            --acento: #E67E22;
+            --verde-activo: #27AE60;
+            --error: #E74C3C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gris-suave);
+            color: var(--tierra);
+            min-height: 100vh;
+            padding-bottom: 6rem;
+        }
+        
+        .header {
+            background: var(--verde-campo);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .welcome-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .producer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--trigo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .producer-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .producer-details p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .active-harvest {
+            background: var(--cielo);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .harvest-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--verde-activo);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .form-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--tierra);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--tierra);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--verde-campo);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .photo-upload {
+            border: 2px dashed var(--verde-campo);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            background: var(--cielo);
+        }
+        
+        .photo-upload:hover {
+            background: #d4e5ec;
+        }
+        
+        .photo-upload input {
+            display: none;
+        }
+        
+        .photo-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .photo-preview {
+            display: none;
+            margin-top: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 300px;
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .location-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .location-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--verde-activo);
+            font-size: 0.9rem;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quick-btn {
+            padding: 1rem;
+            background: white;
+            border: 2px solid var(--verde-campo);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .quick-btn:hover {
+            background: var(--verde-campo);
+            color: white;
+        }
+        
+        .quick-btn.active {
+            background: var(--verde-campo);
+            color: white;
+        }
+        
+        .quick-btn-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .quick-btn-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--verde-campo);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #3d6548;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 124, 89, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .success-message {
+            display: none;
+            background: var(--verde-activo);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: slideDown 0.3s;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .recent-events {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .event-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-left: 3px solid var(--verde-campo);
+            background: var(--gris-suave);
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+        
+        .event-time {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .event-type {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        
+        .event-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .blockchain-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.8rem;
+            background: var(--verde-activo);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+        }
+        
+        @media (max-width: 480px) {
+            .location-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌱 AndesChain Productor</h1>
+        <p>Registro en tiempo real de tu cosecha</p>
+    </div>
+
+    <div class="container">
+        <!-- WELCOME CARD -->
+        <div class="welcome-card">
+            <div class="producer-info">
+                <div class="avatar">🌰</div>
+                <div class="producer-details">
+                    <h3>Productor de Almendras</h3>
+                    <p>Predio Los Nogales - Valdivia</p>
+                </div>
+            </div>
+            <div class="active-harvest">
+                <div class="harvest-status">
+                    <div class="pulse-dot"></div>
+                    Cosecha activa
+                </div>
+                <div style="font-size: 0.9rem; color: #666;">
+                    Lote: ALM-2602
+                </div>
+            </div>
+        </div>
+
+        <!-- SUCCESS MESSAGE -->
+        <div class="success-message" id="successMessage">
+            ✓ Evento registrado exitosamente en blockchain
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="quick-actions">
+            <div class="quick-btn" onclick="selectEventType('siembra')">
+                <div class="quick-btn-icon">🌱</div>
+                <div class="quick-btn-label">Siembra</div>
+            </div>
+            <div class="quick-btn active" onclick="selectEventType('cosecha')">
+                <div class="quick-btn-icon">🌰</div>
+                <div class="quick-btn-label">Cosecha</div>
+            </div>
+            <div class="quick-btn" onclick="selectEventType('riego')">
+                <div class="quick-btn-icon">💧</div>
+                <div class="quick-btn-label">Riego</div>
+            </div>
+            <div class="quick-btn" onclick="selectEventType('fertilizacion')">
+                <div class="quick-btn-icon">🌾</div>
+                <div class="quick-btn-label">Fertilización</div>
+            </div>
+            <div class="quick-btn" onclick="selectEventType('control')">
+                <div class="quick-btn-icon">🔬</div>
+                <div class="quick-btn-label">Control</div>
+            </div>
+            <div class="quick-btn" onclick="selectEventType('otro')">
+                <div class="quick-btn-icon">📝</div>
+                <div class="quick-btn-label">Otro</div>
+            </div>
+        </div>
+
+        <!-- REGISTRATION FORM -->
+        <div class="form-card">
+            <h2 class="form-title">Registrar Evento de Cosecha</h2>
+            
+            <form id="harvestForm" onsubmit="submitEvent(event)">
+                <div class="form-group">
+                    <label for="eventType">Tipo de Evento</label>
+                    <select id="eventType" required>
+                        <option value="cosecha" selected>Cosecha</option>
+                        <option value="siembra">Siembra</option>
+                        <option value="riego">Riego</option>
+                        <option value="fertilizacion">Fertilización</option>
+                        <option value="control">Control Fitosanitario</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Cantidad Cosechada (kg)</label>
+                    <input type="number" id="quantity" placeholder="Ej: 150" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="quality">Calidad del Producto</label>
+                    <select id="quality" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="premium">Premium</option>
+                        <option value="primera">Primera</option>
+                        <option value="segunda">Segunda</option>
+                        <option value="descarte">Descarte</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Ubicación GPS</label>
+                    <div class="location-status">
+                        <span>📍</span>
+                        <span id="gpsStatus">Capturando ubicación...</span>
+                    </div>
+                    <div class="location-info">
+                        <input type="text" id="latitude" placeholder="Latitud" readonly>
+                        <input type="text" id="longitude" placeholder="Longitud" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Observaciones</label>
+                    <textarea id="notes" placeholder="Describe cualquier detalle importante: clima, condiciones del suelo, particularidades de esta cosecha..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Fotografía (Opcional)</label>
+                    <label for="photoUpload" class="photo-upload">
+                        <div class="photo-icon">📸</div>
+                        <div>Toca para tomar foto o seleccionar</div>
+                        <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">
+                            La foto se vinculará al registro blockchain
+                        </div>
+                        <input type="file" id="photoUpload" accept="image/*" capture="environment" onchange="previewPhoto(event)">
+                    </label>
+                    <div class="photo-preview" id="photoPreview"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Registrar en Blockchain
+                </button>
+            </form>
+        </div>
+
+        <!-- RECENT EVENTS -->
+        <div class="recent-events">
+            <h2 class="form-title">Eventos Recientes</h2>
+            
+            <div class="event-item">
+                <div style="flex: 1;">
+                    <div class="event-time">Hoy, 10:30</div>
+                    <div class="event-type">🌰 Cosecha - Sector Norte</div>
+                    <div class="event-details">125 kg • Calidad Premium</div>
+                    <span class="blockchain-badge">✓ Blockchain</span>
+                </div>
+            </div>
+
+            <div class="event-item">
+                <div style="flex: 1;">
+                    <div class="event-time">Ayer, 16:45</div>
+                    <div class="event-type">💧 Riego por Goteo</div>
+                    <div class="event-details">85 m³ • Eficiencia 94%</div>
+                    <span class="blockchain-badge">✓ Blockchain</span>
+                </div>
+            </div>
+
+            <div class="event-item">
+                <div style="flex: 1;">
+                    <div class="event-time">3 días atrás</div>
+                    <div class="event-type">🔬 Control de Calidad</div>
+                    <div class="event-details">Estado sanitario: Excelente</div>
+                    <span class="blockchain-badge">✓ Blockchain</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Capturar GPS automáticamente
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                    document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                    document.getElementById('gpsStatus').textContent = 'Ubicación capturada ✓';
+                    document.getElementById('gpsStatus').style.color = 'var(--verde-activo)';
+                },
+                (error) => {
+                    document.getElementById('gpsStatus').textContent = 'Error al obtener ubicación';
+                    document.getElementById('gpsStatus').style.color = 'var(--error)';
+                }
+            );
+        }
+
+        function selectEventType(type) {
+            document.querySelectorAll('.quick-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.quick-btn').classList.add('active');
+            document.getElementById('eventType').value = type;
+        }
+
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photoPreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitEvent(e) {
+            e.preventDefault();
+            
+            // Simular envío a blockchain
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Registrando en Polygon...';
+            
+            setTimeout(() => {
+                // Mostrar mensaje de éxito
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                
+                // Generar TX hash simulado
+                const txHash = '0x' + Math.random().toString(16).substr(2, 64);
+                console.log('Transaction Hash:', txHash);
+                
+                // Resetear formulario
+                btn.disabled = false;
+                btn.textContent = 'Registrar en Blockchain';
+                e.target.reset();
+                document.getElementById('photoPreview').style.display = 'none';
+                
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+        }
+
+        // Actualizar hora actual
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+            // Se puede usar para mostrar la hora actual en algún lugar
+        }
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
