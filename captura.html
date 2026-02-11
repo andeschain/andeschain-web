@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Captura de Origen</title>
+    <title>Captura de Origen | AndesChain</title>
     
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,19 +27,16 @@
         body { background-color: #FAFAFA; color: #1F2937; -webkit-tap-highlight-color: transparent; }
         .glass-panel { background: white; border: 1px solid #F3F4F6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-radius: 24px; }
         
-        /* Estilo Toggle Fintual */
-        .toggle-checkbox:checked { right: 0; border-color: #10B981; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #10B981; }
-        
         .btn-capture {
             background: #022C22; color: white; border-radius: 20px; padding: 18px;
             font-weight: 700; width: 100%; transition: all 0.2s; font-family: 'Outfit', sans-serif;
             text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px;
         }
         .btn-capture:active { transform: scale(0.98); }
+        .btn-capture:disabled { opacity: 0.5; background: #9CA3AF; cursor: not-allowed; }
 
         .loading-overlay {
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px);
             z-index: 100; position: absolute; inset: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center; border-radius: 24px;
         }
@@ -47,23 +44,23 @@
         select { -webkit-appearance: none; appearance: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-20 select-none">
 
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2">
             <img src="assets/favicon.png" class="h-6">
             <span class="font-display font-bold text-lg tracking-tight text-corp-900">AndesChain</span>
         </div>
-        <div class="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full" id="gps-badge">
-            <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span class="text-[10px] font-bold text-red-600 uppercase">Sin GPS</span>
+        <div class="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full transition-colors" id="gps-badge">
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" id="gps-dot"></div>
+            <span class="text-[10px] font-bold text-gray-500 uppercase" id="gps-text">Buscando GPS...</span>
         </div>
     </nav>
 
     <main class="max-w-md mx-auto p-6 space-y-6">
 
         <section class="glass-panel p-6">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">1. Identidad Digital</h2>
+            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">1. Identidad del Lote</h2>
             
             <div class="bg-gray-100 p-1 rounded-xl flex mb-4 relative">
                 <button onclick="setRole('productor')" id="btn-productor" class="flex-1 py-3 rounded-lg text-xs font-bold transition-all bg-white shadow-sm text-corp-600">
@@ -75,10 +72,10 @@
             </div>
 
             <div class="space-y-3">
-                <input type="text" placeholder="Nombre del Lote / Producto (Ej: Lote 1)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-semibold outline-none focus:border-corp-500 transition-colors">
+                <input type="text" id="input-lote" placeholder="Nombre del Lote (Ej: Lote 1)" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-semibold outline-none focus:border-corp-500 transition-colors">
                 
                 <div class="relative">
-                    <select id="stage-select" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-semibold outline-none focus:border-corp-500 transition-colors appearance-none">
+                    <select id="stage-select" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-semibold outline-none focus:border-corp-500 transition-colors">
                         </select>
                     <div class="absolute right-4 top-3.5 pointer-events-none text-gray-400">
                         <i class="fas fa-chevron-down text-xs"></i>
@@ -88,11 +85,13 @@
         </section>
 
         <section class="glass-panel p-1 relative overflow-hidden group">
-            <div id="camera-placeholder" class="bg-gray-900 rounded-[20px] aspect-[4/5] flex flex-col items-center justify-center text-gray-400 relative cursor-pointer" onclick="document.getElementById('file-input').click()">
+            <div id="camera-placeholder" class="bg-gray-900 rounded-[20px] aspect-[4/5] flex flex-col items-center justify-center text-gray-400 relative cursor-pointer active:scale-95 transition-transform" onclick="triggerCamera()">
                 
-                <i class="fas fa-camera text-4xl mb-4 group-hover:scale-110 transition-transform text-corp-500"></i>
-                <p class="text-xs font-bold uppercase tracking-widest text-center px-8">Tocar para abrir cámara y capturar verdad</p>
-                <p class="text-[9px] mt-2 opacity-50">Se extraerá: GPS, Hora, Clima</p>
+                <div class="w-16 h-16 rounded-full border-2 border-white/20 flex items-center justify-center mb-4">
+                    <i class="fas fa-camera text-2xl text-white"></i>
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-center px-8 text-white">Tocar para capturar</p>
+                <p class="text-[9px] mt-2 text-gray-500">Georeferencia Obligatoria</p>
                 
                 <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
             </div>
@@ -100,58 +99,48 @@
             <img id="image-preview" class="hidden w-full h-full object-cover rounded-[20px] aspect-[4/5]">
 
             <div id="data-overlay" class="hidden absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/50">
-                <div class="flex justify-between items-end">
+                <div class="flex justify-between items-center">
                     <div>
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Evidencia Inmutable</p>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Metadata Extraída</p>
                         <div class="flex gap-4 text-[10px] font-mono text-corp-900 font-bold">
-                            <div><i class="fas fa-map-marker-alt text-corp-500"></i> <span id="val-lat">--</span>, <span id="val-lon">--</span></div>
-                            <div><i class="fas fa-clock text-corp-500"></i> <span id="val-time">--:--</span></div>
+                            <div><i class="fas fa-satellite-dish text-corp-500 mr-1"></i> <span id="val-lat">--</span>, <span id="val-lon">--</span></div>
                         </div>
                     </div>
-                    <i class="fas fa-check-circle text-2xl text-corp-500"></i>
+                    <div class="bg-corp-100 text-corp-600 w-8 h-8 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check"></i>
+                    </div>
                 </div>
             </div>
 
             <div id="loader" class="hidden loading-overlay">
-                <div class="w-10 h-10 border-4 border-corp-100 border-t-corp-500 rounded-full animate-spin mb-3"></div>
-                <p class="text-xs font-bold text-corp-600 uppercase tracking-widest animate-pulse">Extrayendo Metadata...</p>
+                <i class="fas fa-sync fa-spin text-3xl text-corp-500 mb-3"></i>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Validando Satélites...</p>
             </div>
         </section>
 
-        <button id="btn-submit" onclick="submitData()" class="btn-capture opacity-50 cursor-not-allowed" disabled>
-            <i class="fas fa-cube mr-2"></i> Acuñar en Blockchain
+        <button id="btn-submit" onclick="submitData()" class="btn-capture" disabled>
+            <i class="fas fa-lock mr-2"></i> Enviar a Verificación
         </button>
         
-        <p class="text-center text-[10px] text-gray-400 font-medium">
-            Al acuñar, la geolocalización será pública en el contrato de AndesChain.
+        <p class="text-center text-[10px] text-gray-400 font-medium px-4">
+            Al enviar, la evidencia quedará en espera de validación por el nodo AndesChain antes de ser pública.
         </p>
 
     </main>
 
     <script>
-        // CONFIGURACIÓN DE ETAPAS
         const stages = {
             productor: [
-                "1. Selección de Semilla", 
-                "2. Siembra / Plantación", 
-                "3. Crecimiento (Fertilización)", 
-                "4. Floración", 
-                "5. Poda / Manejo", 
-                "6. Cosecha (Hito Final)"
+                "1. Siembra / Plantación", "2. Fertilización", "3. Floración", "4. Poda / Manejo", "5. Cosecha Final"
             ],
             emprendedor: [
-                "1. Recepción Materia Prima (Vínculo)", 
-                "2. Maceración / Procesado", 
-                "3. Filtrado / Cocción", 
-                "4. Envasado", 
-                "5. Etiquetado (Producto Terminado)"
+                "1. Recepción Materia Prima", "2. Procesado / Maceración", "3. Cocción / Filtrado", "4. Envasado", "5. Etiquetado"
             ]
         };
 
         let currentRole = 'productor';
-        let gpsReady = false;
+        let gpsCoordinates = null;
 
-        // 1. INICIALIZACIÓN
         window.onload = function() {
             setRole('productor');
             initGPS();
@@ -160,103 +149,130 @@
         function setRole(role) {
             currentRole = role;
             const select = document.getElementById('stage-select');
-            select.innerHTML = ""; // Limpiar
-            
-            // Llenar select
-            stages[role].forEach(stage => {
-                const option = document.createElement('option');
-                option.text = stage;
-                option.value = stage;
-                select.add(option);
+            select.innerHTML = "";
+            stages[role].forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s; opt.text = s; select.add(opt);
             });
-
-            // Estilos de botones
+            
+            // UI Toggle
             const btnP = document.getElementById('btn-productor');
             const btnE = document.getElementById('btn-emprendedor');
-            
             if(role === 'productor') {
-                btnP.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all bg-white shadow-sm text-corp-600";
-                btnE.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all text-gray-400";
+                btnP.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all bg-white shadow-sm text-corp-600 border border-corp-100";
+                btnE.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-gray-600";
             } else {
-                btnE.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all bg-white shadow-sm text-corp-600";
-                btnP.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all text-gray-400";
+                btnE.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all bg-white shadow-sm text-corp-600 border border-corp-100";
+                btnP.className = "flex-1 py-3 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-gray-600";
             }
         }
 
-        // 2. GEOLOCALIZACIÓN FORZOSA
+        // 1. GPS OBLIGATORIO
         function initGPS() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const badge = document.getElementById('gps-badge');
-                        badge.className = "flex items-center gap-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100";
-                        badge.innerHTML = `<div class="w-2 h-2 bg-emerald-500 rounded-full"></div><span class="text-[10px] font-bold text-emerald-700 uppercase">GPS Satelital Activo</span>`;
-                        gpsReady = true;
-                        
-                        // Guardar datos en memoria para cuando saque la foto
-                        window.currentLat = position.coords.latitude.toFixed(6);
-                        window.currentLon = position.coords.longitude.toFixed(6);
+                    (pos) => {
+                        gpsCoordinates = {
+                            lat: pos.coords.latitude.toFixed(6),
+                            lon: pos.coords.longitude.toFixed(6)
+                        };
+                        updateGPSStatus(true);
                     },
-                    (error) => {
-                        alert("AndesChain requiere GPS para certificar el origen. Por favor activa la ubicación.");
-                    },
+                    (err) => { updateGPSStatus(false); },
                     { enableHighAccuracy: true }
                 );
+            } else { updateGPSStatus(false); }
+        }
+
+        function updateGPSStatus(active) {
+            const badge = document.getElementById('gps-badge');
+            const dot = document.getElementById('gps-dot');
+            const text = document.getElementById('gps-text');
+
+            if(active) {
+                badge.className = "flex items-center gap-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 transition-colors";
+                dot.className = "w-2 h-2 bg-emerald-500 rounded-full";
+                text.className = "text-[10px] font-bold text-emerald-700 uppercase";
+                text.innerText = "GPS Activo";
+            } else {
+                badge.className = "flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full border border-red-100 transition-colors";
+                dot.className = "w-2 h-2 bg-red-500 rounded-full animate-pulse";
+                text.className = "text-[10px] font-bold text-red-600 uppercase";
+                text.innerText = "GPS Requerido";
             }
         }
 
-        // 3. MANEJO DE CÁMARA Y SIMULACIÓN DE EXTRACCIÓN
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!gpsReady) {
-                alert("Esperando señal GPS... Intenta en unos segundos.");
+        function triggerCamera() {
+            if(!gpsCoordinates) {
+                alert("⚠️ AndesChain necesita tu ubicación exacta.\n\nPor favor activa el GPS e intenta de nuevo.");
+                initGPS();
                 return;
             }
+            document.getElementById('file-input').click();
+        }
+
+        // 2. PROCESAMIENTO DE IMAGEN
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if(!file) return;
 
             // Mostrar Loader
             document.getElementById('loader').classList.remove('hidden');
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(evt) {
                 setTimeout(() => {
-                    // Ocultar Loader y mostrar imagen
+                    // UI: Mostrar Imagen
                     document.getElementById('loader').classList.add('hidden');
                     document.getElementById('camera-placeholder').classList.add('hidden');
-                    
                     const img = document.getElementById('image-preview');
-                    img.src = e.target.result;
+                    img.src = evt.target.result;
                     img.classList.remove('hidden');
 
-                    // Mostrar Datos "Extraídos"
+                    // UI: Mostrar Datos
                     document.getElementById('data-overlay').classList.remove('hidden');
-                    
-                    // Llenar datos reales del momento (Simulando extracción EXIF instantánea)
-                    const now = new Date();
-                    document.getElementById('val-lat').innerText = window.currentLat;
-                    document.getElementById('val-lon').innerText = window.currentLon;
-                    document.getElementById('val-time').innerText = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+                    document.getElementById('val-lat').innerText = gpsCoordinates.lat;
+                    document.getElementById('val-lon').innerText = gpsCoordinates.lon;
 
-                    // Habilitar botón final
+                    // Habilitar Botón
                     const btn = document.getElementById('btn-submit');
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
                     btn.disabled = false;
-                    btn.classList.add('bg-corp-500', 'shadow-lg', 'shadow-emerald-200');
+                    btn.className = "btn-capture bg-corp-900 shadow-xl shadow-emerald-200 cursor-pointer";
 
-                }, 1500); // 1.5s de delay para simular procesamiento
+                }, 1200); // Delay artificial para "sentir" el proceso
             };
             reader.readAsDataURL(file);
         }
 
+        // 3. ENVÍO DE DATOS (Conexión con Admin Dashboard)
         function submitData() {
             const btn = document.getElementById('btn-submit');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Subiendo a Polygon...';
+            const loteName = document.getElementById('input-lote').value || "Lote S/N";
             
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Encriptando...';
+            
+            // Crear Objeto de Evidencia
+            const evidencia = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('es-CL'),
+                productor: currentRole === 'productor' ? "Agricultor Verificado" : "Emprendedor Local",
+                lote: loteName,
+                stage: document.getElementById('stage-select').value,
+                lat: gpsCoordinates.lat,
+                lon: gpsCoordinates.lon,
+                status: "PENDIENTE" // Clave para que aparezca en Admin
+            };
+
+            // Guardar en LocalStorage (Simulando Backend)
+            // Admin.html leerá esta misma clave 'andesDB'
+            let db = JSON.parse(localStorage.getItem('andesDB')) || [];
+            db.push(evidencia);
+            localStorage.setItem('andesDB', JSON.stringify(db));
+
             setTimeout(() => {
-                alert("¡Éxito! Hito registrado. Tu ID de Transacción es: 0x34fe...60611");
+                alert("✅ Evidencia Enviada al Nodo Validador.\n\nEl equipo de AndesChain verificará los datos satelitales antes de acuñar en Polygon.");
                 window.location.reload();
-            }, 2000);
+            }, 1500);
         }
     </script>
 </body>
