@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entidades Públicas | AndesChain</title>
+    
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#022C22' },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #FFFFFF; color: #1E293B; -webkit-font-smoothing: antialiased; }
+        .glass-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; padding: 40px; transition: all 0.3s ease; }
+        .glass-card:hover { border-color: #10B981; transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        
+        .btn-primary {
+            background-color: #0F172A; color: white; font-weight: 700; 
+            padding: 16px 32px; border-radius: 16px; transition: all 0.2s;
+            display: inline-block; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .btn-primary:hover { background-color: #000000; transform: translateY(-2px); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 py-4">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <img src="assets/favicon.png" class="h-8 group-hover:scale-110 transition-transform">
+                <span class="font-display font-extrabold text-xl tracking-tighter uppercase text-slate-900">AndesChain</span>
+            </a>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-sm font-bold text-slate-400 hover:text-corp-600 py-2">Volver</a>
+                <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" target="_blank" class="bg-corp-600 text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wide hover:bg-corp-500 transition-all shadow-md">
+                    Reunión Técnica
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-40 pb-20 px-6 bg-slate-50 border-b border-slate-200">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                Para Municipios e INDAP
+            </span>
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 tracking-tighter leading-tight">
+                Auditoría en tiempo real para el <br><span class="text-corp-500">Gasto Público Rural.</span>
+            </h1>
+            <p class="text-xl text-slate-500 font-light mb-12 max-w-3xl mx-auto leading-relaxed">
+                Transforme los subsidios y programas de fomento (PRODESAL) en datos medibles. Sepa qué se produce en su comuna, dónde y por quién, con validación inmutable.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="dashboard.html" class="btn-primary shadow-xl shadow-slate-300">
+                    <i class="fas fa-chart-pie mr-2 text-corp-500"></i> Ver Dashboard Demo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-24 px-6">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="font-display text-4xl font-extrabold mb-6">El problema de la <br><span class="text-red-500">"Caja Negra".</span></h2>
+                <div class="space-y-6 text-slate-600 leading-relaxed">
+                    <p>Hoy, un Municipio entrega fertilizantes, semillas o fondos de riego, pero <strong>pierde la trazabilidad</strong> en el momento de la entrega.</p>
+                    <ul class="space-y-4 mt-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times-circle text-red-400 mt-1"></i>
+                            <span>No hay certeza de si el cultivo prosperó.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times-circle text-red-400 mt-1"></i>
+                            <span>No hay datos para reportes ODS reales.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times-circle text-red-400 mt-1"></i>
+                            <span>Riesgo de reventa o mal uso de beneficios.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card bg-slate-900 text-white border-slate-800">
+                <div class="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
+                    <div class="w-3 h-3 bg-corp-500 rounded-full animate-pulse"></div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-corp-400">Solución AndesChain</p>
+                </div>
+                <h3 class="font-bold text-2xl mb-4">Visibilidad Total del Territorio</h3>
+                <p class="text-slate-400 font-light mb-8">
+                    Le entregamos un panel de control donde cada productor valida sus hitos (siembra, cosecha) con evidencia fotográfica y satelital georeferenciada.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-center">
+                        <p class="text-2xl font-black text-white">100%</p>
+                        <p class="text-[9px] font-bold text-slate-500 uppercase">Trazabilidad</p>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/10 text-center">
+                        <p class="text-2xl font-black text-white">0%</p>
+                        <p class="text-[9px] font-bold text-slate-500 uppercase">Papel</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-corp-50 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-center font-display text-3xl font-bold mb-16">Valor Estratégico para la Comuna</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-[32px] shadow-sm">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl mb-6">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Cumplimiento ODS</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        Genere reportes automáticos para la FAO sobre Seguridad Alimentaria (ODS 2) y Producción Responsable (ODS 12) con datos duros, no estimaciones.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-[32px] shadow-sm border-2 border-corp-100">
+                    <div class="w-12 h-12 bg-corp-100 text-corp-600 rounded-2xl flex items-center justify-center text-xl mb-6">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Marca Territorial</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        Posicione a su comuna (ej. "Tomate de Paine") como un origen certificado y libre de fraude. Proteja a sus productores locales de la competencia desleal.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-[32px] shadow-sm">
+                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl mb-6">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Fe Pública Digital</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        Use la tecnología Blockchain (Ley N° 19.799) para dar fe de que los recursos públicos fueron utilizados correctamente, auditables por cualquier ciudadano.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 text-center">
+        <div class="max-w-2xl mx-auto glass-card border-slate-200">
+            <i class="fas fa-info-circle text-3xl text-slate-300 mb-4"></i>
+            <h3 class="font-bold text-xl mb-2">Nota de Implementación</h3>
+            <p class="text-slate-500 text-sm mb-8">
+                La plataforma que verá a continuación (Dashboard) está operando con datos de prueba en la red <strong>Polygon Testnet</strong>. 
+                Para implementar un piloto real con los productores de su comuna, agende una sesión técnica.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-black">
+                    Ir a Dashboard
+                </a>
+                <a href="https://calendar.google.com/calendar/appointments/schedules/jorge@quillagua.cl" target="_blank" class="bg-white border border-slate-200 text-slate-600 px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-slate-50">
+                    Contactar Equipo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 bg-white border-t border-slate-100 text-center">
+        <p class="text-[10px] font-black tracking-[0.4em] text-slate-300 uppercase italic">AndesChain Technology · Infraestructura Pública</p>
+    </footer>
+
+</body>
+</html>
