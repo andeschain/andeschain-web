@@ -12,14 +12,10 @@
 
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#059669', 600: '#047857', 900: '#022C22' },
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
-                }
-            }
+            theme: { extend: {
+                colors: { 'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#059669', 600: '#047857', 900: '#022C22' } },
+                fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] }
+            } }
         }
     </script>
     
@@ -29,7 +25,6 @@
         .timeline-line { position: absolute; left: 23px; top: 20px; bottom: 0; width: 2px; background: #E2E8F0; z-index: 0; }
         .timeline-item { position: relative; z-index: 10; padding-left: 60px; padding-bottom: 40px; }
         .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #059669; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
-        /* Filtro para que el mapa se vea profesional (Blanco y negro al inicio) */
         .tech-map { filter: grayscale(100%) contrast(1.2); transition: all 0.5s ease; }
         .tech-map:hover { filter: grayscale(0%) contrast(1); }
     </style>
@@ -48,7 +43,6 @@
     </nav>
 
     <main id="fod-container" class="pt-24 px-6 max-w-xl mx-auto hidden">
-        
         <header class="text-center mb-10">
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Ficha de Origen Digital</p>
             <h1 id="fod-name" class="font-display text-4xl font-extrabold text-slate-900 leading-tight mb-2">...</h1>
@@ -88,7 +82,7 @@
             </h3>
             <div class="relative pl-2" id="fod-timeline">
                 <div class="timeline-line"></div>
-                </div>
+            </div>
         </section>
 
         <section class="glass-card bg-slate-900 text-white p-0 mb-12 overflow-hidden relative border-slate-800">
@@ -96,194 +90,92 @@
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Evidencia Satelital</h3>
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                    <span class="text-[9px] font-bold text-white uppercase">Live View</span>
+                    <span class="text-[9px] font-bold text-white uppercase tracking-widest">Live Sat-Feed</span>
                 </div>
             </div>
 
             <div class="w-full h-72 bg-slate-800 relative group overflow-hidden">
-                <iframe 
-                    id="google-map"
-                    width="100%" 
-                    height="100%" 
-                    frameborder="0" 
-                    scrolling="no" 
-                    marginheight="0" 
-                    marginwidth="0" 
-                    class="tech-map w-full h-full object-cover"
-                    src="about:blank">
-                </iframe>
+                <iframe id="google-map" width="100%" height="100%" frameborder="0" scrolling="no" class="tech-map w-full h-full object-cover"></iframe>
                 <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_50px_rgba(0,0,0,0.5)]"></div>
             </div>
             
             <div class="p-6 grid grid-cols-2 gap-6 bg-slate-900 border-t border-white/10">
                 <div>
-                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1">Latitud</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1 tracking-widest">Latitud GPS</p>
                     <p id="fod-lat" class="font-mono text-sm text-slate-200">...</p>
                 </div>
                 <div>
-                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1">Longitud</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1 tracking-widest">Longitud GPS</p>
                     <p id="fod-lon" class="font-mono text-sm text-slate-200">...</p>
                 </div>
             </div>
-            
-            <div class="px-6 pb-6 bg-slate-900">
-                <button onclick="abrirMapaExterno()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-3 flex items-center justify-center gap-3 transition group">
-                    <i class="fas fa-external-link-alt text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-white">Ver en Google Maps</span>
-                </button>
-            </div>
         </section>
-
+        
         <div class="text-center pb-12">
-            <a href="index.html" class="inline-block px-6 py-2 border border-slate-200 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-corp-600 transition-colors uppercase tracking-widest">
-                Volver a AndesChain
-            </a>
+            <a href="index.html" class="inline-block px-6 py-2 border border-slate-200 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-corp-600 transition-colors uppercase tracking-widest">Cerrar Expediente</a>
         </div>
     </main>
 
     <div id="loader" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center">
         <div class="w-12 h-12 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando Bloque...</p>
-    </div>
-
-    <div id="error-screen" class="hidden fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-8 text-center">
-        <i class="fas fa-bug text-4xl text-red-400 mb-6"></i>
-        <h2 class="font-bold text-xl text-slate-900 mb-2">Producto no encontrado</h2>
-        <p id="error-msg" class="text-slate-500 mb-8 max-w-xs mx-auto text-sm">...</p>
-        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase">Volver al Dashboard</a>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Consultando Nodo...</p>
     </div>
 
     <script src="js/simulador.js"></script>
-    
     <script>
-        // --- COPIA DE SEGURIDAD (Para que funcione si o si en Laptop) ---
-        const BACKUP_DB = [
-            {
-                id: "1001",
-                nombre: "Almendras Nonpareil",
-                lote: "Lote #04-2026",
-                productor: "Agrícola El Vínculo",
-                ubicacion: "Paine, Sector Poniente",
-                lat: "-33.8155",
-                lon: "-70.7512",
-                fecha: "12 Feb 2026",
-                historia: "Almendras de calibre exportación. Producidas con riego por goteo optimizado.",
-                img: "assets/papas.jpg",
-                hitos: [{ titulo: "Cosecha", fecha: "10 Feb 2026", desc: "Recolección mecánica." }]
-            }
-        ];
-
-        // Variables globales
         let currentCoords = { lat: 0, lon: 0 };
 
         window.onload = function() {
-            // SEGURO DE VIDA: Si en 2 segundos sigue cargando, forzamos quitar el loader
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                if(!loader.classList.contains('hidden')) {
-                    console.warn("Forzando inicio por demora...");
-                    // Si no ha cargado nada, intenta iniciar aunque sea con error
-                    if(document.getElementById('fod-container').classList.contains('hidden')) {
-                         try { initPage(); } catch(e) { console.log("Reintento fallido"); }
-                    }
-                }
-            }, 2000);
-
-            // Carga normal
             setTimeout(() => {
                 try {
                     initPage();
                 } catch (e) {
-                    console.error("Error crítico:", e);
+                    console.error("Error:", e);
                     document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('error-screen').classList.remove('hidden');
-                    document.getElementById('error-msg').innerText = "Error técnico: " + e.message;
+                    alert("ID de producto no encontrado.");
                 }
-            }, 600);
+            }, 800);
         };
 
         function initPage() {
-            // 1. Obtener ID URL
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
+            const db = window.getProductos();
+            const p = db.find(item => item.id == id);
 
-            if (!id) throw new Error("ID faltante en URL");
+            if (!p) throw new Error("Producto no existe");
 
-            // 2. Buscar Producto (Prioridad: Simulador -> Respaldo)
-            let p = null;
-            
-            // Intentar leer simulador
-            if (typeof window.getProductos === 'function') {
-                const db = window.getProductos();
-                p = db.find(item => item.id == id);
-            }
-
-            // Si no está, buscar en respaldo (Arreglo para laptops vacíos)
-            if (!p) {
-                console.log("Usando base de datos de respaldo...");
-                p = BACKUP_DB.find(item => item.id == id);
-            }
-
-            // Si falla todo
-            if (!p) throw new Error("ID no existe en ninguna base de datos");
-
-            // 3. MOSTRAR CONTENIDO (Romper el loop)
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('fod-container').classList.remove('hidden');
 
-            // 4. Llenar Textos
-            document.getElementById('fod-name').innerText = p.nombre || "Sin Nombre";
-            document.getElementById('fod-location').innerText = p.ubicacion || "-";
-            document.getElementById('fod-producer').innerText = p.productor || "Productor";
-            document.getElementById('fod-lote').innerText = p.lote || "Lote S/N";
-            document.getElementById('fod-date').innerText = p.fecha || "-";
-            document.getElementById('fod-story').innerText = p.historia || "Certificación válida.";
+            document.getElementById('fod-name').innerText = p.nombre;
+            document.getElementById('fod-location').innerText = p.ubicacion;
+            document.getElementById('fod-producer').innerText = p.productor;
+            document.getElementById('fod-lote').innerText = p.lote;
+            document.getElementById('fod-date').innerText = p.fecha;
+            document.getElementById('fod-story').innerText = p.historia;
+            document.getElementById('fod-img').src = p.img;
             
-            // Imagen (con fallback)
-            const imgEl = document.getElementById('fod-img');
-            imgEl.src = p.img || "";
-            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/600x400'; };
+            document.getElementById('fod-lat').innerText = p.lat;
+            document.getElementById('fod-lon').innerText = p.lon;
+            
+            // MAPA PROFESIONAL (Formato HTTPS estable)
+            const mapUrl = "https://maps.google.com/maps?q=" + p.lat + "," + p.lon + "&t=k&z=17&ie=UTF8&iwloc=&output=embed";
+            document.getElementById('google-map').src = mapUrl;
 
-            // 5. MAPA SATELITAL (LA CLAVE DEL ARREGLO)
-            if (p.lat && p.lon) {
-                document.getElementById('fod-lat').innerText = p.lat;
-                document.getElementById('fod-lon').innerText = p.lon;
-                currentCoords = { lat: p.lat, lon: p.lon };
-
-                // Construcción de URL "A prueba de balas" (HTTPS + Concatenación simple)
-                // Usamos 'maps.google.com' en vez de 'googleusercontent' que a veces falla
-                const cleanLat = p.lat.toString().trim();
-                const cleanLon = p.lon.toString().trim();
-                
-                const mapUrl = "https://maps.google.com/maps?q=" + cleanLat + "," + cleanLon + "&t=k&z=17&ie=UTF8&iwloc=&output=embed";
-                
-                document.getElementById('google-map').src = mapUrl;
-            }
-
-            // 6. Timeline
             const timeline = document.getElementById('fod-timeline');
             timeline.innerHTML = '<div class="timeline-line"></div>';
-
-            if (p.hitos && p.hitos.length > 0) {
-                p.hitos.forEach(h => {
-                    const item = document.createElement('div');
-                    item.className = "timeline-item";
-                    item.innerHTML = `
-                        <div class="timeline-dot"></div>
-                        <h4 class="font-bold text-lg text-slate-900 leading-tight">${h.titulo}</h4>
-                        <p class="text-[10px] font-bold text-corp-500 uppercase mb-1 tracking-wider">${h.fecha}</p>
-                        <p class="text-sm text-slate-500 font-light">${h.desc}</p>
-                    `;
-                    timeline.appendChild(item);
-                });
-            }
-        }
-
-        function abrirMapaExterno() {
-            if(currentCoords.lat !== 0) {
-                const url = "https://maps.google.com/?q=" + currentCoords.lat + "," + currentCoords.lon;
-                window.open(url, '_blank');
-            }
+            p.hitos.forEach(h => {
+                const item = document.createElement('div');
+                item.className = "timeline-item";
+                item.innerHTML = `
+                    <div class="timeline-dot"></div>
+                    <h4 class="font-bold text-lg text-slate-900 leading-tight">${h.titulo}</h4>
+                    <p class="text-[10px] font-bold text-corp-500 uppercase mb-1 tracking-wider">${h.fecha}</p>
+                    <p class="text-sm text-slate-500 font-light">${h.desc}</p>
+                `;
+                timeline.appendChild(item);
+            });
         }
     </script>
 </body>
