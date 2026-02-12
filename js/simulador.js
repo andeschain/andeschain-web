@@ -12,9 +12,28 @@ console.log("✅ Simulador AndesChain Iniciado");
 const seedData = [
     {
         id: "1001",
-        nombre: "Almendras Nonpareil",
+        nombre: "Papa Astrid",
         lote: "Lote #04-2026",
-        productor: "Agrícola El Vínculo",
+        productor: "Agrícola & Comercial Rural Quillagua",
+        tipo: "Agricultor",
+        ubicacion: "Paine, El Vínculo",
+        lat: "--33.846294574770894", 
+        lon: "-70.80930607600027",
+        fecha: "30 Ene 2026",
+        estado: "VERIFIED",
+        historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
+        img: "assets/cosecha.jpg", 
+        hitos: [
+            { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández" },
+            { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos." },
+            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual, y con amor a las 8:34 am. Temp: 20°C." }
+        ]
+    },
+    {
+        id: "3003",
+        nombre: "Almendra Nonpareil",
+        lote: "Lote #05-2026",
+        productor: "Agrícola Sol de Almendras",
         tipo: "Agricultor",
         ubicacion: "Paine, El Vínculo",
         lat: "-33.842301",
