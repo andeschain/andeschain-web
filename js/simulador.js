@@ -1,14 +1,7 @@
 // js/simulador.js
+console.log("✅ Sistema AndesChain: Sincronizando Infraestructura...");
 
-console.log("✅ Simulador AndesChain Iniciado");
-
-// --- IMPORTANTE: LÍNEA DE RESET ---
-// Esta línea borra la memoria vieja para asegurar que carguen los datos nuevos.
-// Bórrala o coméntala (ponle // al inicio) cuando ya veas los productos y quieras empezar a capturar datos nuevos.
-// localStorage.removeItem('andesDB'); 
-// ----------------------------------
-
-// 1. DATOS SEMILLA (Seed Data)
+// 1. DATOS SEMILLA (Base de Datos Maestra)
 const seedData = [
     {
         id: "1001",
@@ -26,7 +19,7 @@ const seedData = [
         hitos: [
             { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández" },
             { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos." },
-            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual, y con amor a las 8:34 am. Temp: 20°C." }
+            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual a las 8:34 am. Temp: 20°C." }
         ]
     },
     {
@@ -59,7 +52,7 @@ const seedData = [
         lon: "-73.109730",
         fecha: "10 Feb 2026",
         estado: "VERIFIED",
-        historia: "Sidra elaborada en colaboración con la Sra. María (Agricultura Familiar Campesina). Manzanas de quintas patrimoniales recuperadas.",
+        historia: "Sidra elaborada en colaboración con la Sra. María (AFC). Manzanas de quintas patrimoniales recuperadas.",
         img: "assets/puchacay.jpg",
         hitos: [
             { titulo: "Recepción", fecha: "15 Dic 2025", desc: "Vínculo con Agricultura Familiar Campesina." },
@@ -69,28 +62,34 @@ const seedData = [
     }
 ];
 
-// 2. INICIALIZADOR ROBUSTO
+// 2. INICIALIZADOR CON SINCRONIZACIÓN AUTOMÁTICA
 (function initAndesChain() {
-    // Si no existe la DB o está vacía, cargamos la semilla
-    let currentDB = localStorage.getItem('andesDB');
-    
-    if (!currentDB || currentDB === '[]') {
-        console.log("⚡ Inicializando AndesChain Genesis Block...");
-        localStorage.setItem('andesDB', JSON.stringify(seedData));
+    let currentDB = JSON.parse(localStorage.getItem('andesDB')) || [];
+    let nuevosAgregados = 0;
+
+    seedData.forEach(seedItem => {
+        const existe = currentDB.find(dbItem => dbItem.id === seedItem.id);
+        if (!existe) {
+            currentDB.push(seedItem);
+            nuevosAgregados++;
+        }
+    });
+
+    if (nuevosAgregados > 0) {
+        localStorage.setItem('andesDB', JSON.stringify(currentDB));
+        console.log(`✨ Sincronizados ${nuevosAgregados} productos nuevos a la memoria local.`);
     } else {
-        console.log("🔄 Base de datos existente cargada.");
+        console.log("🔄 Memoria local actualizada.");
     }
 })();
 
-// 3. FUNCIONES GLOBALES (Conectadas a WINDOW para que el HTML las vea)
-
 window.getProductos = function() {
     return JSON.parse(localStorage.getItem('andesDB')) || [];
-}
+};
 
 window.saveProducto = function(nuevoProducto) {
     let db = window.getProductos();
-    db.unshift(nuevoProducto); // Agregar al principio
+    db.unshift(nuevoProducto);
     localStorage.setItem('andesDB', JSON.stringify(db));
-    console.log("💾 Producto guardado exitosamente");
-}
+    console.log("💾 Registro guardado en Blockchain (Simulado)");
+};
