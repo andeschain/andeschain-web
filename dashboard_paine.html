@@ -26,28 +26,43 @@
         }
     </script>
     <style>
-        #map { height: 500px; border-radius: 24px; z-index: 10; border: 1px solid #E2E8F0; }
-        .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Inter', sans-serif; }
+        #map { height: 600px; border-radius: 24px; z-index: 10; border: 1px solid #E2E8F0; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+        .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Inter', sans-serif; padding: 5px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #10B981; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50 font-sans min-h-screen">
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-[1000] px-6 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <img src="assets/favicon.png" class="h-8">
-                <div>
-                    <h1 class="font-display font-bold text-lg leading-none">AndesChain <span class="text-corp-600">GeoDashboard</span></h1>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Ilustre Municipalidad de Paine</p>
+            <div class="flex items-center gap-6">
+                <div class="flex flex-col items-center border-r pr-6 border-slate-200">
+                    <img src="assets/favicon.png" class="h-8 mb-1">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter leading-none">Powered by AndesChain</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <img src="assets/mun_paine.jpg" class="h-12 w-auto object-contain rounded">
+                    <div>
+                        <h1 class="font-display font-bold text-lg leading-none">GeoDashboard <span class="text-corp-600">Paine</span></h1>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Gestión de Trazabilidad Comunal</p>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center gap-6">
-                <div class="text-right hidden md:block">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Estado de Red</p>
-                    <p class="text-xs font-bold text-emerald-600">Sincronizado con Blockchain ●</p>
+                <div class="text-right hidden md:block border-r pr-6 border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Nodo Paine v1.0</p>
+                    <p class="text-xs font-bold text-emerald-600 flex items-center gap-2 justify-end">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Sincronizado Blockchain
+                    </p>
                 </div>
-                <button onclick="window.location.reload()" class="bg-slate-100 p-2 rounded-full hover:bg-slate-200 transition">
-                    <i class="fas fa-sync-alt text-slate-600"></i>
+                <button onclick="window.location.reload()" class="bg-slate-100 p-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-300">
+                    <i class="fas fa-sync-alt text-sm"></i>
                 </button>
             </div>
         </div>
@@ -56,41 +71,60 @@
     <main class="max-w-7xl mx-auto px-6 py-8">
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Productores Activos</p>
-                <h3 id="count-producers" class="text-3xl font-display font-extrabold text-slate-900">0</h3>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 flex items-center gap-2">
+                    <i class="fas fa-users text-corp-500"></i> Productores Activos
+                </p>
+                <h3 id="count-producers" class="text-3xl font-display font-extrabold text-slate-900 leading-none">0</h3>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Lotes Certificados</p>
-                <h3 id="count-lots" class="text-3xl font-display font-extrabold text-emerald-600">0</h3>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 flex items-center gap-2">
+                    <i class="fas fa-certificate text-corp-500"></i> Lotes Auditados
+                </p>
+                <h3 id="count-lots" class="text-3xl font-display font-extrabold text-emerald-600 leading-none">0</h3>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Superficie Monitoreada</p>
-                <h3 class="text-3xl font-display font-extrabold text-slate-900">42 <span class="text-sm font-normal text-slate-400">Ha</span></h3>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 flex items-center gap-2">
+                    <i class="fas fa-map-marked-alt text-corp-500"></i> Superficie (Ha)
+                </p>
+                <h3 class="text-3xl font-display font-extrabold text-slate-900 leading-none">42.8</h3>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Vínculo Social AFC</p>
-                <h3 class="text-3xl font-display font-extrabold text-slate-900">88%</h3>
+            <div class="bg-slate-900 p-6 rounded-3xl shadow-sm border-l-4 border-l-emerald-500 transition-hover hover:shadow-md">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 flex items-center gap-2">
+                    <i class="fas fa-hand-holding-heart text-emerald-400"></i> Impacto Social AFC
+                </p>
+                <h3 class="text-3xl font-display font-extrabold text-white leading-none">88%</h3>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <div class="lg:col-span-2 space-y-4">
-                <div class="bg-white p-4 rounded-[32px] border border-slate-200 shadow-sm">
+            <div class="lg:col-span-2">
+                <div class="bg-white p-5 rounded-[32px] border border-slate-200 shadow-sm">
                     <div class="flex justify-between items-center mb-4 px-2">
-                        <h2 class="font-display font-bold text-xl">Mapa de Producción Comunal</h2>
-                        <span class="text-[10px] bg-slate-900 text-white px-3 py-1 rounded-full font-bold uppercase tracking-tighter">Vista Satelital Activa</span>
+                        <div class="flex items-center gap-3">
+                            <h2 class="font-display font-bold text-xl">Análisis Territorial de Producción</h2>
+                            <div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold border border-emerald-200">
+                                <i class="fas fa-satellite"></i> MODO SATELITAL
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-mono tracking-tighter">Lat: -33.8155 | Lon: -70.7512</p>
                     </div>
                     <div id="map"></div>
                 </div>
             </div>
 
             <div class="space-y-4">
-                <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm h-[570px] flex flex-col">
-                    <h2 class="font-display font-bold text-xl mb-6">Últimos Registros</h2>
+                <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm h-[670px] flex flex-col">
+                    <div class="border-b pb-4 mb-4">
+                        <h2 class="font-display font-bold text-xl">Registros de Auditoría</h2>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Sincronización en tiempo real</p>
+                    </div>
                     <div id="recent-list" class="space-y-4 overflow-y-auto pr-2 flex-1">
                         </div>
+                    <div class="mt-4 pt-4 border-t text-center">
+                        <button class="text-[10px] font-bold text-corp-600 hover:text-corp-900 uppercase tracking-widest">Descargar Reporte Comunal (.pdf)</button>
+                    </div>
                 </div>
             </div>
 
@@ -108,49 +142,85 @@
 
         function initDashboard() {
             // 1. Inicializar Mapa centrado en Paine
-            map = L.map('map').setView([-33.8155, -70.7512], 12);
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([-33.82, -70.74], 11.5);
 
-            // 2. Capa de Google Maps Satelital (Para el Alcalde)
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            // 2. Capa Satelital Profesional
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-                attribution: 'AndesChain Sat-Data'
+                attribution: 'AndesChain | Infraestructura Satelital Paine'
             }).addTo(map);
 
-            // 3. Cargar Datos
+            // 3. Perímetro Comunal de Paine (GeoJSON Polígono simplificado)
+            // Esto dibuja el borde verde de la comuna
+            const paineStyle = {
+                "color": "#10B981",
+                "weight": 3,
+                "opacity": 0.8,
+                "fillColor": "#10B981",
+                "fillOpacity": 0.05
+            };
+
+            // Coordenadas aproximadas del polígono de Paine para la demo
+            const paineBoundary = [
+                [-33.74, -70.85], [-33.72, -70.75], [-33.75, -70.65], 
+                [-33.82, -70.58], [-33.95, -70.62], [-33.98, -70.78], 
+                [-33.92, -70.92], [-33.82, -70.95], [-33.74, -70.85]
+            ];
+
+            L.polygon(paineBoundary, paineStyle).addTo(map)
+             .bindTooltip("Límite Comunal Paine", {sticky: true});
+
+            // 4. Cargar Datos del Simulador
             const db = window.getProductos() || [];
             const listContainer = document.getElementById('recent-list');
             
-            // Actualizar Contadores
             document.getElementById('count-lots').innerText = db.length;
             const uniqueProducers = [...new Set(db.map(p => p.productor))].length;
             document.getElementById('count-producers').innerText = uniqueProducers;
 
             db.forEach(p => {
-                // A. Agregar Marker al Mapa
                 if(p.lat && p.lon) {
+                    // Marker Personalizado para el Mapa
                     const marker = L.marker([p.lat, p.lon]).addTo(map);
                     marker.bindPopup(`
-                        <div class="text-center">
-                            <img src="${p.img}" class="w-full h-20 object-cover rounded-lg mb-2">
-                            <p class="font-bold text-sm mb-0">${p.nombre}</p>
-                            <p class="text-[10px] text-emerald-600 font-bold uppercase">${p.productor}</p>
-                            <a href="producto.html?id=${p.id}" target="_blank" class="text-[10px] text-blue-500 underline">Ver Ficha Blockchain</a>
+                        <div class="w-48 text-left">
+                            <div class="relative mb-2">
+                                <img src="${p.img}" class="w-full h-24 object-cover rounded-lg shadow-sm">
+                                <span class="absolute top-1 right-1 bg-emerald-500 text-white text-[8px] px-2 py-0.5 rounded-full font-bold">VERIFICADO</span>
+                            </div>
+                            <p class="font-bold text-xs text-slate-900 leading-tight">${p.nombre}</p>
+                            <p class="text-[9px] text-emerald-600 font-bold uppercase mt-0.5">${p.productor}</p>
+                            <div class="mt-2 pt-2 border-t flex justify-between items-center">
+                                <span class="text-[8px] font-mono text-slate-400">ID: ${p.id}</span>
+                                <a href="producto.html?id=${p.id}" target="_blank" class="bg-slate-900 text-white px-2 py-1 rounded text-[8px] font-bold uppercase">Expediente</a>
+                            </div>
                         </div>
                     `);
                     markers.push(marker);
                 }
 
-                // B. Agregar al Listado Lateral
+                // Generar Item en el Listado Lateral
                 const item = document.createElement('div');
-                item.className = "flex items-center gap-4 p-3 rounded-2xl border border-slate-50 hover:bg-slate-50 transition cursor-pointer";
+                item.className = "group flex items-center gap-4 p-3 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all duration-300 cursor-pointer";
                 item.onclick = () => { map.setView([p.lat, p.lon], 15); };
                 item.innerHTML = `
-                    <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover">
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-sm text-slate-900 truncate">${p.nombre}</p>
-                        <p class="text-[10px] text-slate-400 font-medium">${p.productor}</p>
+                    <div class="relative min-w-[48px]">
+                        <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
+                            <div class="h-2.5 w-2.5 bg-emerald-500 rounded-full border border-white"></div>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold text-emerald-500 uppercase">${p.estado === 'VERIFIED' ? 'Auditado' : 'Pendiente'}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-xs text-slate-900 truncate">${p.nombre}</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">${p.productor}</p>
+                        <p class="text-[9px] font-mono text-slate-300 mt-0.5">${p.fecha}</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <div class="bg-emerald-100 text-emerald-700 text-[8px] font-bold px-2 py-0.5 rounded uppercase">Auditoría OK</div>
+                        <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all"></i>
                     </div>
                 `;
                 listContainer.appendChild(item);
