@@ -1,172 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Operations | AndesChain</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <title>Admin | AndesChain</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = { theme: { extend: { colors: { 'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' } }, fontFamily: { sans: ['Inter'], display: ['Outfit'] } } } }
-    </script>
+    <script> tailwind.config = { theme: { extend: { colors: { 'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' } }, fontFamily: { sans: ['Inter'], display: ['Outfit'] } } } } </script>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-
-    <nav class="border-b border-white/10 px-6 py-4 flex justify-between items-center bg-black/20 backdrop-blur">
+<body class="bg-slate-900 text-white font-sans p-6">
+    <header class="flex justify-between items-center mb-10">
         <div class="flex items-center gap-3">
             <img src="assets/favicon.png" class="h-8 brightness-200 grayscale">
-            <div>
-                <h1 class="font-display font-bold text-lg uppercase tracking-wider leading-none">AndesChain</h1>
-                <p class="text-[9px] text-emerald-500 font-mono uppercase tracking-widest">Protocol Validator Node</p>
-            </div>
+            <div><h1 class="font-display font-bold text-xl uppercase">AndesChain Node</h1><p class="text-[10px] text-emerald-500 font-mono">VALIDATOR ACTIVE</p></div>
         </div>
-        <div class="flex items-center gap-4">
-            <div class="text-right hidden md:block">
-                <p class="text-xs font-bold text-gray-400">Operador: Jorge (Super Admin)</p>
-                <p class="text-[9px] text-emerald-500 animate-pulse">● Gas Fee: Optimizado (Polygon)</p>
-            </div>
-            <div class="w-8 h-8 bg-white text-corp-900 rounded-full flex items-center justify-center font-bold text-xs border border-corp-500">OP</div>
-        </div>
-    </nav>
+    </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-10">
-        
-        <div class="grid md:grid-cols-4 gap-6 mb-10">
-            <div class="bg-white/5 p-6 rounded-[24px] border border-white/10">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cola de Validación</p>
-                <p class="text-3xl font-black text-amber-500 mt-2" id="count-pending">0</p>
-            </div>
-            <div class="bg-white/5 p-6 rounded-[24px] border border-white/10">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Bloques Acuñados</p>
-                <p class="text-3xl font-black text-emerald-500 mt-2" id="count-minted">1,240</p>
-            </div>
-             <div class="bg-white/5 p-6 rounded-[24px] border border-white/10">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nodos Activos</p>
-                <p class="text-3xl font-black text-white mt-2">3 <span class="text-xs text-gray-500 font-normal">(Val. Satelital)</span></p>
-            </div>
-            <div class="bg-emerald-600/20 border border-emerald-500/30 p-6 rounded-[24px] flex items-center justify-between">
-                <div>
-                    <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Estado Red</p>
-                    <p class="text-lg font-bold mt-1 text-white">Saludable</p>
-                </div>
-                <i class="fas fa-network-wired text-2xl text-emerald-500"></i>
-            </div>
-        </div>
-
-        <h2 class="font-display text-xl font-bold mb-6 text-gray-300">Evidencia Entrante (Mempool)</h2>
-
-        <div class="bg-black/40 rounded-[32px] border border-white/10 overflow-hidden backdrop-blur-sm">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-white/5 border-b border-white/10">
-                    <tr>
-                        <th class="p-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Timestamp</th>
-                        <th class="p-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Origen (Productor)</th>
-                        <th class="p-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Datos Crudos (Exif)</th>
-                        <th class="p-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Validación IA</th>
-                        <th class="p-6 text-[10px] font-black text-gray-500 uppercase tracking-widest text-right">Firma Digital</th>
-                    </tr>
+    <main class="max-w-4xl mx-auto">
+        <h2 class="font-display text-2xl font-bold mb-6">Mempool (Pendientes)</h2>
+        <div class="bg-black/30 border border-white/10 rounded-3xl overflow-hidden backdrop-blur">
+            <table class="w-full text-left">
+                <thead class="bg-white/5 text-[10px] font-bold uppercase text-gray-500">
+                    <tr><th class="p-6">Fecha</th><th class="p-6">Productor</th><th class="p-6">Evidencia</th><th class="p-6 text-right">Acción</th></tr>
                 </thead>
-                <tbody id="table-body" class="text-sm font-mono text-gray-300">
+                <tbody id="table-body" class="text-sm">
                     </tbody>
             </table>
-            
-            <div id="empty-state" class="hidden p-16 text-center text-gray-600">
-                <i class="fas fa-satellite-dish text-4xl mb-4 opacity-50"></i>
-                <p class="text-xs uppercase tracking-widest">Esperando transmisión de datos desde campo...</p>
-            </div>
+            <div id="empty" class="hidden p-10 text-center text-gray-600">Sin pendientes</div>
         </div>
-
     </main>
 
+    <script src="js/simulador.js"></script>
     <script>
-        // Cargar datos desde localStorage (simulando conexión con App Campo)
-        function loadOpsDashboard() {
-            // Datos quemados para demo
-            const demoData = [
-                { id: 999, timestamp: "10/02/2026 09:30", productor: "El Otro Huerto", lote: "Lote #004", stage: "Cosecha", lat: "-33.811", lon: "-70.752", status: "PENDIENTE" }
-            ];
+        const db = getProductos();
+        const tbody = document.getElementById('table-body');
+        let hasPending = false;
 
-            let realData = JSON.parse(localStorage.getItem('andesDB')) || [];
-            let allData = [...demoData, ...realData];
-
-            const tbody = document.getElementById('table-body');
-            const pendingCount = document.getElementById('count-pending');
-            const emptyState = document.getElementById('empty-state');
-
-            tbody.innerHTML = '';
-            let pending = 0;
-
-            allData.forEach((item, index) => {
-                if (item.status === 'MINTED') return;
-                pending++;
-
-                const row = document.createElement('tr');
-                row.className = "border-b border-white/5 hover:bg-white/5 transition-colors group";
-                row.id = `row-${index}`;
-                row.innerHTML = `
-                    <td class="p-6 text-xs opacity-60">${item.timestamp}</td>
-                    <td class="p-6">
-                        <div class="font-bold text-white">${item.productor}</div>
-                        <div class="text-[10px] text-emerald-400 uppercase">${item.stage}</div>
-                    </td>
-                    <td class="p-6 text-xs">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-map-pin text-gray-500"></i> ${item.lat}, ${item.lon}
-                        </div>
-                    </td>
-                    <td class="p-6">
-                        <span class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold border border-emerald-500/30">
-                            <i class="fas fa-check mr-1"></i> GEOCERCA OK
-                        </span>
-                    </td>
+        db.forEach((item, index) => {
+            if (item.estado === 'PENDING') {
+                hasPending = true;
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-white/5 hover:bg-white/5";
+                tr.innerHTML = `
+                    <td class="p-6 opacity-60">${item.fecha}</td>
+                    <td class="p-6 font-bold">${item.productor}<br><span class="text-xs font-normal opacity-50">${item.lote}</span></td>
+                    <td class="p-6 font-mono text-xs text-emerald-400"><i class="fas fa-map-marker-alt"></i> ${item.lat}, ${item.lon}</td>
                     <td class="p-6 text-right">
-                        <button onclick="mintBlock(${index})" class="bg-white text-black px-5 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-400 hover:text-black transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                            Acuñar Bloque
-                        </button>
+                        <button onclick="certificar(${index})" class="bg-white text-black px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-emerald-400 transition">Acuñar</button>
                     </td>
                 `;
-                tbody.appendChild(row);
-            });
+                tbody.appendChild(tr);
+            }
+        });
 
-            pendingCount.innerText = pending;
-            if (pending === 0) emptyState.classList.remove('hidden');
+        if(!hasPending) document.getElementById('empty').classList.remove('hidden');
+
+        function certificar(index) {
+            let _db = getProductos();
+            _db[index].estado = 'VERIFIED';
+            _db[index].historia = "Certificado digitalmente en la red AndesChain."; // Historia default
+            localStorage.setItem('andesDB', JSON.stringify(_db));
+            alert("🔗 Bloque acuñado en Polygon.");
+            window.location.reload();
         }
-
-        function mintBlock(index) {
-            const row = document.getElementById(`row-${index}`);
-            const btn = row.querySelector('button');
-            
-            btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> HASHING...';
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-
-            setTimeout(() => {
-                row.classList.add('bg-emerald-900/20');
-                row.innerHTML = `
-                    <td colspan="4" class="p-6 text-center text-emerald-400 font-mono text-xs">
-                        TX: 0x34fe...${Math.floor(Math.random()*99999)} [CONFIRMED BLOCK #8921]
-                    </td>
-                    <td class="p-6 text-right">
-                        <a href="producto.html?id=1" target="_blank" class="text-[10px] font-bold text-gray-400 hover:text-white uppercase underline">Ver en Explorer</a>
-                    </td>
-                `;
-                
-                // Actualizar contadores
-                let currentMinted = parseInt(document.getElementById('count-minted').innerText.replace(',',''));
-                document.getElementById('count-minted').innerText = (currentMinted + 1).toLocaleString();
-                document.getElementById('count-pending').innerText = parseInt(document.getElementById('count-pending').innerText) - 1;
-
-                // Actualizar DB Local
-                let db = JSON.parse(localStorage.getItem('andesDB')) || [];
-                // Nota: En un sistema real, aquí borraríamos o marcaríamos el ID exacto
-                if(db.length > 0) db[0].status = 'MINTED'; // Simplificado para demo
-                localStorage.setItem('andesDB', JSON.stringify(db));
-
-            }, 2000);
-        }
-
-        window.onload = loadOpsDashboard;
     </script>
 </body>
 </html>
