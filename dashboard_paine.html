@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Municipal | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#022C22' },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        #map { height: 500px; border-radius: 24px; z-index: 10; border: 1px solid #E2E8F0; }
+        .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-[1000] px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="assets/favicon.png" class="h-8">
+                <div>
+                    <h1 class="font-display font-bold text-lg leading-none">AndesChain <span class="text-corp-600">GeoDashboard</span></h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Ilustre Municipalidad de Paine</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-right hidden md:block">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Estado de Red</p>
+                    <p class="text-xs font-bold text-emerald-600">Sincronizado con Blockchain ●</p>
+                </div>
+                <button onclick="window.location.reload()" class="bg-slate-100 p-2 rounded-full hover:bg-slate-200 transition">
+                    <i class="fas fa-sync-alt text-slate-600"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Productores Activos</p>
+                <h3 id="count-producers" class="text-3xl font-display font-extrabold text-slate-900">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Lotes Certificados</p>
+                <h3 id="count-lots" class="text-3xl font-display font-extrabold text-emerald-600">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Superficie Monitoreada</p>
+                <h3 class="text-3xl font-display font-extrabold text-slate-900">42 <span class="text-sm font-normal text-slate-400">Ha</span></h3>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Vínculo Social AFC</p>
+                <h3 class="text-3xl font-display font-extrabold text-slate-900">88%</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white p-4 rounded-[32px] border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4 px-2">
+                        <h2 class="font-display font-bold text-xl">Mapa de Producción Comunal</h2>
+                        <span class="text-[10px] bg-slate-900 text-white px-3 py-1 rounded-full font-bold uppercase tracking-tighter">Vista Satelital Activa</span>
+                    </div>
+                    <div id="map"></div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm h-[570px] flex flex-col">
+                    <h2 class="font-display font-bold text-xl mb-6">Últimos Registros</h2>
+                    <div id="recent-list" class="space-y-4 overflow-y-auto pr-2 flex-1">
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        let map;
+        let markers = [];
+
+        window.onload = function() {
+            initDashboard();
+        };
+
+        function initDashboard() {
+            // 1. Inicializar Mapa centrado en Paine
+            map = L.map('map').setView([-33.8155, -70.7512], 12);
+
+            // 2. Capa de Google Maps Satelital (Para el Alcalde)
+            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                attribution: 'AndesChain Sat-Data'
+            }).addTo(map);
+
+            // 3. Cargar Datos
+            const db = window.getProductos() || [];
+            const listContainer = document.getElementById('recent-list');
+            
+            // Actualizar Contadores
+            document.getElementById('count-lots').innerText = db.length;
+            const uniqueProducers = [...new Set(db.map(p => p.productor))].length;
+            document.getElementById('count-producers').innerText = uniqueProducers;
+
+            db.forEach(p => {
+                // A. Agregar Marker al Mapa
+                if(p.lat && p.lon) {
+                    const marker = L.marker([p.lat, p.lon]).addTo(map);
+                    marker.bindPopup(`
+                        <div class="text-center">
+                            <img src="${p.img}" class="w-full h-20 object-cover rounded-lg mb-2">
+                            <p class="font-bold text-sm mb-0">${p.nombre}</p>
+                            <p class="text-[10px] text-emerald-600 font-bold uppercase">${p.productor}</p>
+                            <a href="producto.html?id=${p.id}" target="_blank" class="text-[10px] text-blue-500 underline">Ver Ficha Blockchain</a>
+                        </div>
+                    `);
+                    markers.push(marker);
+                }
+
+                // B. Agregar al Listado Lateral
+                const item = document.createElement('div');
+                item.className = "flex items-center gap-4 p-3 rounded-2xl border border-slate-50 hover:bg-slate-50 transition cursor-pointer";
+                item.onclick = () => { map.setView([p.lat, p.lon], 15); };
+                item.innerHTML = `
+                    <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-slate-900 truncate">${p.nombre}</p>
+                        <p class="text-[10px] text-slate-400 font-medium">${p.productor}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-emerald-500 uppercase">${p.estado === 'VERIFIED' ? 'Auditado' : 'Pendiente'}</p>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
