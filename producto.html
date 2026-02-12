@@ -22,12 +22,21 @@
             }
         }
     </script>
+    
     <style>
         body { background-color: #FAFAFA; color: #1E293B; }
+        
+        /* Estilos Tarjetas */
         .glass-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; overflow: hidden; }
+        
+        /* Estilos Timeline */
         .timeline-line { position: absolute; left: 23px; top: 20px; bottom: 0; width: 2px; background: #E2E8F0; z-index: 0; }
         .timeline-item { position: relative; z-index: 10; padding-left: 60px; padding-bottom: 40px; }
         .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #10B981; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
+        
+        /* Efecto Mapa Tecnológico */
+        .tech-map { filter: grayscale(100%) contrast(1.2); transition: all 0.5s ease; }
+        .tech-map:hover { filter: grayscale(0%) contrast(1); }
     </style>
 </head>
 <body class="pb-20">
@@ -47,39 +56,44 @@
         
         <header class="text-center mb-10">
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Ficha de Origen Digital</p>
-            <h1 id="fod-name" class="font-display text-4xl font-extrabold text-slate-900 leading-tight mb-2">...</h1>
+            <h1 id="fod-name" class="font-display text-4xl font-extrabold text-slate-900 leading-tight mb-2">Cargando...</h1>
             <div class="flex items-center justify-center gap-2 text-slate-500 font-medium text-sm">
                 <i class="fas fa-map-marker-alt text-corp-500"></i>
                 <span id="fod-location">...</span>
             </div>
         </header>
 
-        <div class="glass-card shadow-xl shadow-slate-200/50 mb-10">
-            <div class="relative aspect-video bg-slate-100">
-                <img id="fod-img" src="" class="w-full h-full object-cover">
-                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6 pt-20">
+        <div class="glass-card shadow-xl shadow-slate-200/50 mb-10 transition-all hover:shadow-2xl">
+            <div class="relative aspect-video bg-slate-100 group">
+                <img id="fod-img" src="" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x400?text=Evidencia+Pendiente'">
+                
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 pt-20">
                     <p class="text-[10px] font-bold text-emerald-300 uppercase tracking-widest mb-1">Productor Certificado</p>
-                    <p id="fod-producer" class="text-xl font-bold text-white">...</p>
+                    <p id="fod-producer" class="text-2xl font-bold text-white">...</p>
                 </div>
             </div>
+            
             <div class="p-8">
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Identificador Lote</p>
                         <p id="fod-lote" class="text-lg font-bold text-slate-900">...</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fecha Registro</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fecha de Cierre</p>
                         <p id="fod-date" class="text-lg font-bold text-slate-900">...</p>
                     </div>
                 </div>
                 <hr class="border-slate-100 mb-6">
-                <p id="fod-story" class="text-slate-600 font-light italic leading-relaxed text-lg">...</p>
+                <div class="relative">
+                    <i class="fas fa-quote-left text-slate-200 text-4xl absolute -top-4 -left-2 -z-10"></i>
+                    <p id="fod-story" class="text-slate-600 font-light italic leading-relaxed text-lg pl-4">...</p>
+                </div>
             </div>
         </div>
 
         <section class="mb-12">
-            <h3 class="font-display text-xl font-bold mb-8 flex items-center gap-2">
+            <h3 class="font-display text-xl font-bold mb-8 flex items-center gap-2 text-slate-800">
                 <i class="fas fa-history text-slate-300"></i> Historia del Lote
             </h3>
             <div class="relative pl-2" id="fod-timeline">
@@ -87,47 +101,86 @@
                 </div>
         </section>
 
-        <section class="glass-card bg-slate-900 text-white p-8 mb-12">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Evidencia Satelital</h3>
-            <div class="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                    <p class="text-[10px] text-emerald-400 font-bold uppercase mb-1">Latitud</p>
-                    <p id="fod-lat" class="font-mono text-sm">...</p>
-                </div>
-                <div>
-                    <p class="text-[10px] text-emerald-400 font-bold uppercase mb-1">Longitud</p>
-                    <p id="fod-lon" class="font-mono text-sm">...</p>
+        <section class="glass-card bg-slate-900 text-white p-0 mb-12 overflow-hidden relative border-slate-800">
+            
+            <div class="p-6 border-b border-white/10 z-10 relative bg-slate-900/90 backdrop-blur-sm flex justify-between items-center">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Evidencia Satelital</h3>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    <span class="text-[9px] font-bold text-white uppercase">Live View</span>
                 </div>
             </div>
-            <div class="bg-white/10 rounded-xl p-4 text-center border border-white/10">
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Hash Polygon</p>
-                <div class="font-mono text-[10px] text-emerald-300 break-all">0x34fe...60611</div>
+
+            <div class="w-full h-72 bg-slate-800 relative group overflow-hidden">
+                <iframe 
+                    id="google-map"
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    scrolling="no" 
+                    marginheight="0" 
+                    marginwidth="0" 
+                    class="tech-map w-full h-full object-cover"
+                    src="">
+                </iframe>
+                <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_50px_rgba(0,0,0,0.5)]"></div>
+            </div>
+            
+            <div class="p-6 grid grid-cols-2 gap-6 bg-slate-900 border-t border-white/10">
+                <div>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1">Latitud</p>
+                    <p id="fod-lat" class="font-mono text-sm text-slate-200">...</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mb-1">Longitud</p>
+                    <p id="fod-lon" class="font-mono text-sm text-slate-200">...</p>
+                </div>
+            </div>
+
+            <div class="px-6 pb-6 bg-slate-900">
+                <button onclick="abrirMapaExterno()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-3 flex items-center justify-center gap-3 transition group">
+                    <i class="fas fa-external-link-alt text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-white">Ver en Google Maps</span>
+                </button>
             </div>
         </section>
 
-        <div class="text-center pb-10">
-            <a href="index.html" class="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-corp-600">Verificar en AndesChain.io</a>
+        <div class="text-center pb-12">
+            <p class="text-[10px] text-slate-400 font-mono mb-4">Registro inmutable en Polygon Network</p>
+            <a href="index.html" class="inline-block px-6 py-2 border border-slate-200 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-corp-600 transition-colors uppercase tracking-widest">
+                Volver a AndesChain
+            </a>
         </div>
     </main>
 
-    <div id="loader" class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center">
-        <div class="w-10 h-10 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando en Blockchain...</p>
+    <div id="loader" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center">
+        <div class="relative">
+            <div class="w-12 h-12 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin"></div>
+            <img src="assets/favicon.png" class="h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50">
+        </div>
+        <p class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando Bloque...</p>
     </div>
 
-    <div id="error-screen" class="hidden fixed inset-0 bg-white z-40 flex flex-col items-center justify-center p-6 text-center">
-        <i class="fas fa-exclamation-circle text-4xl text-slate-300 mb-4"></i>
-        <h2 class="font-bold text-xl text-slate-900 mb-2">Producto no encontrado</h2>
-        <p class="text-slate-500 mb-6">El ID del lote no existe o no ha sido verificado.</p>
-        <a href="dashboard.html" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase">Volver al Dashboard</a>
+    <div id="error-screen" class="hidden fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-8 text-center">
+        <div class="w-16 h-16 bg-red-50 text-red-400 rounded-full flex items-center justify-center mb-6 text-2xl">
+            <i class="fas fa-search"></i>
+        </div>
+        <h2 class="font-display font-bold text-2xl text-slate-900 mb-2">Producto no encontrado</h2>
+        <p class="text-slate-500 mb-8 max-w-xs mx-auto leading-relaxed">El código QR escaneado no corresponde a un lote verificado en nuestra Blockchain.</p>
+        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wide hover:shadow-lg transition-all">
+            Volver al Inicio
+        </a>
     </div>
 
     <script src="js/simulador.js"></script>
     <script>
+        // Variables globales para el mapa
+        let currentCoords = { lat: 0, lon: 0 };
+
         window.onload = function() {
             setTimeout(() => {
                 loadProduct();
-            }, 1000); // Pequeña espera dramática
+            }, 800); // Pequeña espera para dar sensación de "búsqueda"
         };
 
         function loadProduct() {
@@ -135,7 +188,7 @@
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
-            // 2. Buscar en la base de datos
+            // 2. Buscar en la base de datos (simulador.js)
             const db = window.getProductos ? window.getProductos() : [];
             const p = db.find(item => item.id == id);
 
@@ -143,32 +196,36 @@
             document.getElementById('loader').classList.add('hidden');
 
             if (!p) {
-                // Si no existe, mostrar error
                 document.getElementById('error-screen').classList.remove('hidden');
                 return;
             }
 
-            // 4. Llenar datos en el HTML
+            // 4. Mostrar Contenido
             document.getElementById('fod-container').classList.remove('hidden');
             
+            // 5. Inyectar Textos e Imágenes
             document.getElementById('fod-name').innerText = p.nombre;
             document.getElementById('fod-location').innerText = p.ubicacion;
             document.getElementById('fod-img').src = p.img;
             document.getElementById('fod-producer').innerText = p.productor;
             document.getElementById('fod-lote').innerText = p.lote;
             document.getElementById('fod-date').innerText = p.fecha;
+            document.getElementById('fod-story').innerText = p.historia || "Este producto cuenta con certificación de origen validada satelitalmente.";
             
-            // Historia (Fallback si no tiene)
-            document.getElementById('fod-story').innerText = p.historia || "Este producto cuenta con certificación de origen inmutable registrada en AndesChain.";
-            
-            // Coordenadas
             document.getElementById('fod-lat').innerText = p.lat;
             document.getElementById('fod-lon').innerText = p.lon;
 
-            // 5. Renderizar Hitos (Timeline)
+            // 6. CONFIGURAR MAPA (Clave para la demo)
+            // Usamos la API embed pública (t=k activa satélite)
+            const mapUrl = `https://maps.google.com/maps?q=${p.lat},${p.lon}&t=k&z=15&ie=UTF8&iwloc=&output=embed`;
+            document.getElementById('google-map').src = mapUrl;
+            
+            // Guardar para el botón externo
+            currentCoords = { lat: p.lat, lon: p.lon };
+
+            // 7. Renderizar Timeline
             const timeline = document.getElementById('fod-timeline');
-            // Limpiar dejando la línea
-            timeline.innerHTML = '<div class="timeline-line"></div>';
+            timeline.innerHTML = '<div class="timeline-line"></div>'; // Reset
 
             if (p.hitos && p.hitos.length > 0) {
                 p.hitos.forEach(h => {
@@ -183,14 +240,22 @@
                     timeline.appendChild(item);
                 });
             } else {
-                // Hito por defecto si no hay
                 timeline.innerHTML += `
                     <div class="timeline-item">
                         <div class="timeline-dot"></div>
-                        <h4 class="font-bold text-lg">Registro Blockchain</h4>
+                        <h4 class="font-bold text-lg">Registro Inicial</h4>
                         <p class="text-[10px] font-bold text-corp-500 uppercase mb-1">${p.fecha}</p>
-                        <p class="text-sm text-slate-500">Certificación inicial.</p>
+                        <p class="text-sm text-slate-500">Datos ingresados al sistema.</p>
                     </div>`;
+            }
+        }
+
+        // Función para abrir app externa
+        function abrirMapaExterno() {
+            if(currentCoords.lat !== 0) {
+                // Link universal que abre App en móvil o Web en desktop
+                const url = `https://www.google.com/maps/search/?api=1&query=${currentCoords.lat},${currentCoords.lon}`;
+                window.open(url, '_blank');
             }
         }
     </script>
