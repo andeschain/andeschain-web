@@ -1,22 +1,198 @@
-<script src="js/simulador.js"></script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Origen Digital | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<script>
-    window.onload = function() {
-        const id = new URLSearchParams(window.location.search).get('id');
-        const db = getProductos();
-        const p = db.find(item => item.id == id);
-
-        if(p) {
-            document.getElementById('fod-name').innerText = p.nombre;
-            document.getElementById('fod-producer').innerText = p.productor;
-            document.getElementById('fod-img').src = p.img;
-            document.getElementById('fod-story').innerText = p.historia;
-            // Render Timeline...
-            const timeline = document.getElementById('fod-timeline');
-            p.hitos.forEach(h => {
-                // Crear HTML del hito...
-                timeline.innerHTML += `<div class="timeline-item"><h4>${h.titulo}</h4><p>${h.fecha}</p></div>`;
-            });
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#022C22' },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
         }
-    }
-</script>
+    </script>
+    <style>
+        body { background-color: #FAFAFA; color: #1E293B; }
+        .glass-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; overflow: hidden; }
+        .timeline-line { position: absolute; left: 23px; top: 20px; bottom: 0; width: 2px; background: #E2E8F0; z-index: 0; }
+        .timeline-item { position: relative; z-index: 10; padding-left: 60px; padding-bottom: 40px; }
+        .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #10B981; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md border-b border-gray-100 py-3 px-6 z-50 flex justify-between items-center">
+        <a href="index.html" class="flex items-center gap-2">
+            <img src="assets/favicon.png" class="h-6">
+            <span class="font-display font-bold text-sm uppercase tracking-tight text-slate-900">AndesChain</span>
+        </a>
+        <div class="flex items-center gap-2 px-3 py-1 bg-emerald-50 rounded-full border border-emerald-100">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Verificado</span>
+        </div>
+    </nav>
+
+    <main id="fod-container" class="pt-24 px-6 max-w-xl mx-auto hidden">
+        
+        <header class="text-center mb-10">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3">Ficha de Origen Digital</p>
+            <h1 id="fod-name" class="font-display text-4xl font-extrabold text-slate-900 leading-tight mb-2">...</h1>
+            <div class="flex items-center justify-center gap-2 text-slate-500 font-medium text-sm">
+                <i class="fas fa-map-marker-alt text-corp-500"></i>
+                <span id="fod-location">...</span>
+            </div>
+        </header>
+
+        <div class="glass-card shadow-xl shadow-slate-200/50 mb-10">
+            <div class="relative aspect-video bg-slate-100">
+                <img id="fod-img" src="" class="w-full h-full object-cover">
+                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6 pt-20">
+                    <p class="text-[10px] font-bold text-emerald-300 uppercase tracking-widest mb-1">Productor Certificado</p>
+                    <p id="fod-producer" class="text-xl font-bold text-white">...</p>
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</p>
+                        <p id="fod-lote" class="text-lg font-bold text-slate-900">...</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fecha Registro</p>
+                        <p id="fod-date" class="text-lg font-bold text-slate-900">...</p>
+                    </div>
+                </div>
+                <hr class="border-slate-100 mb-6">
+                <p id="fod-story" class="text-slate-600 font-light italic leading-relaxed text-lg">...</p>
+            </div>
+        </div>
+
+        <section class="mb-12">
+            <h3 class="font-display text-xl font-bold mb-8 flex items-center gap-2">
+                <i class="fas fa-history text-slate-300"></i> Historia del Lote
+            </h3>
+            <div class="relative pl-2" id="fod-timeline">
+                <div class="timeline-line"></div>
+                </div>
+        </section>
+
+        <section class="glass-card bg-slate-900 text-white p-8 mb-12">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Evidencia Satelital</h3>
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                    <p class="text-[10px] text-emerald-400 font-bold uppercase mb-1">Latitud</p>
+                    <p id="fod-lat" class="font-mono text-sm">...</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-emerald-400 font-bold uppercase mb-1">Longitud</p>
+                    <p id="fod-lon" class="font-mono text-sm">...</p>
+                </div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4 text-center border border-white/10">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Hash Polygon</p>
+                <div class="font-mono text-[10px] text-emerald-300 break-all">0x34fe...60611</div>
+            </div>
+        </section>
+
+        <div class="text-center pb-10">
+            <a href="index.html" class="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-corp-600">Verificar en AndesChain.io</a>
+        </div>
+    </main>
+
+    <div id="loader" class="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center">
+        <div class="w-10 h-10 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando en Blockchain...</p>
+    </div>
+
+    <div id="error-screen" class="hidden fixed inset-0 bg-white z-40 flex flex-col items-center justify-center p-6 text-center">
+        <i class="fas fa-exclamation-circle text-4xl text-slate-300 mb-4"></i>
+        <h2 class="font-bold text-xl text-slate-900 mb-2">Producto no encontrado</h2>
+        <p class="text-slate-500 mb-6">El ID del lote no existe o no ha sido verificado.</p>
+        <a href="dashboard.html" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase">Volver al Dashboard</a>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        window.onload = function() {
+            setTimeout(() => {
+                loadProduct();
+            }, 1000); // Pequeña espera dramática
+        };
+
+        function loadProduct() {
+            // 1. Obtener ID de la URL
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            // 2. Buscar en la base de datos
+            const db = window.getProductos ? window.getProductos() : [];
+            const p = db.find(item => item.id == id);
+
+            // 3. Ocultar loader
+            document.getElementById('loader').classList.add('hidden');
+
+            if (!p) {
+                // Si no existe, mostrar error
+                document.getElementById('error-screen').classList.remove('hidden');
+                return;
+            }
+
+            // 4. Llenar datos en el HTML
+            document.getElementById('fod-container').classList.remove('hidden');
+            
+            document.getElementById('fod-name').innerText = p.nombre;
+            document.getElementById('fod-location').innerText = p.ubicacion;
+            document.getElementById('fod-img').src = p.img;
+            document.getElementById('fod-producer').innerText = p.productor;
+            document.getElementById('fod-lote').innerText = p.lote;
+            document.getElementById('fod-date').innerText = p.fecha;
+            
+            // Historia (Fallback si no tiene)
+            document.getElementById('fod-story').innerText = p.historia || "Este producto cuenta con certificación de origen inmutable registrada en AndesChain.";
+            
+            // Coordenadas
+            document.getElementById('fod-lat').innerText = p.lat;
+            document.getElementById('fod-lon').innerText = p.lon;
+
+            // 5. Renderizar Hitos (Timeline)
+            const timeline = document.getElementById('fod-timeline');
+            // Limpiar dejando la línea
+            timeline.innerHTML = '<div class="timeline-line"></div>';
+
+            if (p.hitos && p.hitos.length > 0) {
+                p.hitos.forEach(h => {
+                    const item = document.createElement('div');
+                    item.className = "timeline-item";
+                    item.innerHTML = `
+                        <div class="timeline-dot"></div>
+                        <h4 class="font-bold text-lg text-slate-900 leading-tight">${h.titulo}</h4>
+                        <p class="text-[10px] font-bold text-corp-500 uppercase mb-1 tracking-wider">${h.fecha}</p>
+                        <p class="text-sm text-slate-500 font-light">${h.desc}</p>
+                    `;
+                    timeline.appendChild(item);
+                });
+            } else {
+                // Hito por defecto si no hay
+                timeline.innerHTML += `
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4 class="font-bold text-lg">Registro Blockchain</h4>
+                        <p class="text-[10px] font-bold text-corp-500 uppercase mb-1">${p.fecha}</p>
+                        <p class="text-sm text-slate-500">Certificación inicial.</p>
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
