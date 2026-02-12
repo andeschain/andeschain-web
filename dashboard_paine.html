@@ -19,7 +19,7 @@
                 extend: {
                     colors: {
                         'corp': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#022C22' },
-                        'alert': '#FF5722' // Naranja Neón para visibilidad máxima
+                        'alert': '#FF5722' 
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -28,19 +28,18 @@
     </script>
     <style>
         #map { height: 600px; border-radius: 24px; z-index: 10; border: 2px solid #1e293b; background: #0f172a; }
-        
-        /* Personalización de los Pines para que brillen sobre el satélite */
         .custom-pin {
             background-color: #FF5722;
             border: 2px solid white;
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.8);
+            box-shadow: 0 0 15px rgba(255, 87, 34, 0.5);
         }
-
-        .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Inter', sans-serif; padding: 2px; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #10B981; border-radius: 10px; }
+        .leaflet-container { background: #0f172a !important; outline: 0 !important; }
+        .leaflet-marker-icon:focus { outline: none !important; }
+        .leaflet-popup-content-wrapper { border-radius: 16px; font-family: 'Inter', sans-serif; padding: 2px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50 font-sans min-h-screen">
@@ -53,7 +52,7 @@
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">AndesChain Tech</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <img src="assets/mun_paine.jpg" class="h-14 w-auto object-contain">
+                    <img src="assets/LogoPaine.svg" class="h-14 w-auto object-contain" onerror="this.src='https://via.placeholder.com/150x60?text=Logo+Paine'">
                     <div>
                         <h1 class="font-display font-bold text-xl leading-none">GeoDashboard <span class="text-alert">Paine</span></h1>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Infraestructura Digital de Trazabilidad</p>
@@ -62,10 +61,10 @@
             </div>
             <div class="flex items-center gap-6">
                 <div class="text-right border-r pr-6 border-slate-200 hidden md:block">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase leading-none">Vigilancia Satelital</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Nodo Comunal 01</p>
                     <p class="text-xs font-bold text-emerald-600 flex items-center gap-2 mt-1">
                         <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        ACTIVO / POLYGON MAINNET
+                        POLYGON MAINNET LIVE
                     </p>
                 </div>
                 <button onclick="window.location.reload()" class="bg-slate-900 text-white p-3 rounded-xl hover:bg-alert transition-all">
@@ -77,7 +76,7 @@
 
     <main class="max-w-7xl mx-auto px-6 py-8">
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 text-center md:text-left">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Puntos de Origen</p>
                 <h3 id="count-lots" class="text-4xl font-display font-extrabold text-slate-900">0</h3>
@@ -88,11 +87,11 @@
             </div>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Superficie Verificada</p>
-                <h3 class="text-4xl font-display font-extrabold text-slate-900">12.5 <span class="text-sm font-normal text-slate-400">Ha</span></h3>
+                <h3 class="text-4xl font-display font-extrabold text-slate-900">42.8 <span class="text-sm font-normal text-slate-400">Ha</span></h3>
             </div>
             <div class="bg-emerald-600 p-6 rounded-3xl shadow-lg">
-                <p class="text-[10px] font-bold text-emerald-100 uppercase mb-1">Estado de Auditoría</p>
-                <h3 class="text-4xl font-display font-extrabold text-white">100%</h3>
+                <p class="text-[10px] font-bold text-emerald-100 uppercase mb-1">Auditoría Blockchain</p>
+                <h3 class="text-4xl font-display font-extrabold text-white uppercase tracking-tighter text-center">Verified</h3>
             </div>
         </div>
 
@@ -101,18 +100,37 @@
                 <div class="bg-white p-4 rounded-[32px] border-2 border-slate-200 shadow-xl overflow-hidden">
                     <div class="flex justify-between items-center mb-4 px-2">
                         <div class="flex items-center gap-3">
-                            <h2 class="font-display font-bold text-xl">Catastro Territorial Paine</h2>
-                            <span class="bg-alert text-white text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest">Live Sat-Feed</span>
+                            <h2 class="font-display font-bold text-xl text-slate-800">Catastro Territorial Comunal</h2>
+                            <span class="bg-alert text-white text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest leading-none">Live Sat-Feed</span>
                         </div>
                     </div>
                     <div id="map"></div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm h-[650px] flex flex-col">
-                <h2 class="font-display font-bold text-xl mb-6">Expedientes Digitales</h2>
-                <div id="recent-list" class="space-y-4 overflow-y-auto pr-2 flex-1">
+            <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm h-[650px] flex flex-col overflow-hidden">
+                <div class="mb-4">
+                    <h2 class="font-display font-bold text-xl text-slate-800 mb-4">Expedientes Digitales</h2>
+                    
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            onkeyup="filterItems()"
+                            placeholder="Buscar productor o localidad..." 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm focus:border-alert focus:ring-1 focus:ring-alert outline-none transition-all"
+                        >
                     </div>
+                </div>
+
+                <div id="recent-list" class="space-y-3 overflow-y-auto pr-2 flex-1 scroll-smooth">
+                    </div>
+
+                <div id="no-results" class="hidden text-center py-8">
+                    <i class="fas fa-search text-slate-200 text-3xl mb-2"></i>
+                    <p class="text-xs text-slate-400 font-bold uppercase">No se encontraron registros</p>
+                </div>
             </div>
         </div>
     </main>
@@ -120,22 +138,21 @@
     <script src="js/simulador.js"></script>
     <script>
         let map;
+        let markers = [];
+        let allData = [];
 
         window.onload = function() {
             initDashboard();
         };
 
         function initDashboard() {
-            // 1. Centrado real en Paine
-            map = L.map('map', { zoomControl: false }).setView([-33.82, -70.74], 11.5);
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.74], 11.5);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-            // 2. Capa Satelital de Google (Máxima Resolución)
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-                attribution: 'AndesChain Sat-Systems'
+                maxZoom: 20
             }).addTo(map);
 
-            // 3. POLÍGONO REAL DE LA COMUNA (Coordenadas ajustadas al contorno administrativo)
             const paineBoundary = [
                 [-33.743, -70.835], [-33.722, -70.762], [-33.731, -70.685], 
                 [-33.765, -70.621], [-33.824, -70.585], [-33.878, -70.602],
@@ -149,54 +166,89 @@
                 weight: 4,
                 opacity: 1,
                 fillColor: '#10B981',
-                fillOpacity: 0.1,
-                dashArray: '10, 10' // Línea segmentada profesional
+                fillOpacity: 0.08,
+                dashArray: '10, 10'
             }).addTo(map).bindTooltip("Límite Administrativo Paine", {sticky: true});
 
-            // 4. Cargado de Datos y Marcadores Naranjas
-            const db = window.getProductos() || [];
-            const listContainer = document.getElementById('recent-list');
+            allData = window.getProductos() || [];
             
-            document.getElementById('count-lots').innerText = db.length;
-            document.getElementById('count-producers').innerText = [...new Set(db.map(p => p.productor))].length;
+            document.getElementById('count-lots').innerText = allData.length;
+            document.getElementById('count-producers').innerText = [...new Set(allData.map(p => p.productor))].length;
 
-            db.forEach(p => {
+            renderList(allData);
+            renderMarkers(allData);
+        }
+
+        function renderMarkers(data) {
+            // Limpiar markers anteriores
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            data.forEach(p => {
                 if(p.lat && p.lon) {
-                    // Creador de Icono Naranja Neón
                     const orangeIcon = L.divIcon({
                         className: 'custom-pin-container',
-                        html: `<div class="custom-pin" style="width: 24px; height: 24px;"></div>`,
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 24]
+                        html: `<div class="custom-pin" style="width: 22px; height: 22px;"></div>`,
+                        iconSize: [22, 22],
+                        iconAnchor: [11, 22],
+                        popupAnchor: [0, -20]
                     });
 
                     const marker = L.marker([p.lat, p.lon], { icon: orangeIcon }).addTo(map);
                     marker.bindPopup(`
-                        <div class="text-left w-44">
-                            <img src="${p.img}" class="w-full h-24 object-cover rounded-xl mb-3 shadow-md">
-                            <p class="font-bold text-xs text-slate-900 leading-none mb-1">${p.nombre}</p>
-                            <p class="text-[10px] text-orange-600 font-bold uppercase mb-2">Auditado Satelital</p>
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block text-center bg-slate-900 text-white py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-orange-600 transition-colors">Abrir Ficha Digital</a>
+                        <div class="text-left w-48 p-1">
+                            <img src="${p.img}" class="w-full h-24 object-cover rounded-xl mb-3 border border-slate-100 shadow-sm">
+                            <p class="font-bold text-xs text-slate-900 leading-none mb-0.5">${p.nombre}</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase mb-2">${p.productor}</p>
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block text-center bg-slate-900 text-white py-2 rounded-lg text-[9px] font-bold uppercase hover:bg-alert transition-all">Ver Expediente</a>
                         </div>
                     `);
+                    markers.push(marker);
                 }
+            });
+        }
 
-                // Lista Lateral
+        function renderList(data) {
+            const listContainer = document.getElementById('recent-list');
+            listContainer.innerHTML = '';
+
+            data.forEach(p => {
                 const item = document.createElement('div');
-                item.className = "group flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50 transition-all cursor-pointer";
+                item.className = "item-card group flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-alert hover:bg-orange-50/30 transition-all cursor-pointer";
+                item.setAttribute('data-search', `${p.nombre} ${p.productor} ${p.ubicacion}`.toLowerCase());
                 item.onclick = () => { map.setView([p.lat, p.lon], 16); };
                 item.innerHTML = `
-                    <div class="relative min-w-[48px]">
-                        <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
-                        <div class="absolute -top-1 -right-1 bg-orange-500 h-3 w-3 rounded-full border-2 border-white"></div>
+                    <div class="relative min-w-[52px]">
+                        <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform">
+                        <div class="absolute -top-1 -right-1 bg-alert h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm"></div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-xs text-slate-900 truncate">${p.nombre}</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">${p.productor}</p>
+                        <p class="font-bold text-sm text-slate-900 truncate group-hover:text-alert transition-colors">${p.nombre}</p>
+                        <p class="text-[10px] text-slate-600 font-bold uppercase tracking-tight truncate">${p.productor}</p>
+                        <p class="text-[9px] text-slate-400 font-medium italic mt-0.5 truncate"><i class="fas fa-map-marker-alt text-[8px] mr-1"></i>${p.ubicacion}</p>
                     </div>
+                    <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:text-alert group-hover:translate-x-1 transition-all"></i>
                 `;
                 listContainer.appendChild(item);
             });
+        }
+
+        function filterItems() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const items = document.querySelectorAll('.item-card');
+            let hasResults = false;
+
+            items.forEach(item => {
+                const text = item.getAttribute('data-search');
+                if (text.includes(query)) {
+                    item.style.display = 'flex';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            document.getElementById('no-results').style.display = hasResults ? 'none' : 'block';
         }
     </script>
 </body>
