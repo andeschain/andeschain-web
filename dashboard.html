@@ -1,243 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Público | AndesChain</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/simulador.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
-                }
-            }
-        }
-    </script>
+<script>
+    // En el script de dashboard.html:
+    function loadDashboard() {
+        const db = getProductos(); // Viene de simulador.js
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = '';
 
-    <style>
-        body { background-color: #F8FAFC; color: #1E293B; -webkit-font-smoothing: antialiased; }
-        .glass-card { background: white; border-radius: 24px; border: 1px solid #E2E8F0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .glass-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1); border-color: #10B981; }
-        .badge-verified { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
-        .badge-pending { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
-    </style>
-</head>
-<body class="pb-20">
+        db.forEach(p => {
+            if(p.estado !== 'VERIFIED') return;
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-2">
-                    <img src="assets/favicon.png" class="h-8">
-                    <span class="font-display font-bold text-xl uppercase tracking-tighter text-slate-900">AndesChain</span>
-                </a>
-                <span class="hidden md:inline-block h-6 w-px bg-slate-200 mx-2"></span>
-                <span class="hidden md:inline-block text-xs font-bold text-slate-400 uppercase tracking-widest">Explorador de Lotes</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Estado Red</p>
-                    <div class="flex items-center gap-1 justify-end">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                        <p class="text-xs font-bold text-emerald-600">Polygon Mainnet</p>
-                    </div>
-                </div>
-                <button onclick="window.print()" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors">
-                    <i class="fas fa-print mr-2"></i> Reporte
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto px-6 py-10">
-
-        <header class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
-            <div>
-                <h1 class="font-display text-4xl font-extrabold text-slate-900 mb-2">Productos Certificados</h1>
-                <p class="text-slate-500 font-light">
-                    Visualización pública de lotes con trazabilidad inmutable.
-                </p>
-            </div>
-            <div class="flex gap-4">
-                <div class="bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Productores</p>
-                    <p class="text-2xl font-black text-slate-900" id="total-producers">0</p>
-                </div>
-                <div class="bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Lotes Activos</p>
-                    <p class="text-2xl font-black text-corp-600" id="total-lots">0</p>
-                </div>
-            </div>
-        </header>
-
-        <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
-            <button class="px-4 py-2 bg-slate-900 text-white rounded-full text-xs font-bold whitespace-nowrap">Todos</button>
-            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-full text-xs font-bold whitespace-nowrap hover:bg-slate-50">Frutas y Hortalizas</button>
-            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-full text-xs font-bold whitespace-nowrap hover:bg-slate-50">Procesados (Miel/Sidra)</button>
-            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-full text-xs font-bold whitespace-nowrap hover:bg-slate-50">Exportación</button>
-        </div>
-
-        <div id="products-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            </div>
-
-        <div id="empty-state" class="hidden text-center py-20">
-            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 text-2xl">
-                <i class="fas fa-box-open"></i>
-            </div>
-            <p class="text-slate-400 font-medium">No hay productos certificados aún.</p>
-        </div>
-
-    </main>
-
-    <footer class="bg-white border-t border-slate-200 mt-20 py-10 text-center">
-        <img src="assets/favicon.png" class="h-6 mx-auto mb-4 opacity-50 grayscale">
-        <p class="text-[10px] font-black tracking-[0.4em] text-slate-300 uppercase italic">
-            AndesChain Technology · Paine · 2026
-        </p>
-    </footer>
-
-    <script>
-        // 1. DATOS DE EJEMPLO (MOCK DATA) - Para que el dashboard se vea "lleno" en la demo
-        const mockData = [
-            {
-                id: "GEN-001",
-                name: "Papa Desirée",
-                lote: "Lote #001-A",
-                producer: "Juan Pérez",
-                location: "Paine Centro",
-                img: "assets/papas.jpg",
-                status: "VERIFIED",
-                date: "10 Feb 2026"
-            },
-            {
-                id: "GEN-002",
-                name: "Sidra Patrimonial",
-                lote: "Barrica #77",
-                producer: "María González",
-                location: "Huelquén",
-                img: "https://images.unsplash.com/photo-1560249821-274878a87383?auto=format&fit=crop&q=80&w=400",
-                status: "VERIFIED",
-                date: "08 Feb 2026"
-            },
-            {
-                id: "GEN-003",
-                name: "Miel de Ulmo",
-                lote: "Cosecha Verano",
-                producer: "Coop. Los Andes",
-                location: "El Vínculo",
-                img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=400",
-                status: "VERIFIED",
-                date: "05 Feb 2026"
-            }
-        ];
-
-        // 2. CARGAR DATOS
-        function loadDashboard() {
-            // Leer datos locales (de la app de captura)
-            const localData = JSON.parse(localStorage.getItem('andesDB')) || [];
+            const card = document.createElement('div');
+            card.className = "glass-card p-6 ..."; // (Estilos previos)
+            // IMPORTANTE: Link al producto
+            const url = `producto.html?id=${p.id}`;
             
-            // Combinar datos Mock + Datos Reales Capturados
-            // Mapeamos los datos locales para que coincidan con la estructura visual
-            const formattedLocal = localData.map(item => ({
-                id: item.id,
-                name: item.productor.includes("Agricultor") ? "Cultivo Registrado" : "Producto Local", // Nombre genérico si viene de captura rápida
-                lote: item.lote,
-                producer: item.productor,
-                location: "Paine (GPS)",
-                img: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=400", // Placeholder para local
-                status: item.status === 'MINTED' ? 'VERIFIED' : 'PENDING',
-                date: item.timestamp.split(' ')[0]
-            }));
-
-            const allProducts = [...mockData, ...formattedLocal];
-
-            // Actualizar contadores
-            document.getElementById('total-lots').innerText = allProducts.length;
-            document.getElementById('total-producers').innerText = new Set(allProducts.map(p => p.producer)).size;
-
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-
-            if (allProducts.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
-                return;
-            }
-
-            // Renderizar Tarjetas
-            allProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = "glass-card p-6 flex flex-col h-full relative group";
-                
-                // Badge de Estado
-                const badgeClass = product.status === 'VERIFIED' ? 'badge-verified' : 'badge-pending';
-                const badgeText = product.status === 'VERIFIED' ? '<i class="fas fa-check-circle mr-1"></i> Verificado' : '<i class="fas fa-clock mr-1"></i> En Proceso';
-
-                // URL del Producto (FOD)
-                // En producción sería: andeschain.io/producto.html?id=...
-                const productUrl = `${window.location.origin}/producto.html?id=${product.id}`;
-
-                card.innerHTML = `
-                    <div class="relative h-48 mb-5 rounded-2xl overflow-hidden bg-slate-100">
-                        <img src="${product.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute top-3 right-3 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest ${badgeClass}">
-                            ${badgeText}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-auto">
-                        <h3 class="font-bold text-xl text-slate-900 leading-tight mb-1">${product.name}</h3>
-                        <p class="text-xs font-bold text-corp-600 mb-3">${product.lote}</p>
-                        
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs text-slate-400">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <p class="text-xs text-slate-500 font-medium">${product.producer}</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
-                        <div class="text-left">
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ficha Digital</p>
-                            <a href="producto.html?id=${product.id}" class="text-xs font-bold text-slate-900 hover:text-corp-600 underline">Ver Historia →</a>
-                        </div>
-                        <div id="qr-${product.id}" class="bg-white p-1 rounded-lg border border-slate-100" title="Escanear para ver origen"></div>
-                    </div>
-                `;
-
-                grid.prepend(card); // Los más nuevos primero
-
-                // Generar QR (pequeño retraso para asegurar que el DOM existe)
-                setTimeout(() => {
-                    const qrContainer = document.getElementById(`qr-${product.id}`);
-                    if(qrContainer) {
-                        qrContainer.innerHTML = ""; // Limpiar por si acaso
-                        new QRCode(qrContainer, {
-                            text: productUrl,
-                            width: 48,
-                            height: 48,
-                            colorDark : "#0F172A",
-                            colorLight : "#ffffff",
-                            correctLevel : QRCode.CorrectLevel.L
-                        });
-                    }
-                }, 100);
-            });
-        }
-
-        // Iniciar
-        window.onload = loadDashboard;
-    </script>
-</body>
-</html>
+            card.innerHTML = `
+                <img src="${p.img}" class="...">
+                <h3>${p.nombre}</h3>
+                <div id="qr-${p.id}"></div>
+                <a href="${url}">Ver Ficha</a>
+            `;
+            grid.appendChild(card);
+            
+            new QRCode(document.getElementById(`qr-${p.id}`), { text: window.location.origin + "/" + url, width: 64, height: 64 });
+        });
+    }
+    window.onload = loadDashboard;
+</script>
