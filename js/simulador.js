@@ -1,6 +1,14 @@
 // js/simulador.js
 
-// 1. DATOS INICIALES (CASOS DE USO)
+console.log("✅ Simulador AndesChain Iniciado");
+
+// --- IMPORTANTE: LÍNEA DE RESET ---
+// Esta línea borra la memoria vieja para asegurar que carguen los datos nuevos.
+// Bórrala o coméntala (ponle // al inicio) cuando ya veas los productos y quieras empezar a capturar datos nuevos.
+// localStorage.removeItem('andesDB'); 
+// ----------------------------------
+
+// 1. DATOS SEMILLA (Seed Data)
 const seedData = [
     {
         id: "1001",
@@ -9,12 +17,12 @@ const seedData = [
         productor: "Agrícola El Vínculo",
         tipo: "Agricultor",
         ubicacion: "Paine, El Vínculo",
-        lat: "-33.84230133754286",
-        lon: "-70.811054665178",
+        lat: "-33.842301",
+        lon: "-70.811054",
         fecha: "12 Feb 2026",
         estado: "VERIFIED",
         historia: "Almendras de calibre exportación. Producidas con riego por goteo optimizado. Polinización natural certificada.",
-        img: "assets/cosecha.jpg", // Usamos papas.jpg como placeholder si no tienes almendras
+        img: "assets/cosecha.jpg", 
         hitos: [
             { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." },
             { titulo: "Cuaja", fecha: "20 Nov 2025", desc: "Control de carga frutal." },
@@ -28,38 +36,42 @@ const seedData = [
         productor: "Punta Fierro",
         tipo: "Emprendedor",
         ubicacion: "Cayumapu, Valdivia",
-        lat: "-39.72943265745812",
-        lon: "-73.10973057843908",
+        lat: "-39.729432",
+        lon: "-73.109730",
         fecha: "10 Feb 2026",
         estado: "VERIFIED",
-        historia: "Sidra elaborada en colaboración con la Sra. María (Agricultura Familiar Campesina). Manzanas de quintas patrimoniales recuperadas. Economía circular.",
+        historia: "Sidra elaborada en colaboración con la Sra. María (Agricultura Familiar Campesina). Manzanas de quintas patrimoniales recuperadas.",
         img: "assets/puchacay.jpg",
         hitos: [
-            { titulo: "Recepción (Sra. María)", fecha: "15 Dic 2025", desc: "Vínculo con Agricultura Familiar Campesina." },
+            { titulo: "Recepción", fecha: "15 Dic 2025", desc: "Vínculo con Agricultura Familiar Campesina." },
             { titulo: "Fermentación", fecha: "20 Dic 2025", desc: "Proceso natural sin aditivos." },
             { titulo: "Embotellado", fecha: "08 Feb 2026", desc: "Lote limitado." }
         ]
     }
 ];
 
-// 2. INICIALIZADOR
-function initAndesChain() {
-    if (!localStorage.getItem('andesDB')) {
+// 2. INICIALIZADOR ROBUSTO
+(function initAndesChain() {
+    // Si no existe la DB o está vacía, cargamos la semilla
+    let currentDB = localStorage.getItem('andesDB');
+    
+    if (!currentDB || currentDB === '[]') {
         console.log("⚡ Inicializando AndesChain Genesis Block...");
         localStorage.setItem('andesDB', JSON.stringify(seedData));
+    } else {
+        console.log("🔄 Base de datos existente cargada.");
     }
-}
+})();
 
-// 3. FUNCIONES DE LECTURA/ESCRITURA
-function getProductos() {
+// 3. FUNCIONES GLOBALES (Conectadas a WINDOW para que el HTML las vea)
+
+window.getProductos = function() {
     return JSON.parse(localStorage.getItem('andesDB')) || [];
 }
 
-function saveProducto(nuevoProducto) {
-    let db = getProductos();
+window.saveProducto = function(nuevoProducto) {
+    let db = window.getProductos();
     db.unshift(nuevoProducto); // Agregar al principio
     localStorage.setItem('andesDB', JSON.stringify(db));
+    console.log("💾 Producto guardado exitosamente");
 }
-
-// Ejecutar al cargar
-initAndesChain();
