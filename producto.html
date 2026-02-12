@@ -25,16 +25,10 @@
     
     <style>
         body { background-color: #FAFAFA; color: #1E293B; }
-        
-        /* Estilos Tarjetas */
         .glass-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; overflow: hidden; }
-        
-        /* Estilos Timeline */
         .timeline-line { position: absolute; left: 23px; top: 20px; bottom: 0; width: 2px; background: #E2E8F0; z-index: 0; }
         .timeline-item { position: relative; z-index: 10; padding-left: 60px; padding-bottom: 40px; }
         .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #10B981; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
-        
-        /* Efecto Mapa Tecnológico */
         .tech-map { filter: grayscale(100%) contrast(1.2); transition: all 0.5s ease; }
         .tech-map:hover { filter: grayscale(0%) contrast(1); }
     </style>
@@ -63,32 +57,27 @@
             </div>
         </header>
 
-        <div class="glass-card shadow-xl shadow-slate-200/50 mb-10 transition-all hover:shadow-2xl">
+        <div class="glass-card shadow-xl shadow-slate-200/50 mb-10">
             <div class="relative aspect-video bg-slate-100 group">
-                <img id="fod-img" src="" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x400?text=Evidencia+Pendiente'">
-                
+                <img id="fod-img" src="" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x400?text=Imagen+No+Disponible'">
                 <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 pt-20">
                     <p class="text-[10px] font-bold text-emerald-300 uppercase tracking-widest mb-1">Productor Certificado</p>
                     <p id="fod-producer" class="text-2xl font-bold text-white">...</p>
                 </div>
             </div>
-            
             <div class="p-8">
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Identificador Lote</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lote</p>
                         <p id="fod-lote" class="text-lg font-bold text-slate-900">...</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fecha de Cierre</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Fecha</p>
                         <p id="fod-date" class="text-lg font-bold text-slate-900">...</p>
                     </div>
                 </div>
                 <hr class="border-slate-100 mb-6">
-                <div class="relative">
-                    <i class="fas fa-quote-left text-slate-200 text-4xl absolute -top-4 -left-2 -z-10"></i>
-                    <p id="fod-story" class="text-slate-600 font-light italic leading-relaxed text-lg pl-4">...</p>
-                </div>
+                <p id="fod-story" class="text-slate-600 font-light italic leading-relaxed text-lg">...</p>
             </div>
         </div>
 
@@ -102,7 +91,6 @@
         </section>
 
         <section class="glass-card bg-slate-900 text-white p-0 mb-12 overflow-hidden relative border-slate-800">
-            
             <div class="p-6 border-b border-white/10 z-10 relative bg-slate-900/90 backdrop-blur-sm flex justify-between items-center">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Evidencia Satelital</h3>
                 <div class="flex items-center gap-2">
@@ -136,7 +124,7 @@
                     <p id="fod-lon" class="font-mono text-sm text-slate-200">...</p>
                 </div>
             </div>
-
+            
             <div class="px-6 pb-6 bg-slate-900">
                 <button onclick="abrirMapaExterno()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-3 flex items-center justify-center gap-3 transition group">
                     <i class="fas fa-external-link-alt text-emerald-400 group-hover:scale-110 transition-transform"></i>
@@ -146,7 +134,6 @@
         </section>
 
         <div class="text-center pb-12">
-            <p class="text-[10px] text-slate-400 font-mono mb-4">Registro inmutable en Polygon Network</p>
             <a href="index.html" class="inline-block px-6 py-2 border border-slate-200 rounded-full text-xs font-bold text-slate-500 hover:bg-slate-50 hover:text-corp-600 transition-colors uppercase tracking-widest">
                 Volver a AndesChain
             </a>
@@ -154,78 +141,81 @@
     </main>
 
     <div id="loader" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center">
-        <div class="relative">
-            <div class="w-12 h-12 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin"></div>
-            <img src="assets/favicon.png" class="h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-50">
-        </div>
-        <p class="mt-4 text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando Bloque...</p>
+        <div class="w-12 h-12 border-4 border-slate-100 border-t-corp-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Verificando Bloque...</p>
     </div>
 
     <div id="error-screen" class="hidden fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-8 text-center">
-        <div class="w-16 h-16 bg-red-50 text-red-400 rounded-full flex items-center justify-center mb-6 text-2xl">
-            <i class="fas fa-search"></i>
-        </div>
-        <h2 class="font-display font-bold text-2xl text-slate-900 mb-2">Producto no encontrado</h2>
-        <p class="text-slate-500 mb-8 max-w-xs mx-auto leading-relaxed">El código QR escaneado no corresponde a un lote verificado en nuestra Blockchain.</p>
-        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wide hover:shadow-lg transition-all">
-            Volver al Inicio
-        </a>
+        <i class="fas fa-search text-4xl text-slate-300 mb-6"></i>
+        <h2 class="font-bold text-2xl text-slate-900 mb-2">Producto no encontrado</h2>
+        <p class="text-slate-500 mb-8 max-w-xs mx-auto">No encontramos el ID solicitado en la red.</p>
+        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase">Volver al Inicio</a>
     </div>
 
     <script src="js/simulador.js"></script>
+    
     <script>
-        // Variables globales para el mapa
         let currentCoords = { lat: 0, lon: 0 };
 
         window.onload = function() {
+            // Seguridad: Si en 3 segundos no carga, quitamos el loader para no colgar el navegador
             setTimeout(() => {
-                loadProduct();
-            }, 800); // Pequeña espera para dar sensación de "búsqueda"
+                document.getElementById('loader').classList.add('hidden');
+            }, 3000);
+
+            setTimeout(() => {
+                try {
+                    initPage();
+                } catch (e) {
+                    console.error(e);
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('error-screen').classList.remove('hidden');
+                }
+            }, 800);
         };
 
-        function loadProduct() {
-            // 1. Obtener ID de la URL
+        function initPage() {
+            // 1. Obtener ID
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
-            // 2. Buscar en la base de datos (simulador.js)
+            if (!id) throw new Error("ID faltante");
+
+            // 2. Buscar en BD
             const db = window.getProductos ? window.getProductos() : [];
             const p = db.find(item => item.id == id);
 
-            // 3. Ocultar loader
-            document.getElementById('loader').classList.add('hidden');
-
             if (!p) {
+                document.getElementById('loader').classList.add('hidden');
                 document.getElementById('error-screen').classList.remove('hidden');
                 return;
             }
 
-            // 4. Mostrar Contenido
+            // 3. Renderizar Datos
+            document.getElementById('loader').classList.add('hidden');
             document.getElementById('fod-container').classList.remove('hidden');
-            
-            // 5. Inyectar Textos e Imágenes
-            document.getElementById('fod-name').innerText = p.nombre;
-            document.getElementById('fod-location').innerText = p.ubicacion;
-            document.getElementById('fod-img').src = p.img;
-            document.getElementById('fod-producer').innerText = p.productor;
-            document.getElementById('fod-lote').innerText = p.lote;
-            document.getElementById('fod-date').innerText = p.fecha;
-            document.getElementById('fod-story').innerText = p.historia || "Este producto cuenta con certificación de origen validada satelitalmente.";
-            
+
+            document.getElementById('fod-name').innerText = p.nombre || "Sin Nombre";
+            document.getElementById('fod-location').innerText = p.ubicacion || "Ubicación Desconocida";
+            document.getElementById('fod-img').src = p.img || "assets/placeholder.jpg";
+            document.getElementById('fod-producer').innerText = p.productor || "Productor";
+            document.getElementById('fod-lote').innerText = p.lote || "Lote S/N";
+            document.getElementById('fod-date').innerText = p.fecha || "-";
+            document.getElementById('fod-story').innerText = p.historia || "Certificación válida.";
             document.getElementById('fod-lat').innerText = p.lat;
             document.getElementById('fod-lon').innerText = p.lon;
 
-            // 6. CONFIGURAR MAPA (Clave para la demo)
-            // Usamos la API embed pública (t=k activa satélite)
-            const mapUrl = `https://maps.google.com/maps?q=${p.lat},${p.lon}&t=k&z=15&ie=UTF8&iwloc=&output=embed`;
-            document.getElementById('google-map').src = mapUrl;
-            
-            // Guardar para el botón externo
-            currentCoords = { lat: p.lat, lon: p.lon };
+            // 4. Mapa
+            if (p.lat && p.lon) {
+                currentCoords = { lat: p.lat, lon: p.lon };
+                // URL corregida y estándar para embeds
+                const mapUrl = `https://maps.google.com/maps?q=${p.lat},${p.lon}&t=k&z=17&ie=UTF8&iwloc=&output=embed`;
+                document.getElementById('google-map').src = mapUrl;
+            }
 
-            // 7. Renderizar Timeline
+            // 5. Timeline
             const timeline = document.getElementById('fod-timeline');
-            timeline.innerHTML = '<div class="timeline-line"></div>'; // Reset
+            timeline.innerHTML = '<div class="timeline-line"></div>';
 
             if (p.hitos && p.hitos.length > 0) {
                 p.hitos.forEach(h => {
@@ -245,15 +235,12 @@
                         <div class="timeline-dot"></div>
                         <h4 class="font-bold text-lg">Registro Inicial</h4>
                         <p class="text-[10px] font-bold text-corp-500 uppercase mb-1">${p.fecha}</p>
-                        <p class="text-sm text-slate-500">Datos ingresados al sistema.</p>
                     </div>`;
             }
         }
 
-        // Función para abrir app externa
         function abrirMapaExterno() {
             if(currentCoords.lat !== 0) {
-                // Link universal que abre App en móvil o Web en desktop
                 const url = `https://www.google.com/maps/search/?api=1&query=${currentCoords.lat},${currentCoords.lon}`;
                 window.open(url, '_blank');
             }
