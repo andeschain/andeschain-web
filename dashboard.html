@@ -1,80 +1,138 @@
-<script src="js/simulador.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Público | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
 
-<script>
-    function loadDashboard() {
-        // 1. Obtener datos (usando window para asegurar conexión con simulador.js)
-        const db = window.getProductos() || []; 
-        const grid = document.getElementById('products-grid');
-        
-        // Limpiar grid y verificar si hay datos
-        grid.innerHTML = '';
-        
-        // Filtrar solo los VERIFICADOS
-        const verificados = db.filter(p => p.estado === 'VERIFIED');
+    <style>
+        body { background-color: #F8FAFC; color: #1E293B; }
+        .glass-card { background: white; border-radius: 24px; border: 1px solid #E2E8F0; transition: all 0.3s; }
+        .glass-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1); border-color: #10B981; }
+    </style>
+</head>
+<body class="pb-20">
 
-        if (verificados.length === 0) {
-            document.getElementById('empty-state').classList.remove('hidden');
-            return;
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="assets/favicon.png" class="h-8">
+                <span class="font-display font-bold text-xl uppercase tracking-tighter text-slate-900">AndesChain</span>
+            </a>
+            <div class="hidden md:block text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                Mainnet Live ●
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <header class="flex justify-between items-end mb-10">
+            <div>
+                <h1 class="font-display text-4xl font-extrabold text-slate-900 mb-2">Productos Certificados</h1>
+                <p class="text-slate-500">Registro público inmutable.</p>
+            </div>
+        </header>
+
+        <div id="products-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </div>
+
+        <div id="empty-state" class="hidden text-center py-20">
+            <p class="text-slate-400 font-medium">No hay productos certificados aún.</p>
+        </div>
+
+    </main>
+
+    <script src="js/simulador.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        function loadDashboard() {
+            // 1. Obtener datos
+            const db = window.getProductos ? window.getProductos() : [];
+            
+            // 2. Obtener el contenedor (AQUÍ ES DONDE FALLABA ANTES)
+            const grid = document.getElementById('products-grid');
+            
+            if (!grid) {
+                console.error("ERROR CRÍTICO: No encontré el div con id='products-grid'");
+                return;
+            }
+
+            grid.innerHTML = '';
+            
+            // Filtrar solo verificados
+            const verificados = db.filter(p => p.estado === 'VERIFIED');
+
+            if (verificados.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            }
+
+            // 3. Generar Tarjetas
+            verificados.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-6 flex flex-col h-full relative group";
+                
+                // URL dinámica (detecta si es local o web)
+                const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                const url = `${baseUrl}/producto.html?id=${p.id}`;
+                
+                card.innerHTML = `
+                    <div class="relative h-48 mb-5 rounded-2xl overflow-hidden bg-slate-100">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                        <div class="absolute top-3 right-3 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-200">
+                            <i class="fas fa-check-circle mr-1"></i> Verificado
+                        </div>
+                    </div>
+                    
+                    <div class="mb-auto">
+                        <h3 class="font-bold text-xl text-slate-900 leading-tight mb-1">${p.nombre}</h3>
+                        <p class="text-xs font-bold text-corp-600 mb-3">${p.lote}</p>
+                        <p class="text-xs text-slate-500 font-medium"><i class="fas fa-user mr-1"></i> ${p.productor}</p>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <a href="${url}" class="text-xs font-bold text-slate-900 hover:text-corp-600 underline">Ver Historia →</a>
+                        <div id="qr-${p.id}" class="bg-white p-1 rounded border border-slate-100"></div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+                
+                // Generar QR
+                setTimeout(() => {
+                    new QRCode(document.getElementById(`qr-${p.id}`), {
+                        text: url,
+                        width: 54,
+                        height: 54,
+                        colorDark : "#0F172A",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.L
+                    });
+                }, 50);
+            });
         }
 
-        // 2. Generar Tarjetas
-        verificados.forEach(p => {
-            const card = document.createElement('div');
-            // AQUÍ ESTABAN LOS PUNTOS SUSPENSIVOS (...), AHORA TIENE ESTILO REAL:
-            card.className = "glass-card p-6 flex flex-col h-full relative group hover:shadow-xl transition-all duration-300";
-            
-            // URL Absoluta para el QR
-            // Si estás en local file://, esto puede fallar. Mejor usar window.location.href base.
-            // Para el MVP asumiendo carpeta raíz:
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-            const url = `${baseUrl}/producto.html?id=${p.id}`;
-            
-            card.innerHTML = `
-                <div class="relative h-48 mb-5 rounded-2xl overflow-hidden bg-slate-100">
-                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute top-3 right-3 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest badge-verified">
-                        <i class="fas fa-check-circle mr-1"></i> Verificado
-                    </div>
-                </div>
-                
-                <div class="mb-auto">
-                    <h3 class="font-bold text-xl text-slate-900 leading-tight mb-1">${p.nombre}</h3>
-                    <p class="text-xs font-bold text-corp-600 mb-3">${p.lote}</p>
-                    
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs text-slate-400">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <p class="text-xs text-slate-500 font-medium">${p.productor}</p>
-                    </div>
-                </div>
-
-                <div class="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <div class="text-left">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ficha Digital</p>
-                        <a href="producto.html?id=${p.id}" class="text-xs font-bold text-slate-900 hover:text-corp-600 underline">Ver Historia →</a>
-                    </div>
-                    <div id="qr-${p.id}" class="bg-white p-1 rounded-lg border border-slate-100 shadow-sm"></div>
-                </div>
-            `;
-            
-            grid.appendChild(card);
-            
-            // 3. Generar QR (Pequeño delay para asegurar renderizado)
-            setTimeout(() => {
-                new QRCode(document.getElementById(`qr-${p.id}`), {
-                    text: url,
-                    width: 54,
-                    height: 54,
-                    colorDark : "#0F172A",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                });
-            }, 50);
-        });
-    }
-
-    // Ejecutar al cargar
-    window.onload = loadDashboard;
-</script>
+        window.onload = loadDashboard;
+    </script>
+</body>
+</html>
