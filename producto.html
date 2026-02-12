@@ -15,7 +15,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#10B981', 600: '#059669', 900: '#022C22' },
+                        'corp': { 50: '#F0FDF4', 100: '#DCFCE7', 500: '#059669', 600: '#047857', 900: '#022C22' },
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -28,7 +28,7 @@
         .glass-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; overflow: hidden; }
         .timeline-line { position: absolute; left: 23px; top: 20px; bottom: 0; width: 2px; background: #E2E8F0; z-index: 0; }
         .timeline-item { position: relative; z-index: 10; padding-left: 60px; padding-bottom: 40px; }
-        .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #10B981; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
+        .timeline-dot { position: absolute; left: 15px; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #059669; border: 4px solid white; box-shadow: 0 0 0 1px #E2E8F0; }
         .tech-map { filter: grayscale(100%) contrast(1.2); transition: all 0.5s ease; }
         .tech-map:hover { filter: grayscale(0%) contrast(1); }
     </style>
@@ -158,55 +158,115 @@
         // Variables globales
         let currentCoords = { lat: 0, lon: 0 };
 
-        window.onload = function() {
-            // Seguridad: Si en 2 segundos no carga, forzamos quitar el loader
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 2000);
+        // --- DATOS DE RESPALDO (Por si falla el simulador o localStorage está vacío) ---
+        const BACKUP_DATA = [
+            {
+                id: "1001",
+                nombre: "Almendras Nonpareil",
+                lote: "Lote #04-2026",
+                productor: "Agrícola El Vínculo",
+                ubicacion: "Paine, Sector Poniente",
+                lat: "-33.8155",
+                lon: "-70.7512",
+                fecha: "12 Feb 2026",
+                historia: "Almendras de calibre exportación. Producidas con riego por goteo optimizado. Polinización natural certificada.",
+                img: "assets/papas.jpg", // Asegúrate que el archivo exista o usa URL web
+                hitos: [
+                    { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." },
+                    { titulo: "Cuaja", fecha: "20 Nov 2025", desc: "Control de carga frutal." },
+                    { titulo: "Cosecha", fecha: "10 Feb 2026", desc: "Recolección mecánica. Temp: 28°C." }
+                ]
+            },
+            {
+                id: "2002",
+                nombre: "Sidra Patrimonial",
+                lote: "Barrica Origen #77",
+                productor: "Sidrería La Quintrala",
+                ubicacion: "Huelquén, Paine",
+                lat: "-33.8201",
+                lon: "-70.7055",
+                fecha: "10 Feb 2026",
+                historia: "Sidra elaborada en colaboración con la Sra. María. Manzanas de quintas antiguas recuperadas.",
+                img: "assets/sidra.jpg",
+                hitos: [
+                    { titulo: "Recepción", fecha: "15 Dic 2025", desc: "Vínculo con Agricultura Familiar." },
+                    { titulo: "Fermentación", fecha: "20 Dic 2025", desc: "Proceso natural sin aditivos." },
+                    { titulo: "Embotellado", fecha: "08 Feb 2026", desc: "Lote limitado." }
+                ]
+            }
+        ];
 
-            // Intentar cargar
+        window.onload = function() {
+            // SEGURO ANTI-LOOP: Si en 2.5 seg no carga, forzamos quitar loader
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                if(!loader.classList.contains('hidden')) {
+                    console.warn("Tiempo de espera agotado, forzando carga...");
+                    loader.classList.add('hidden');
+                }
+            }, 2500);
+
+            // Intentar cargar la página
             setTimeout(() => {
                 try {
                     initPage();
                 } catch (e) {
                     console.error("Error JS:", e);
-                    // Si falla, no mostramos error fatal, solo quitamos loader
                     document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('error-screen').classList.remove('hidden');
+                    document.getElementById('error-msg').innerText = "Error técnico: " + e.message;
                 }
             }, 500);
         };
 
         function initPage() {
-            // 1. Validar script de datos
-            if (typeof window.getProductos !== 'function') {
-                console.warn("Simulador no cargado aún...");
-                return;
-            }
-
-            // 2. Obtener ID URL
+            // 1. Obtener ID URL
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
 
-            // 3. Buscar Producto (Comparación flexible ==)
-            const db = window.getProductos();
-            const p = db.find(item => item.id == id);
-
-            if (!p) {
-                // Si no encuentra producto, redirige al error screen
+            if (!id) {
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('error-screen').classList.remove('hidden');
-                document.getElementById('error-msg').innerText = "ID #" + id + " no encontrado en la base de datos local.";
+                document.getElementById('error-msg').innerText = "Falta el ID en la URL.";
                 return;
             }
 
-            // 4. Mostrar Contenido
+            // 2. Buscar Producto (Estrategia Doble: Simulador -> Respaldo)
+            let p = null;
+            
+            // Intento A: Desde simulador.js (localStorage)
+            if (typeof window.getProductos === 'function') {
+                const db = window.getProductos();
+                p = db.find(item => item.id == id);
+            }
+
+            // Intento B: Si falló A, usar Backup
+            if (!p) {
+                console.warn("Producto no encontrado en LocalStorage, buscando en Respaldo...");
+                p = BACKUP_DATA.find(item => item.id == id);
+            }
+
+            // Si falla todo:
+            if (!p) {
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('error-screen').classList.remove('hidden');
+                document.getElementById('error-msg').innerText = "Producto ID #" + id + " no encontrado.";
+                return;
+            }
+
+            // 3. ¡ÉXITO! Mostrar Contenido
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('fod-container').classList.remove('hidden');
 
-            // 5. Llenar Datos
+            // 4. Llenar Datos
             document.getElementById('fod-name').innerText = p.nombre || "Sin Nombre";
             document.getElementById('fod-location').innerText = p.ubicacion || "-";
-            document.getElementById('fod-img').src = p.img || "assets/placeholder.jpg";
+            
+            // Imagen con fallback
+            const imgEl = document.getElementById('fod-img');
+            imgEl.src = p.img || "assets/placeholder.jpg";
+            imgEl.onerror = function() { this.src = 'https://via.placeholder.com/600x400?text=Imagen+No+Disponible'; };
+
             document.getElementById('fod-producer').innerText = p.productor || "Productor";
             document.getElementById('fod-lote').innerText = p.lote || "Lote S/N";
             document.getElementById('fod-date').innerText = p.fecha || "-";
@@ -214,15 +274,15 @@
             document.getElementById('fod-lat').innerText = p.lat || "0.0";
             document.getElementById('fod-lon').innerText = p.lon || "0.0";
 
-            // 6. CONFIGURAR MAPA (CORRECCIÓN IMPORTANTE AQUÍ)
+            // 5. CONFIGURAR MAPA (CORREGIDO HTTPS Y BACKTICKS)
             if (p.lat && p.lon) {
                 currentCoords = { lat: p.lat, lon: p.lon };
-                // Usamos HTTPS y comillas invertidas (backticks) correctamente
+                // URL estándar de Google Maps Embed
                 const mapUrl = `https://maps.google.com/maps?q=${p.lat},${p.lon}&t=k&z=17&ie=UTF8&iwloc=&output=embed`;
                 document.getElementById('google-map').src = mapUrl;
             }
 
-            // 7. Renderizar Timeline
+            // 6. Renderizar Timeline
             const timeline = document.getElementById('fod-timeline');
             timeline.innerHTML = '<div class="timeline-line"></div>';
 
@@ -250,7 +310,6 @@
 
         function abrirMapaExterno() {
             if(currentCoords.lat !== 0) {
-                // Link universal seguro
                 const url = `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lon}`;
                 window.open(url, '_blank');
             }
