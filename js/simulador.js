@@ -17,7 +17,7 @@ const seedData = [
         productor: "Agrícola & Comercial Rural Quillagua",
         tipo: "Agricultor",
         ubicacion: "Paine, El Vínculo",
-        lat: "--33.846294574770894", 
+        lat: "-33.846294574770894", 
         lon: "-70.80930607600027",
         fecha: "30 Ene 2026",
         estado: "VERIFIED",
