@@ -90,8 +90,8 @@
                 <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-9 md:h-16 w-auto object-contain transition-all duration-300">
             </a>
             <div class="flex items-center gap-4">
-                <a href="/registro.html" target="_blank" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
-                    Registro Productor
+                <a href="registro.html" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
+                    Registrate
                 </a>
             </div>
         </div>
@@ -102,9 +102,9 @@
         <div class="max-w-4xl mx-auto relative z-10 px-2 text-center">
             <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Tecnología de Certificación Pública</span>
             <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Cada alimento tiene una<br><span class="text-corp-500">historia que contar.</span></h1>
-            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto text-center"> Convertimos la historia de productores locales en activos digitales verificados. Infraestructura de confianza para Municipios, INDAP y Mercados Locales.</p>
+            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto text-center"> Convertimos la historia de productores locales en activos digitales verificados. Infraestructura de confianza para entidades públicas.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="#unete" class="btn-primary">Certifica el origen de lo que produces.</a>
+                <a href="registro.html" class="btn-primary">Certifica el origen de lo que produces.</a>
                 <a href="#tecnologia" class="inline-block py-3 px-6 text-slate-600 font-semibold hover:text-corp-600 transition-colors">Cómo funciona →</a>
             </div>
         </div>
@@ -155,21 +155,40 @@
             <p class="text-slate-600 text-sm md:text-lg font-medium">Un protocolo de confianza diseñado para la nueva economía.</p>
         </div>
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
-            <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-satellite"></i></div>
-                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">1. Validación Satelital</h3>
-                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Geolocalización en tiempo real para certificar la procedencia física y el cumplimiento territorial.</p>
+            
+            <article class="card-corp group hover:bg-slate-50 transition-colors">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-100 text-corp-600 rounded-lg flex items-center justify-center text-lg md:text-xl mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">1. Evidencia en Terreno</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">
+                    El productor usa nuestra <strong>App Web</strong> para registrar hitos clave como siembra o cosecha. Validamos coordenadas GPS y fecha exacta en el momento.
+                </p>
             </article>
-            <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-link"></i></div>
-                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">2. Blockchain Inalterable</h3>
-                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Registro criptográfico en la red Polygon. Construimos sobre una infraestructura que no permite alteraciones.</p>
+
+            <article class="card-corp group hover:bg-slate-50 transition-colors">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-100 text-corp-600 rounded-lg flex items-center justify-center text-lg md:text-xl mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">2. Validación Satelital</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">
+                    Nuestro nodo validador cruza la metadata de la foto con <strong>imágenes satelitales</strong> y datos climáticos para asegurar matemáticamente la veracidad del evento.
+                </p>
             </article>
-            <article class="card-corp">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-500 rounded-lg flex items-center justify-center text-white text-lg md:text-xl mb-4 md:mb-6 shadow-md"><i class="fas fa-file-contract"></i></div>
-                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">3. Evidencia Pública</h3>
-                <p class="text-slate-600 text-xs md:text-base leading-relaxed">Sellos interactivos que permiten al mercado verificar cada dato. El consumidor final viaja al origen del producto mediante una transparencia radical al alcance de un QR.</p>
+
+            <article class="card-corp group hover:bg-slate-50 transition-colors">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-corp-100 text-corp-600 rounded-lg flex items-center justify-center text-lg md:text-xl mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">3. Ficha de Origen (FOD)</h3>
+                <p class="text-slate-600 text-xs md:text-base leading-relaxed">
+                    Generamos un pasaporte digital único. El consumidor escanea el QR y accede a la <strong>historia completa y verificada</strong>, sin intermediarios.
+                </p>
+                <div class="mt-4">
+                    <a href="dashboard.html" class="text-corp-600 text-xs font-bold uppercase tracking-wider hover:underline">Ver Ejemplo Real →</a>
+                </div>
             </article>
+
         </div>
     </section>
 
