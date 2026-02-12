@@ -1,30 +1,80 @@
-<script src="js/simulador.js"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/simulador.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
-    // En el script de dashboard.html:
     function loadDashboard() {
-        const db = getProductos(); // Viene de simulador.js
+        // 1. Obtener datos (usando window para asegurar conexión con simulador.js)
+        const db = window.getProductos() || []; 
         const grid = document.getElementById('products-grid');
+        
+        // Limpiar grid y verificar si hay datos
         grid.innerHTML = '';
+        
+        // Filtrar solo los VERIFICADOS
+        const verificados = db.filter(p => p.estado === 'VERIFIED');
 
-        db.forEach(p => {
-            if(p.estado !== 'VERIFIED') return;
+        if (verificados.length === 0) {
+            document.getElementById('empty-state').classList.remove('hidden');
+            return;
+        }
 
+        // 2. Generar Tarjetas
+        verificados.forEach(p => {
             const card = document.createElement('div');
-            card.className = "glass-card p-6 ..."; // (Estilos previos)
-            // IMPORTANTE: Link al producto
-            const url = `producto.html?id=${p.id}`;
+            // AQUÍ ESTABAN LOS PUNTOS SUSPENSIVOS (...), AHORA TIENE ESTILO REAL:
+            card.className = "glass-card p-6 flex flex-col h-full relative group hover:shadow-xl transition-all duration-300";
+            
+            // URL Absoluta para el QR
+            // Si estás en local file://, esto puede fallar. Mejor usar window.location.href base.
+            // Para el MVP asumiendo carpeta raíz:
+            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+            const url = `${baseUrl}/producto.html?id=${p.id}`;
             
             card.innerHTML = `
-                <img src="${p.img}" class="...">
-                <h3>${p.nombre}</h3>
-                <div id="qr-${p.id}"></div>
-                <a href="${url}">Ver Ficha</a>
+                <div class="relative h-48 mb-5 rounded-2xl overflow-hidden bg-slate-100">
+                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute top-3 right-3 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest badge-verified">
+                        <i class="fas fa-check-circle mr-1"></i> Verificado
+                    </div>
+                </div>
+                
+                <div class="mb-auto">
+                    <h3 class="font-bold text-xl text-slate-900 leading-tight mb-1">${p.nombre}</h3>
+                    <p class="text-xs font-bold text-corp-600 mb-3">${p.lote}</p>
+                    
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs text-slate-400">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">${p.productor}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
+                    <div class="text-left">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ficha Digital</p>
+                        <a href="producto.html?id=${p.id}" class="text-xs font-bold text-slate-900 hover:text-corp-600 underline">Ver Historia →</a>
+                    </div>
+                    <div id="qr-${p.id}" class="bg-white p-1 rounded-lg border border-slate-100 shadow-sm"></div>
+                </div>
             `;
+            
             grid.appendChild(card);
             
-            new QRCode(document.getElementById(`qr-${p.id}`), { text: window.location.origin + "/" + url, width: 64, height: 64 });
+            // 3. Generar QR (Pequeño delay para asegurar renderizado)
+            setTimeout(() => {
+                new QRCode(document.getElementById(`qr-${p.id}`), {
+                    text: url,
+                    width: 54,
+                    height: 54,
+                    colorDark : "#0F172A",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                });
+            }, 50);
         });
     }
+
+    // Ejecutar al cargar
     window.onload = loadDashboard;
 </script>
