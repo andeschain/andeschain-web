@@ -146,74 +146,83 @@
     </div>
 
     <div id="error-screen" class="hidden fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-8 text-center">
-        <i class="fas fa-search text-4xl text-slate-300 mb-6"></i>
-        <h2 class="font-bold text-2xl text-slate-900 mb-2">Producto no encontrado</h2>
-        <p class="text-slate-500 mb-8 max-w-xs mx-auto">No encontramos el ID solicitado en la red.</p>
-        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase">Volver al Inicio</a>
+        <i class="fas fa-bug text-4xl text-red-400 mb-6"></i>
+        <h2 class="font-bold text-xl text-slate-900 mb-2">Error de Carga</h2>
+        <p id="error-msg" class="text-slate-500 mb-8 max-w-xs mx-auto text-sm">...</p>
+        <a href="dashboard.html" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase">Volver al Dashboard</a>
     </div>
 
     <script src="js/simulador.js"></script>
     
     <script>
+        // Variables globales
         let currentCoords = { lat: 0, lon: 0 };
 
         window.onload = function() {
-            // Seguridad: Si en 3 segundos no carga, quitamos el loader para no colgar el navegador
+            // Seguridad: Si en 2 segundos no carga, forzamos quitar el loader
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
-            }, 3000);
+            }, 2000);
 
+            // Intentar cargar
             setTimeout(() => {
                 try {
                     initPage();
                 } catch (e) {
-                    console.error(e);
+                    console.error("Error JS:", e);
+                    // Si falla, no mostramos error fatal, solo quitamos loader
                     document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('error-screen').classList.remove('hidden');
                 }
-            }, 800);
+            }, 500);
         };
 
         function initPage() {
-            // 1. Obtener ID
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-
-            if (!id) throw new Error("ID faltante");
-
-            // 2. Buscar en BD
-            const db = window.getProductos ? window.getProductos() : [];
-            const p = db.find(item => item.id == id);
-
-            if (!p) {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('error-screen').classList.remove('hidden');
+            // 1. Validar script de datos
+            if (typeof window.getProductos !== 'function') {
+                console.warn("Simulador no cargado aún...");
                 return;
             }
 
-            // 3. Renderizar Datos
+            // 2. Obtener ID URL
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            // 3. Buscar Producto (Comparación flexible ==)
+            const db = window.getProductos();
+            const p = db.find(item => item.id == id);
+
+            if (!p) {
+                // Si no encuentra producto, redirige al error screen
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('error-screen').classList.remove('hidden');
+                document.getElementById('error-msg').innerText = "ID #" + id + " no encontrado en la base de datos local.";
+                return;
+            }
+
+            // 4. Mostrar Contenido
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('fod-container').classList.remove('hidden');
 
+            // 5. Llenar Datos
             document.getElementById('fod-name').innerText = p.nombre || "Sin Nombre";
-            document.getElementById('fod-location').innerText = p.ubicacion || "Ubicación Desconocida";
+            document.getElementById('fod-location').innerText = p.ubicacion || "-";
             document.getElementById('fod-img').src = p.img || "assets/placeholder.jpg";
             document.getElementById('fod-producer').innerText = p.productor || "Productor";
             document.getElementById('fod-lote').innerText = p.lote || "Lote S/N";
             document.getElementById('fod-date').innerText = p.fecha || "-";
             document.getElementById('fod-story').innerText = p.historia || "Certificación válida.";
-            document.getElementById('fod-lat').innerText = p.lat;
-            document.getElementById('fod-lon').innerText = p.lon;
+            document.getElementById('fod-lat').innerText = p.lat || "0.0";
+            document.getElementById('fod-lon').innerText = p.lon || "0.0";
 
-            // 4. Mapa
+            // 6. CONFIGURAR MAPA (CORRECCIÓN IMPORTANTE AQUÍ)
             if (p.lat && p.lon) {
                 currentCoords = { lat: p.lat, lon: p.lon };
-                // URL corregida y estándar para embeds
+                // Usamos HTTPS y comillas invertidas (backticks) correctamente
                 const mapUrl = `https://maps.google.com/maps?q=${p.lat},${p.lon}&t=k&z=17&ie=UTF8&iwloc=&output=embed`;
                 document.getElementById('google-map').src = mapUrl;
             }
 
-            // 5. Timeline
+            // 7. Renderizar Timeline
             const timeline = document.getElementById('fod-timeline');
             timeline.innerHTML = '<div class="timeline-line"></div>';
 
@@ -230,7 +239,7 @@
                     timeline.appendChild(item);
                 });
             } else {
-                timeline.innerHTML += `
+                 timeline.innerHTML += `
                     <div class="timeline-item">
                         <div class="timeline-dot"></div>
                         <h4 class="font-bold text-lg">Registro Inicial</h4>
@@ -241,7 +250,8 @@
 
         function abrirMapaExterno() {
             if(currentCoords.lat !== 0) {
-                const url = `https://www.google.com/maps/search/?api=1&query=${currentCoords.lat},${currentCoords.lon}`;
+                // Link universal seguro
+                const url = `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lon}`;
                 window.open(url, '_blank');
             }
         }
