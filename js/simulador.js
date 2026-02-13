@@ -9,7 +9,7 @@ const seedData = [
         lote: "Lote #04-2026",
         productor: "El Otro Huerto (Quillagua)",
         tipo: "Agricultor",
-        ubicacion: "Paine, El Vínculo",
+        ubicacion: "El Vínculo, Paine",
         lat: "-33.846294574770894", 
         lon: "-70.80930607600027",
         fecha: "30 Ene 2026",
@@ -28,7 +28,7 @@ const seedData = [
         lote: "Lote #05-2026",
         productor: "Sol de Almendras",
         tipo: "Agricultor",
-        ubicacion: "Paine, El Vínculo",
+        ubicacion: "El Vínculo, Paine",
         lat: "-33.842301",
         lon: "-70.811054",
         fecha: "12 Feb 2026",
@@ -47,7 +47,7 @@ const seedData = [
         lote: "Lote #06-2026",
         productor: "Familia Alburquenque",
         tipo: "Agricultor",
-        ubicacion: "Paine, Mansel",
+        ubicacion: "Mansel, Paine",
         lat: "-33.85199885495518",
         lon: "-70.78121948081238",
         fecha: "13 Feb 2026",
@@ -58,6 +58,24 @@ const seedData = [
             { titulo: "Siembra", fecha: "10 Oct 2025", desc: "Semillas ancestrales de mi familia." },
             { titulo: "Trasplante", fecha: "25 Nov 2025", desc: "Semillas ancestrales de mi familia." },
             { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Cosecha manual. Temp: 20°C." }
+        ]
+    },
+    {
+        id: "5005", // ID único para Luis Miranda
+        nombre: "Zapallo de Guarda Antiguo",
+        lote: "Lote #07-2026",
+        productor: "Luis Miranda",
+        tipo: "Agricultor",
+        ubicacion: "Colonia Kennedy, Paine",
+        lat: "-33.852876", 
+        lon: "-70.763419",
+        fecha: "13 Feb 2026",
+        estado: "VERIFIED",
+        historia: "Cultivo agroecológico a partir de semilla tradicional, rescatando el sabor y la durabilidad del zapallo de guarda auténtico de la zona.",
+        img: "/assets/zapalloguarda.jpg", // Imagen de referencia (puedes cambiarla por la real)
+        hitos: [
+            { titulo: "Siembra Tradicional", fecha: "15 Sep 2025", desc: "Uso de semillas ancestrales sin intervención química." },
+            { titulo: "Validación de Origen", fecha: "13 Feb 2026", desc: "Registro de coordenadas en Colonia Kennedy mediante AndesChain." }
         ]
     },
     {
