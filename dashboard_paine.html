@@ -23,7 +23,7 @@
                             500: '#10B981', 
                             600: '#059669', 
                             800: '#065F46',
-                            900: '#022C22' // Verde oscuro de index.html
+                            900: '#022C22' 
                         },
                         'alert': '#FF5722' 
                     },
@@ -42,7 +42,6 @@
             box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
         }
         
-        /* PIN MEJORADO CON VERDE CORP */
         .custom-pin {
             background-color: #022C22;
             border: 2px solid #10B981;
@@ -73,7 +72,6 @@
         .leaflet-popup-content { margin: 0; width: 220px !important; }
         .leaflet-popup-tip { background: white; }
 
-        /* EFECTO GLASSMORFISMO LISTA */
         .item-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -145,13 +143,13 @@
                 </div>
                 <h3 class="text-4xl font-display font-extrabold text-corp-900">42.8 <span class="text-sm font-normal text-slate-400 uppercase">Ha</span></h3>
             </div>
-            <div class="bg-corp-900 p-6 rounded-[2rem] shadow-xl shadow-corp-900/20 relative overflow-hidden group">
+            <div class="bg-corp-900 p-6 rounded-[2rem] shadow-xl shadow-corp-900/20 relative overflow-hidden group border border-corp-800">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
-                <p class="text-[10px] font-bold text-corp-500 uppercase tracking-[0.2em] mb-1">Blockchain Auditor</p>
+                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-[0.2em] mb-1">Blockchain Auditor</p>
                 <h3 class="text-4xl font-display font-extrabold text-white uppercase tracking-tighter">Verified</h3>
                 <div class="mt-2 flex items-center gap-1">
-                    <i class="fas fa-check-circle text-corp-500 text-[10px]"></i>
-                    <span class="text-[9px] text-corp-400 font-bold uppercase">Smart Contract V2.1</span>
+                    <i class="fas fa-check-circle text-emerald-400 text-[10px]"></i>
+                    <span class="text-[9px] text-emerald-100/60 font-bold uppercase">Smart Contract V2.1</span>
                 </div>
             </div>
         </div>
@@ -185,7 +183,7 @@
                 </div>
 
                 <div id="recent-list" class="space-y-4 overflow-y-auto pr-3 flex-1 scroll-smooth">
-                    </div>
+                </div>
 
                 <div id="no-results" class="hidden text-center py-12">
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -208,21 +206,18 @@
         };
 
         function initDashboard() {
-            // AJUSTE: Foco inicial en toda la comuna
             map = L.map('map', { 
                 zoomControl: false, 
                 attributionControl: false,
-                scrollWheelZoom: false // Mejora experiencia en Dashboard
+                scrollWheelZoom: false 
             }).setView([-33.82, -70.74], 11);
             
             L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-            // Capa satelital profesional
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
                 maxZoom: 20
             }).addTo(map);
 
-            // POLÍGONO PROFESIONAL MEJORADO (Basado en límites reales aproximados)
             const paineBoundary = [
                 [-33.722, -70.835], [-33.705, -70.762], [-33.715, -70.685], 
                 [-33.745, -70.621], [-33.810, -70.585], [-33.860, -70.602],
@@ -241,7 +236,6 @@
                 dashArray: '8, 12'
             }).addTo(map);
 
-            // Ajustar vista a los límites del polígono al entrar
             map.fitBounds(poly.getBounds(), { padding: [20, 20] });
 
             allData = window.getProductos() || [];
@@ -269,7 +263,6 @@
 
                     const marker = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
                     
-                    // POPUP MEJORADO (Imagen mejorada y colores corp)
                     marker.bindPopup(`
                         <div class="overflow-hidden bg-white">
                             <div class="relative h-28 overflow-hidden">
@@ -298,7 +291,8 @@
                 item.setAttribute('data-search', `${p.nombre} ${p.productor} ${p.ubicacion}`.toLowerCase());
                 item.onclick = () => { 
                     map.setView([p.lat, p.lon], 16);
-                    markers.find(m => m.getLatLng().lat == p.lat).openPopup();
+                    const marker = markers.find(m => m.getLatLng().lat == p.lat && m.getLatLng().lng == p.lon);
+                    if(marker) marker.openPopup();
                 };
                 item.innerHTML = `
                     <div class="relative min-w-[56px]">
@@ -333,7 +327,7 @@
                 }
             });
 
-            document.getElementById('no-results').style.display = hasResults ? 'none' : 'block';
+            document.getElementById('no-results').classList.toggle('hidden', hasResults);
         }
     </script>
 </body>
