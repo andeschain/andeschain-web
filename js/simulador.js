@@ -7,7 +7,7 @@ const seedData = [
         id: "1001",
         nombre: "Papa Astrid",
         lote: "Lote #04-2026",
-        productor: "Agrícola & Comercial Rural Quillagua",
+        productor: "El Otro Huerto (Quillagua)",
         tipo: "Agricultor",
         ubicacion: "Paine, El Vínculo",
         lat: "-33.846294574770894", 
@@ -15,7 +15,7 @@ const seedData = [
         fecha: "30 Ene 2026",
         estado: "VERIFIED",
         historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
-        img: "assets/cosecha.jpg", 
+        img: "assets/papa.jpg", 
         hitos: [
             { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández" },
             { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos." },
@@ -26,7 +26,7 @@ const seedData = [
         id: "3003",
         nombre: "Almendra Nonpareil",
         lote: "Lote #05-2026",
-        productor: "Agrícola Sol de Almendras",
+        productor: "Sol de Almendras",
         tipo: "Agricultor",
         ubicacion: "Paine, El Vínculo",
         lat: "-33.842301",
@@ -34,18 +34,36 @@ const seedData = [
         fecha: "12 Feb 2026",
         estado: "VERIFIED",
         historia: "Almendras de calibre exportación. Producidas con riego por goteo optimizado. Polinización natural certificada.",
-        img: "assets/cosecha.jpg", 
+        img: "assets/almendra.jpg", 
         hitos: [
             { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." },
             { titulo: "Cuaja", fecha: "20 Nov 2025", desc: "Control de carga frutal." },
             { titulo: "Cosecha", fecha: "10 Feb 2026", desc: "Recolección mecánica. Temp: 28°C." }
         ]
     },
+      {
+        id: "3003",
+        nombre: "Tomate Cal-Ace",
+        lote: "Lote #06-2026",
+        productor: "Familia Alburquenque",
+        tipo: "Agricultor",
+        ubicacion: "Paine, Mansel",
+        lat: "-33.85199885495518",
+        lon: "-70.78121948081238",
+        fecha: "13 Feb 2026",
+        estado: "VERIFIED",
+        historia: "Tomate cal-ace producidas sin agroquímicos por un agricultor con historia en la comuna.",
+        img: "assets/tomate.jpg", 
+        hitos: [
+            { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." }
+            { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Recolección manual. Temp: 20°C." }
+        ]
+    },
     {
         id: "2002",
         nombre: "Sidra Patrimonial",
         lote: "Barrica Origen #77",
-        productor: "Punta Fierro",
+        productor: "Punta de Fierro",
         tipo: "Emprendedor",
         ubicacion: "Cayumapu, Valdivia",
         lat: "-39.729432",
