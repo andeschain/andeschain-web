@@ -26,7 +26,7 @@
         }
     </script>
     <style>
-        #map { height: 650px; border-radius: 32px; z-index: 10; background: #0f172a; }
+        #map { height: 650px; border-radius: 32px; z-index: 10; background: #f8fafc; border: 1px solid #e2e8f0; }
         
         .custom-pin-wrapper { position: relative; }
         .custom-pin {
@@ -35,24 +35,25 @@
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
             position: absolute; z-index: 2;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         .pin-pulse {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 30px; height: 30px;
+            width: 24px; height: 24px;
             background: #10B981;
             border-radius: 50%;
-            opacity: 0.6;
-            animation: pulse 2s infinite;
+            opacity: 0.4;
+            animation: pulse 2.5s infinite;
             z-index: 1;
         }
         @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
         }
 
-        .leaflet-popup-content-wrapper { border-radius: 20px; padding: 0; overflow: hidden; }
+        .leaflet-popup-content-wrapper { border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
         .leaflet-popup-content { margin: 0; width: 220px !important; }
         
         .btn-expediente {
@@ -65,8 +66,8 @@
         }
         .btn-expediente:hover { background-color: #065F46; transform: scale(1.02); }
 
-        .item-card { transition: all 0.3s ease; }
-        .item-card:hover { transform: translateX(6px); background: #f0fdf4; border-color: #10B981; }
+        .item-card { transition: all 0.3s ease; border: 1px solid transparent; }
+        .item-card:hover { transform: translateX(6px); background: white; border-color: #10B981; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05); }
     </style>
 </head>
 <body class="bg-[#F8FAFC] font-sans min-h-screen text-slate-900">
@@ -154,7 +155,6 @@
 
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
 
-            // PAINE COORDS (EXCLUSIVO)
             const paineCoords = [
                 [-33.774, -70.812], [-33.765, -70.748], [-33.778, -70.684], 
                 [-33.805, -70.620], [-33.844, -70.582], [-33.898, -70.600],
@@ -163,29 +163,21 @@
                 [-33.802, -70.922], [-33.774, -70.812]
             ];
 
-            // 1. MÁSCARA EXTERIOR (FOCO TIPO JUSTOAPP)
+            // 1. MÁSCARA ACADÉMICA (Matiz Slate translúcido para equilibrio de contraste)
             const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
             L.polygon([worldOuter, paineCoords], {
                 color: 'none',
-                fillColor: '#020617', 
-                fillOpacity: 0.7 
+                fillColor: '#475569', 
+                fillOpacity: 0.4 
             }).addTo(map);
 
-            // 2. BRILLO DE BORDE (GLOW)
-            L.polygon(paineCoords, {
-                color: '#10B981',
-                weight: 12,
-                opacity: 0.2,
-                fillColor: 'transparent'
-            }).addTo(map);
-
-            // 3. LÍNEA PRINCIPAL
+            // 2. POLÍGONO TIPO CRISTAL (Enfoque territorial limpio)
             const painePolygon = L.polygon(paineCoords, {
-                color: '#10B981', 
-                weight: 3, 
+                color: '#059669', 
+                weight: 2, 
                 opacity: 1, 
                 fillColor: '#10B981', 
-                fillOpacity: 0.03
+                fillOpacity: 0.08
             }).addTo(map);
 
             map.fitBounds(painePolygon.getBounds(), { padding: [40, 40] });
@@ -227,14 +219,14 @@
             listContainer.innerHTML = '';
             data.forEach(p => {
                 const item = document.createElement('div');
-                item.className = "item-card group flex items-center gap-4 p-5 rounded-[1.5rem] border border-slate-50 bg-white shadow-sm transition-all cursor-pointer";
+                item.className = "item-card group flex items-center gap-4 p-5 rounded-[1.5rem] bg-slate-50 shadow-sm cursor-pointer";
                 item.onclick = () => { 
                     map.setView([p.lat, p.lon], 16);
                     const marker = markers.find(m => m.getLatLng().lat == p.lat && m.getLatLng().lng == p.lon);
                     if(marker) marker.openPopup();
                 };
                 item.innerHTML = `
-                    <img src="${p.img}" class="w-14 h-14 rounded-2xl object-cover">
+                    <img src="${p.img}" class="w-14 h-14 rounded-2xl object-cover shadow-sm">
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-base text-corp-900 truncate">${p.nombre}</p>
                         <p class="text-[10px] text-slate-500 font-bold uppercase">${p.productor}</p>
