@@ -24,8 +24,7 @@
                             600: '#059669', 
                             800: '#065F46',
                             900: '#022C22' 
-                        },
-                        'alert': '#FF5722' 
+                        }
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -51,15 +50,12 @@
         }
         .custom-pin::after {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 8px; height: 8px;
             background: white;
             position: absolute;
             border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            margin-left: -4px;
-            margin-top: -4px;
+            top: 50%; left: 50%;
+            margin-left: -4px; margin-top: -4px;
         }
 
         .leaflet-container { background: #f8fafc !important; }
@@ -67,24 +63,16 @@
             border-radius: 20px; 
             padding: 0; 
             overflow: hidden; 
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); 
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); 
         }
         .leaflet-popup-content { margin: 0; width: 220px !important; }
         .leaflet-popup-tip { background: white; }
 
-        .item-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .item-card:hover {
-            transform: translateX(4px);
-            background: #f0fdf4;
-            border-color: #10B981;
-        }
+        .item-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .item-card:hover { transform: translateX(6px); background: #f0fdf4; border-color: #10B981; }
 
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #059669; }
     </style>
 </head>
 <body class="bg-[#F8FAFC] font-sans min-h-screen text-slate-900">
@@ -112,7 +100,7 @@
                         Polygon Mainnet Live
                     </p>
                 </div>
-                <button onclick="window.location.reload()" class="bg-corp-900 text-white p-3 rounded-2xl hover:bg-corp-800 transition-all shadow-lg shadow-corp-900/20">
+                <button onclick="window.location.reload()" class="bg-corp-900 text-white p-3 rounded-2xl hover:bg-corp-800 transition-all">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
@@ -122,40 +110,40 @@
     <main class="max-w-7xl mx-auto px-6 py-8">
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600"><i class="fas fa-map-pin text-sm"></i></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Puntos de Origen</p>
                 </div>
                 <h3 id="count-lots" class="text-4xl font-display font-extrabold text-corp-900">0</h3>
             </div>
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-lg bg-corp-50 flex items-center justify-center text-corp-600"><i class="fas fa-users text-sm"></i></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Productores Certificados</p>
                 </div>
                 <h3 id="count-producers" class="text-4xl font-display font-extrabold text-corp-600">0</h3>
             </div>
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600"><i class="fas fa-vector-square text-sm"></i></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Superficie Verificada</p>
                 </div>
                 <h3 class="text-4xl font-display font-extrabold text-corp-900">42.8 <span class="text-sm font-normal text-slate-400 uppercase">Ha</span></h3>
             </div>
-            <div class="bg-corp-900 p-6 rounded-[2rem] shadow-xl shadow-corp-900/20 relative overflow-hidden group border border-corp-800">
+            <div class="bg-corp-900 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group border border-corp-800">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
                 <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-[0.2em] mb-1">Blockchain Auditor</p>
                 <h3 class="text-4xl font-display font-extrabold text-white uppercase tracking-tighter">Verified</h3>
                 <div class="mt-2 flex items-center gap-1">
                     <i class="fas fa-check-circle text-emerald-400 text-[10px]"></i>
-                    <span class="text-[9px] text-emerald-100/60 font-bold uppercase">Smart Contract V2.1</span>
+                    <span class="text-[9px] text-emerald-100/70 font-bold uppercase">Smart Contract V2.1</span>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-4">
+            <div class="lg:col-span-2">
                 <div class="bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
                     <div class="flex justify-between items-center mb-5 px-2">
                         <div class="flex items-center gap-4">
@@ -172,23 +160,11 @@
                     <h2 class="font-display font-extrabold text-2xl text-corp-900 mb-6 tracking-tight">Expedientes Digitales</h2>
                     <div class="relative">
                         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input 
-                            type="text" 
-                            id="search-input" 
-                            onkeyup="filterItems()"
-                            placeholder="Buscar productor o localidad..." 
-                            class="w-full bg-slate-50 border border-slate-200 rounded-[1.2rem] py-4 pl-12 pr-4 text-sm focus:border-corp-500 focus:ring-4 focus:ring-corp-500/10 outline-none transition-all font-medium"
-                        >
+                        <input type="text" id="search-input" onkeyup="filterItems()" placeholder="Buscar productor o localidad..." class="w-full bg-slate-50 border border-slate-200 rounded-[1.2rem] py-4 pl-12 pr-4 text-sm focus:border-corp-500 focus:ring-4 focus:ring-corp-500/10 outline-none transition-all font-medium">
                     </div>
                 </div>
-
-                <div id="recent-list" class="space-y-4 overflow-y-auto pr-3 flex-1 scroll-smooth">
-                </div>
-
+                <div id="recent-list" class="space-y-4 overflow-y-auto pr-3 flex-1 scroll-smooth"></div>
                 <div id="no-results" class="hidden text-center py-12">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-search text-slate-300 text-xl"></i>
-                    </div>
                     <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sin registros encontrados</p>
                 </div>
             </div>
@@ -201,45 +177,33 @@
         let markers = [];
         let allData = [];
 
-        window.onload = function() {
-            initDashboard();
-        };
+        window.onload = function() { initDashboard(); };
 
         function initDashboard() {
-            map = L.map('map', { 
-                zoomControl: false, 
-                attributionControl: false,
-                scrollWheelZoom: false 
-            }).setView([-33.82, -70.74], 11);
-            
+            // Foco en el centro geográfico de Paine
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.74], 12);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-                maxZoom: 20
-            }).addTo(map);
+            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
 
+            // POLÍGONO PAINE EXCLUSIVO (Ajustado para no incluir Buin)
             const paineBoundary = [
-                [-33.722, -70.835], [-33.705, -70.762], [-33.715, -70.685], 
-                [-33.745, -70.621], [-33.810, -70.585], [-33.860, -70.602],
-                [-33.935, -70.645], [-33.985, -70.690], [-33.995, -70.785],
-                [-33.972, -70.885], [-33.925, -70.942], [-33.845, -70.965],
-                [-33.770, -70.925], [-33.722, -70.835]
+                [-33.774, -70.812], [-33.755, -70.758], [-33.768, -70.684], 
+                [-33.795, -70.620], [-33.834, -70.582], [-33.888, -70.600],
+                [-33.935, -70.640], [-33.982, -70.695], [-33.998, -70.782],
+                [-33.965, -70.880], [-33.918, -70.938], [-33.842, -70.962],
+                [-33.792, -70.922], [-33.774, -70.812]
             ];
 
             const poly = L.polygon(paineBoundary, {
-                color: '#10B981',
-                weight: 3,
-                opacity: 0.8,
-                fillColor: '#022C22',
-                fillOpacity: 0.15,
-                lineJoin: 'round',
-                dashArray: '8, 12'
+                color: '#10B981', weight: 3, opacity: 0.8,
+                fillColor: '#022C22', fillOpacity: 0.15,
+                lineJoin: 'round', dashArray: '8, 12'
             }).addTo(map);
 
-            map.fitBounds(poly.getBounds(), { padding: [20, 20] });
+            map.fitBounds(poly.getBounds(), { padding: [30, 30] });
 
             allData = window.getProductos() || [];
-            
             document.getElementById('count-lots').innerText = allData.length;
             document.getElementById('count-producers').innerText = [...new Set(allData.map(p => p.productor))].length;
 
@@ -256,23 +220,22 @@
                     const icon = L.divIcon({
                         className: 'custom-pin-container',
                         html: `<div class="custom-pin" style="width: 26px; height: 26px;"></div>`,
-                        iconSize: [26, 26],
-                        iconAnchor: [13, 26],
-                        popupAnchor: [0, -26]
+                        iconSize: [26, 26], iconAnchor: [13, 26], popupAnchor: [0, -26]
                     });
 
                     const marker = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
                     
+                    // POPUP ESTANDARIZADO (Colores Corp y Blanco)
                     marker.bindPopup(`
                         <div class="overflow-hidden bg-white">
                             <div class="relative h-28 overflow-hidden">
-                                <img src="${p.img}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                                <div class="absolute top-2 right-2 bg-corp-900 text-white text-[8px] px-2 py-0.5 rounded-full font-bold">VERIFICADO</div>
+                                <img src="${p.img}" class="w-full h-full object-cover">
+                                <div class="absolute top-2 right-2 bg-corp-900 border border-emerald-500/50 text-white text-[8px] px-2 py-0.5 rounded-full font-bold">VERIFICADO</div>
                             </div>
-                            <div class="p-4">
+                            <div class="p-4 bg-white">
                                 <p class="font-bold text-sm text-corp-900 leading-tight mb-1">${p.nombre}</p>
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3">${p.productor}</p>
-                                <a href="producto.html?id=${p.id}" target="_blank" class="block w-full text-center bg-corp-900 text-white py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-corp-800 transition-all shadow-lg shadow-corp-900/20">Ver Expediente</a>
+                                <a href="producto.html?id=${p.id}" target="_blank" class="block w-full text-center bg-corp-900 text-white py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg shadow-corp-900/20">Ver Expediente</a>
                             </div>
                         </div>
                     `);
@@ -316,17 +279,11 @@
             const query = document.getElementById('search-input').value.toLowerCase();
             const items = document.querySelectorAll('.item-card');
             let hasResults = false;
-
             items.forEach(item => {
-                const text = item.getAttribute('data-search');
-                if (text.includes(query)) {
-                    item.style.display = 'flex';
-                    hasResults = true;
-                } else {
-                    item.style.display = 'none';
-                }
+                if (item.getAttribute('data-search').includes(query)) {
+                    item.style.display = 'flex'; hasResults = true;
+                } else item.style.display = 'none';
             });
-
             document.getElementById('no-results').classList.toggle('hidden', hasResults);
         }
     </script>
