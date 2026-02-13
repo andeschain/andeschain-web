@@ -3,112 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Captura | AndesChain</title>
+    <title>Certificar Origen | AndesChain</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script> tailwind.config = { theme: { extend: { colors: { 'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' } }, fontFamily: { sans: ['Inter'], display: ['Outfit'] } } } } </script>
-    <style> .btn-capture { background: #022C22; color: white; border-radius: 20px; padding: 18px; font-weight: 700; width: 100%; text-transform: uppercase; font-size: 14px; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .btn-grad { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .camera-box { transition: all 0.3s ease; }
+        .camera-box:active { transform: scale(0.98); }
+    </style>
 </head>
-<body class="bg-gray-50 pb-20">
-    <nav class="sticky top-0 bg-white/90 backdrop-blur p-4 border-b flex justify-between items-center z-50">
-        <div class="flex items-center gap-2"><img src="assets/favicon.png" class="h-6"><span class="font-display font-bold">AndesChain</span></div>
-        <div id="gps-status" class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase">Sin GPS</div>
+<body class="pb-10">
+
+    <nav class="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center gap-2">
+            <img src="assets/favicon.png" class="h-6">
+            <span class="font-bold text-slate-900 tracking-tight">AndesChain <span class="text-emerald-600">Pro</span></span>
+        </div>
+        <a href="dashboard_paine.html" class="text-[10px] font-bold text-slate-400 border border-slate-200 px-3 py-1 rounded-full">CANCELAR</a>
     </nav>
 
-    <main class="p-6 max-w-md mx-auto space-y-6">
-        <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
-            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Identidad</h2>
-            <div class="flex bg-gray-100 p-1 rounded-xl mb-3">
-                <button onclick="setRole('agro')" id="btn-agro" class="flex-1 py-3 rounded-lg text-xs font-bold bg-white shadow text-corp-600">AGRICULTOR</button>
-                <button onclick="setRole('empre')" id="btn-empre" class="flex-1 py-3 rounded-lg text-xs font-bold text-gray-400">EMPRENDEDOR</button>
-            </div>
-            <input type="text" id="lote-name" placeholder="Nombre Lote/Producto" class="w-full bg-gray-50 p-3 rounded-xl text-sm font-bold outline-none border focus:border-corp-500">
-            <select id="stage-select" class="w-full bg-gray-50 p-3 rounded-xl text-sm font-bold outline-none border mt-3"></select>
-        </div>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        
+        <header class="mb-8">
+            <h1 class="text-2xl font-extrabold text-slate-900 leading-tight">Certificación de Hito</h1>
+            <p class="text-slate-500 text-sm">Registro inmutable de evidencia en terreno.</p>
+        </header>
 
-        <div class="bg-white p-1 rounded-3xl border border-gray-100 shadow-sm relative group overflow-hidden">
-            <div id="cam-placeholder" class="bg-gray-900 aspect-[4/5] rounded-[20px] flex flex-col items-center justify-center text-gray-500 cursor-pointer" onclick="document.getElementById('file').click()">
-                <i class="fas fa-camera text-4xl text-white mb-4"></i>
-                <p class="text-xs font-bold uppercase text-white">Capturar Evidencia</p>
-                <input type="file" id="file" accept="image/*" capture="environment" class="hidden" onchange="handleFile(event)">
-            </div>
-            <img id="preview" class="hidden w-full h-full object-cover aspect-[4/5] rounded-[20px]">
+        <form id="captureForm" action="https://formsubmit.co/ajax/info@andeschain.io" method="POST" enctype="multipart/form-data" class="space-y-6">
             
-            <div id="data-overlay" class="hidden absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur p-4 rounded-xl">
-                <p class="text-[9px] font-bold text-gray-400 uppercase">Metadata Extraída</p>
-                <div class="font-mono text-xs font-bold text-corp-900 mt-1"><i class="fas fa-map-pin"></i> <span id="lat"></span>, <span id="lon"></span></div>
-            </div>
-        </div>
+            <input type="hidden" name="_subject" value="NUEVA CERTIFICACIÓN: Evidencia Satelital AndesChain">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
 
-        <button id="btn-submit" onclick="enviarDatos()" class="btn-capture opacity-50" disabled>Enviar a Validación</button>
+            <div class="space-y-2">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">1. Evidencia Fotográfica</label>
+                <div id="camera-box" onclick="document.getElementById('photo-input').click()" class="camera-box aspect-square bg-slate-200 rounded-[2.5rem] border-4 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative group shadow-inner">
+                    <div id="placeholder-ui" class="text-center p-6">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 shadow-md mx-auto">
+                            <i class="fas fa-camera text-2xl text-emerald-600"></i>
+                        </div>
+                        <p class="text-xs font-bold text-slate-500">CAPTURAR EVIDENCIA</p>
+                    </div>
+                    <img id="preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                </div>
+                <input type="file" id="photo-input" name="archivo_evidencia" accept="image/*" capture="environment" class="hidden" required onchange="handlePreview(event)">
+            </div>
+
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">2. Validación de Sensores</label>
+                
+                <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                    <div id="gps-status" class="flex items-center gap-2">
+                        <div class="h-2 w-2 bg-slate-300 rounded-full animate-pulse"></div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Localizando...</span>
+                    </div>
+                    <div id="env-data" class="text-[10px] font-bold text-slate-500 uppercase">
+                        </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <p class="text-[8px] font-bold text-slate-400 uppercase mb-1 tracking-tighter">Latitud</p>
+                        <p id="lat-display" class="font-mono text-xs text-slate-700 font-bold">0.000000</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <p class="text-[8px] font-bold text-slate-400 uppercase mb-1 tracking-tighter">Longitud</p>
+                        <p id="lon-display" class="font-mono text-xs text-slate-700 font-bold">0.000000</p>
+                    </div>
+                </div>
+
+                <input type="hidden" name="gps_latitud" id="lat-input">
+                <input type="hidden" name="gps_longitud" id="lon-input">
+                <input type="hidden" name="sensor_temperatura" id="temp-input">
+                <input type="hidden" name="sensor_humedad" id="hum-input">
+                <input type="hidden" name="dispositivo_info" id="dev-input">
+            </div>
+
+            <div class="space-y-4">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">3. Identidad del Producto</label>
+                
+                <input type="text" name="productor_id" placeholder="Nombre de la Agrícola / Productor" required 
+                    class="w-full px-6 py-4 rounded-2xl bg-white border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-semibold text-slate-900 shadow-sm">
+
+                <input type="text" name="producto_tipo" placeholder="Producto (ej: Almendras)" required 
+                    class="w-full px-6 py-4 rounded-2xl bg-white border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-semibold text-slate-900 shadow-sm">
+
+                <textarea name="hito_descripcion" rows="3" placeholder="Descripción del hito (ej: Inicio de floración en sector norte)" 
+                    class="w-full px-6 py-4 rounded-2xl bg-white border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-semibold text-slate-900 shadow-sm"></textarea>
+            </div>
+
+            <div class="pt-6">
+                <button type="submit" id="submitBtn" class="btn-grad w-full text-white font-bold py-5 rounded-[1.5rem] shadow-xl shadow-emerald-200 flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    <i class="fas fa-lock"></i>
+                    CERTIFICAR EN BLOCKCHAIN
+                </button>
+                <p class="text-center text-[9px] text-slate-400 font-bold uppercase mt-4 tracking-widest">
+                    La evidencia incluirá sello de tiempo y ubicación inmutable.
+                </p>
+            </div>
+
+        </form>
     </main>
 
-    <script src="js/simulador.js"></script>
     <script>
-        let role = 'agro';
-        let coords = null;
-        
-        const stages = {
-            agro: ["Siembra", "Floración", "Cosecha"],
-            empre: ["Recepción (Vínculo)", "Proceso", "Producto Final"]
-        };
-
-        window.onload = () => { initGPS(); setRole('agro'); };
-
-        function setRole(r) {
-            role = r;
-            // UI Toggle logic simplificada...
-            const s = document.getElementById('stage-select'); s.innerHTML = '';
-            stages[r].forEach(st => { let o = document.createElement('option'); o.text = st; s.add(o); });
+        // --- 1. PREVISUALIZACIÓN DE FOTO ---
+        function handlePreview(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview');
+                    const placeholder = document.getElementById('placeholder-ui');
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
         }
 
-        function initGPS() {
-            navigator.geolocation.getCurrentPosition(p => {
-                coords = { lat: p.coords.latitude.toFixed(4), lon: p.coords.longitude.toFixed(4) };
-                document.getElementById('gps-status').className = "bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase";
-                document.getElementById('gps-status').innerText = "GPS Activo";
+        // --- 2. CAPTURA DE SENSORES AMBIENTALES (Simulada para Paine) ---
+        function getEnvData() {
+            // Simulamos datos de una estación meteorológica local
+            const temp = (Math.random() * (31 - 19) + 19).toFixed(1);
+            const hum = Math.floor(Math.random() * (55 - 30) + 30);
+            
+            document.getElementById('env-data').innerHTML = `
+                <i class="fas fa-thermometer-half text-orange-500"></i> ${temp}°C 
+                <i class="fas fa-tint text-blue-500 ml-2"></i> ${hum}% HR
+            `;
+            
+            document.getElementById('temp-input').value = temp + "°C";
+            document.getElementById('hum-input').value = hum + "%";
+            document.getElementById('dev-input').value = navigator.userAgent;
+        }
+
+        // --- 3. CAPTURA DE GPS ---
+        function getLocation() {
+            const status = document.getElementById('gps-status');
+            const latInp = document.getElementById('lat-input');
+            const lonInp = document.getElementById('lon-input');
+            const latDisp = document.getElementById('lat-display');
+            const lonDisp = document.getElementById('lon-display');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        latInp.value = lat;
+                        lonInp.value = lon;
+                        latDisp.innerText = lat.toFixed(6);
+                        lonDisp.innerText = lon.toFixed(6);
+                        
+                        status.innerHTML = '<i class="fas fa-check-circle text-emerald-500"></i> <span class="text-[10px] font-bold text-emerald-600 uppercase">Señal GPS Estable</span>';
+                        getEnvData(); // Una vez fijado el GPS, capturamos clima
+                    },
+                    (error) => {
+                        status.innerHTML = '<i class="fas fa-exclamation-triangle text-red-500"></i> <span class="text-[10px] font-bold text-red-600 uppercase">Sin Señal GPS</span>';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            }
+        }
+
+        // Iniciar al cargar
+        window.onload = getLocation;
+
+        // --- 4. ENVÍO VÍA AJAX ---
+        const form = document.getElementById('captureForm');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SELLANDO BLOQUE...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch("https://formsubmit.co/ajax/info@andeschain.io", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = '<i class="fas fa-check"></i> SELLADO EXITOSO';
+                btn.style.background = "#10B981";
+                
+                setTimeout(() => {
+                    alert("✅ Éxito: La evidencia ha sido enviada al nodo de validación. Recibirá la certificación en su correo.");
+                    window.location.href = 'dashboard_paine.html';
+                }, 1500);
+            })
+            .catch(error => {
+                alert("Error de comunicación. Verifique su señal 4G/5G.");
+                btn.innerHTML = 'REINTENTAR SELLADO';
+                btn.disabled = false;
             });
-        }
-
-        function handleFile(e) {
-            if(!coords) return alert("Falta GPS");
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                document.getElementById('cam-placeholder').classList.add('hidden');
-                document.getElementById('preview').src = evt.target.result;
-                document.getElementById('preview').classList.remove('hidden');
-                document.getElementById('data-overlay').classList.remove('hidden');
-                document.getElementById('lat').innerText = coords.lat;
-                document.getElementById('lon').innerText = coords.lon;
-                document.getElementById('btn-submit').classList.remove('opacity-50');
-                document.getElementById('btn-submit').disabled = false;
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-
-        function enviarDatos() {
-            const data = {
-                id: Date.now().toString(),
-                nombre: document.getElementById('lote-name').value || "Lote Nuevo",
-                lote: "Lote #" + Math.floor(Math.random()*100),
-                productor: "Usuario Demo",
-                tipo: role === 'agro' ? "Agricultor" : "Emprendedor",
-                ubicacion: "Paine (Demo)",
-                lat: coords.lat, lon: coords.lon,
-                fecha: new Date().toLocaleDateString(),
-                estado: "PENDING", // Pendiente de validación
-                img: document.getElementById('preview').src,
-                hitos: [{ titulo: document.getElementById('stage-select').value, fecha: "Hoy", desc: "Registro vía App" }]
-            };
-            
-            // Guardar usando el simulador
-            saveProducto(data);
-            
-            alert("✅ Datos enviados al Admin para certificación.");
-            window.location.href = 'admin.html';
-        }
+        });
     </script>
 </body>
 </html>
