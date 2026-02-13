@@ -312,18 +312,40 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // --- FUNCIÓN UNIFICADA ONLOAD ---
+        window.onload = function() {
+            // Inicializar timer del formulario
+            const timer = document.getElementById('form_timer');
+            if (timer) timer.value = Date.now();
+
+            // Lógica de redirección exitosa desde captura
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('envio') === 'exitoso') {
+                Swal.fire({
+                    title: '¡Certificación Enviada!',
+                    text: 'La información ha sido recibida correctamente en el nodo municipal.',
+                    icon: 'success',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#059669',
+                    borderRadius: '2rem',
+                    customClass: {
+                        popup: 'rounded-[2rem]',
+                        confirmButton: 'rounded-xl font-bold uppercase tracking-wide'
+                    }
+                });
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        };
+
         const phoneInput = document.querySelector("#phone");
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: "cl",
             separateDialCode: true,
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
         });
-
-        window.onload = function() {
-            document.getElementById('form_timer').value = Date.now();
-        };
 
         let scrollTimeout;
         window.addEventListener('scroll', function() {
@@ -386,27 +408,5 @@
             });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('envio') === 'exitoso') {
-            Swal.fire({
-                title: '¡Certificación Enviada!',
-                text: 'La información ha sido recibida correctamente en el nodo municipal.',
-                icon: 'success',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: '#059669',
-                borderRadius: '2rem',
-                customClass: {
-                    popup: 'rounded-[2rem]',
-                    confirmButton: 'rounded-xl font-bold uppercase tracking-wide'
-                }
-            });
-            // Limpia la URL para que el mensaje no reaparezca al recargar
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    }
-</script>
 </body>
 </html>
