@@ -41,8 +41,8 @@ const seedData = [
             { titulo: "Cosecha", fecha: "10 Feb 2026", desc: "Recolección mecánica. Temp: 28°C." }
         ]
     },
-      {
-        id: "4004",
+    {
+        id: "4004", // ID ÚNICO CORREGIDO
         nombre: "Tomate Cal-Ace",
         lote: "Lote #06-2026",
         productor: "Familia Alburquenque",
@@ -55,7 +55,7 @@ const seedData = [
         historia: "Tomate cal-ace producidas sin agroquímicos por un agricultor con historia en la comuna.",
         img: "assets/tomate.jpg", 
         hitos: [
-            { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." }
+            { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." }, // COMA AGREGADA AQUÍ
             { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Recolección manual. Temp: 20°C." }
         ]
     },
@@ -95,7 +95,7 @@ const seedData = [
 
     if (nuevosAgregados > 0) {
         localStorage.setItem('andesDB', JSON.stringify(currentDB));
-        console.log(`✨ Sincronizados ${nuevosAgregados} productos nuevos a la memoria local.`);
+        console.log(`✨ Sincronizados ${nuevosAgregados} productos nuevos.`);
     } else {
         console.log("🔄 Memoria local actualizada.");
     }
@@ -109,5 +109,5 @@ window.saveProducto = function(nuevoProducto) {
     let db = window.getProductos();
     db.unshift(nuevoProducto);
     localStorage.setItem('andesDB', JSON.stringify(db));
-    console.log("💾 Registro guardado en Blockchain (Simulado)");
+    console.log("💾 Registro guardado.");
 };
