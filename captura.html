@@ -28,7 +28,7 @@
             
             <input type="hidden" name="_subject" value="NUEVA CERTIFICACIÓN - COPIAR AL SIMULADOR">
             <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_next" value="https://andeschain.io/dashboard_paine.html">
+            <input type="hidden" name="_next" value="https://andeschain.io/index.html?envio=exitoso">
 
             <div class="space-y-2">
                 <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">1. Evidencia Visual</label>
@@ -91,7 +91,6 @@
     </main>
 
     <script>
-        // Función para previsualizar la foto
         function handlePreview(event) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -103,7 +102,6 @@
             reader.readAsDataURL(event.target.files[0]);
         }
 
-        // Obtener GPS apenas carga la página
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
