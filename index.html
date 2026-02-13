@@ -386,5 +386,27 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('envio') === 'exitoso') {
+            Swal.fire({
+                title: '¡Certificación Enviada!',
+                text: 'La información ha sido recibida correctamente en el nodo municipal.',
+                icon: 'success',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#059669',
+                borderRadius: '2rem',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl font-bold uppercase tracking-wide'
+                }
+            });
+            // Limpia la URL para que el mensaje no reaparezca al recargar
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+</script>
 </body>
 </html>
