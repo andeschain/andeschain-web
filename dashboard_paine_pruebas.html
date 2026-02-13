@@ -110,7 +110,7 @@
 
     <script src="js/simulador.js"></script>
     <script>
-        let map, markers = [], allData = [], geoJsonLayer, maskLayer;
+        let map, markers = [], geoJsonLayer, maskLayer;
 
         window.onload = function() { initDashboard(); };
 
@@ -125,58 +125,56 @@
         async function updateTerritory(comunaNombre) {
             document.getElementById('map-loader').classList.remove('hidden');
             
-            // Limpieza de capas previas
+            // 1. Limpieza TOTAL de capas previas
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             markers.forEach(m => map.removeLayer(m));
             markers = [];
 
             try {
-                // Usamos jsDelivr como CDN para evitar bloqueos CORS y asegurar alta disponibilidad
                 const response = await fetch('https://cdn.jsdelivr.net/gh/carlosepunto/chile-geojson@master/comunas.json');
                 const data = await response.json();
                 
-                // Normalización de búsqueda para ignorar tildes y mayúsculas
                 const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
                 const comunaFeature = data.features.find(f => normalize(f.properties.name) === normalize(comunaNombre));
 
                 if (comunaFeature) {
                     const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
                     
-                    // Manejo dinámico de Polygon y MultiPolygon
-                    let coords;
+                    // IMPORTANTE: Invertir coordenadas de [Lng, Lat] a [Lat, Lng] para la máscara manual
+                    let coordsLeaflet;
                     if (comunaFeature.geometry.type === "Polygon") {
-                        coords = [comunaFeature.geometry.coordinates[0].map(c => [c[1], c[0]])];
+                        coordsLeaflet = [comunaFeature.geometry.coordinates[0].map(c => [c[1], c[0]])];
                     } else {
-                        coords = comunaFeature.geometry.coordinates.map(poly => poly[0].map(c => [c[1], c[0]]));
+                        coordsLeaflet = comunaFeature.geometry.coordinates.map(poly => poly[0].map(c => [c[1], c[0]]));
                     }
 
-                    // Máscara Inversa Slate
-                    maskLayer = L.polygon([worldOuter, ...coords], {
-                        color: 'none', fillColor: '#475569', fillOpacity: 0.45
+                    // 2. Crear Máscara
+                    maskLayer = L.polygon([worldOuter, ...coordsLeaflet], {
+                        color: 'none', fillColor: '#475569', fillOpacity: 0.5, interactive: false
                     }).addTo(map);
 
-                    // Límite Comunal Estilo Esmeralda
+                    // 3. Crear Borde Comunal usando L.geoJSON (maneja la proyección automáticamente)
                     geoJsonLayer = L.geoJSON(comunaFeature, {
-                        style: { color: '#10B981', weight: 3, opacity: 1, fillColor: '#10B981', fillOpacity: 0.05 }
+                        style: { color: '#10B981', weight: 3, opacity: 1, fillColor: '#10B981', fillOpacity: 0.05, interactive: false }
                     }).addTo(map);
 
                     map.fitBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
                 }
             } catch (e) { 
-                console.error("Error cargando polígono dinámico:", e);
+                console.error("Error cargando polígono:", e);
             }
 
-            // Filtrado de datos desde simulador.js
+            // 4. Filtrado y Renderizado de Datos
             const rawData = window.getProductos() || [];
-            allData = rawData.filter(p => p.ubicacion.toLowerCase().includes(comunaNombre.toLowerCase()));
-            const dataOrdenada = [...allData].reverse();
+            const filteredData = rawData.filter(p => p.ubicacion.toLowerCase().includes(comunaNombre.toLowerCase()));
+            const dataOrdenada = [...filteredData].reverse();
 
-            document.getElementById('count-lots').innerText = allData.length;
-            document.getElementById('count-producers').innerText = [...new Set(allData.map(p => p.productor))].length;
+            document.getElementById('count-lots').innerText = filteredData.length;
+            document.getElementById('count-producers').innerText = [...new Set(filteredData.map(p => p.productor))].length;
 
             renderList(dataOrdenada);
-            renderMarkers(allData);
+            renderMarkers(filteredData);
             
             document.getElementById('map-loader').classList.add('hidden');
         }
