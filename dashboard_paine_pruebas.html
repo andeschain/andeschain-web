@@ -32,7 +32,7 @@
         .leaflet-popup-content-wrapper { border-radius: 20px; padding: 0; overflow: hidden; }
         .leaflet-popup-content { margin: 0; width: 220px !important; }
         .btn-expediente { background-color: #022C22; color: #A7F3D0 !important; display: block; width: 100%; text-align: center; padding: 12px 0; border-radius: 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; }
-        .item-card { transition: all 0.3s ease; }
+        .item-card { transition: all 0.3s ease; border: 1px solid transparent; margin-bottom: 8px; }
         .item-card:hover { transform: translateX(6px); background: white; border-color: #10B981; }
     </style>
 </head>
@@ -46,11 +46,11 @@
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">AndesChain Tech</span>
                 </a>
                 <div class="flex items-center gap-4">
-                    <img src="assets/LogoPaine.svg" id="municipality-logo" class="h-14 w-auto object-contain">
+                    <img src="assets/LogoPaine.svg" id="municipality-logo" class="h-14 w-auto object-contain" onerror="this.src='https://via.placeholder.com/150x60?text=Logo'">
                     <div>
                         <div class="flex items-center gap-2">
                             <h1 class="font-display font-bold text-xl leading-none text-corp-900">GeoDashboard</h1>
-                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 border-none rounded-lg text-sm font-bold text-corp-600 outline-none px-2 py-1 cursor-pointer">
+                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 border-none rounded-lg text-sm font-bold text-corp-600 outline-none px-2 py-1 cursor-pointer hover:bg-slate-200 transition-colors">
                                 <option value="Paine" selected>Paine</option>
                                 <option value="Buin">Buin</option>
                                 <option value="Valdivia">Valdivia</option>
@@ -91,16 +91,19 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 relative">
                 <div id="map"></div>
-                <div id="map-loader" class="absolute inset-0 bg-white/50 z-[1001] flex items-center justify-center rounded-[2rem] hidden">
-                    <i class="fas fa-spinner animate-spin text-corp-600 text-3xl"></i>
+                <div id="map-loader" class="absolute inset-0 bg-white/60 z-[1001] flex items-center justify-center rounded-[2rem] hidden">
+                    <div class="flex flex-col items-center gap-3">
+                        <i class="fas fa-circle-notch animate-spin text-corp-600 text-4xl"></i>
+                        <span class="text-[10px] font-bold text-corp-900 uppercase tracking-widest">Sincronizando Capas...</span>
+                    </div>
                 </div>
             </div>
             <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl h-[600px] flex flex-col">
                 <div class="mb-6">
                     <h2 class="font-display font-extrabold text-2xl text-corp-900 mb-6 tracking-tight">Expedientes Digitales</h2>
-                    <input type="text" id="search-input" onkeyup="filterItems()" placeholder="Buscar en esta zona..." class="w-full bg-slate-50 border border-slate-200 rounded-[1.2rem] py-4 px-6 text-sm outline-none font-medium focus:border-corp-500">
+                    <input type="text" id="search-input" onkeyup="filterItems()" placeholder="Buscar en esta zona..." class="w-full bg-slate-50 border border-slate-200 rounded-[1.2rem] py-4 px-6 text-sm outline-none font-medium focus:border-corp-500 transition-all">
                 </div>
-                <div id="recent-list" class="space-y-4 overflow-y-auto pr-3 flex-1"></div>
+                <div id="recent-list" class="space-y-1 overflow-y-auto pr-3 flex-1"></div>
             </div>
         </div>
     </main>
@@ -112,7 +115,7 @@
         window.onload = function() { initDashboard(); };
 
         function initDashboard() {
-            map = L.map('map', { zoomControl: false, attributionControl: false });
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
             
@@ -122,37 +125,49 @@
         async function updateTerritory(comunaNombre) {
             document.getElementById('map-loader').classList.remove('hidden');
             
-            // 1. Limpiar Mapa
+            // Limpieza de capas previas
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             markers.forEach(m => map.removeLayer(m));
             markers = [];
 
             try {
-                // 2. Cargar GeoJSON Oficial de Comunas (Usa un repositorio CDN para velocidad)
-                // Nota: Usamos Paine por defecto si la carga falla.
-                const response = await fetch('https://raw.githubusercontent.com/carlosepunto/chile-geojson/master/comunas.json');
+                // Usamos jsDelivr como CDN para evitar bloqueos CORS y asegurar alta disponibilidad
+                const response = await fetch('https://cdn.jsdelivr.net/gh/carlosepunto/chile-geojson@master/comunas.json');
                 const data = await response.json();
                 
-                const comunaFeature = data.features.find(f => f.properties.name.toLowerCase() === comunaNombre.toLowerCase());
+                // Normalización de búsqueda para ignorar tildes y mayúsculas
+                const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const comunaFeature = data.features.find(f => normalize(f.properties.name) === normalize(comunaNombre));
 
                 if (comunaFeature) {
-                    // 3. Crear Máscara Inversa Profesional
                     const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
-                    maskLayer = L.polygon([worldOuter, comunaFeature.geometry.coordinates[0].map(c => [c[1], c[0]])], {
-                        color: 'none', fillColor: '#475569', fillOpacity: 0.5
+                    
+                    // Manejo dinámico de Polygon y MultiPolygon
+                    let coords;
+                    if (comunaFeature.geometry.type === "Polygon") {
+                        coords = [comunaFeature.geometry.coordinates[0].map(c => [c[1], c[0]])];
+                    } else {
+                        coords = comunaFeature.geometry.coordinates.map(poly => poly[0].map(c => [c[1], c[0]]));
+                    }
+
+                    // Máscara Inversa Slate
+                    maskLayer = L.polygon([worldOuter, ...coords], {
+                        color: 'none', fillColor: '#475569', fillOpacity: 0.45
                     }).addTo(map);
 
-                    // 4. Dibujar Límite Comunal Estilo Cristal
+                    // Límite Comunal Estilo Esmeralda
                     geoJsonLayer = L.geoJSON(comunaFeature, {
-                        style: { color: '#10B981', weight: 3, opacity: 1, fillColor: '#10B981', fillOpacity: 0.1 }
+                        style: { color: '#10B981', weight: 3, opacity: 1, fillColor: '#10B981', fillOpacity: 0.05 }
                     }).addTo(map);
 
                     map.fitBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
                 }
-            } catch (e) { console.error("Error cargando polígono:", e); }
+            } catch (e) { 
+                console.error("Error cargando polígono dinámico:", e);
+            }
 
-            // 5. Filtrar y Renderizar Datos
+            // Filtrado de datos desde simulador.js
             const rawData = window.getProductos() || [];
             allData = rawData.filter(p => p.ubicacion.toLowerCase().includes(comunaNombre.toLowerCase()));
             const dataOrdenada = [...allData].reverse();
@@ -161,7 +176,7 @@
             document.getElementById('count-producers').innerText = [...new Set(allData.map(p => p.productor))].length;
 
             renderList(dataOrdenada);
-            renderMarkers(dataOrdenada);
+            renderMarkers(allData);
             
             document.getElementById('map-loader').classList.add('hidden');
         }
@@ -171,21 +186,26 @@
                 const icon = L.divIcon({
                     className: 'custom-pin-wrapper',
                     html: `<div class="pin-pulse"></div><div class="custom-pin" style="width: 24px; height: 24px;"></div>`,
-                    iconSize: [24, 24], iconAnchor: [12, 24]
+                    iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24]
                 });
                 const marker = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
-                marker.bindPopup(`<div class="bg-white"><img src="${p.img}" class="w-full h-24 object-cover"><div class="p-3"><p class="font-bold text-xs text-corp-900">${p.nombre}</p><p class="text-[9px] text-slate-400 font-bold uppercase mb-2">${p.productor}</p><a href="producto.html?id=${p.id}" target="_blank" class="btn-expediente">Ver Expediente</a></div></div>`);
+                marker.bindPopup(`<div class="bg-white overflow-hidden"><img src="${p.img}" class="w-full h-24 object-cover"><div class="p-3"><p class="font-bold text-xs text-corp-900">${p.nombre}</p><p class="text-[9px] text-slate-400 font-bold uppercase mb-2">${p.productor}</p><a href="producto.html?id=${p.id}" target="_blank" class="btn-expediente">Ver Expediente</a></div></div>`);
                 markers.push(marker);
             });
         }
 
         function renderList(data) {
             const list = document.getElementById('recent-list');
-            list.innerHTML = data.length ? '' : '<p class="text-center text-slate-400 text-xs mt-10 italic">No hay registros en esta comuna</p>';
+            list.innerHTML = data.length ? '' : '<div class="flex flex-col items-center justify-center h-full opacity-40"><i class="fas fa-map-marker-alt mb-2 text-2xl"></i><p class="text-xs font-bold uppercase tracking-widest">Sin registros en zona</p></div>';
+            
             data.forEach(p => {
                 const item = document.createElement('div');
-                item.className = "item-card group flex items-center gap-4 p-4 rounded-[1.2rem] bg-slate-50 cursor-pointer border border-transparent";
-                item.onclick = () => { map.setView([p.lat, p.lon], 16); markers.find(m => m.getLatLng().lat == p.lat).openPopup(); };
+                item.className = "item-card group flex items-center gap-4 p-4 rounded-[1.2rem] bg-slate-50 cursor-pointer shadow-sm";
+                item.onclick = () => { 
+                    map.setView([p.lat, p.lon], 16); 
+                    const m = markers.find(marker => marker.getLatLng().lat == p.lat);
+                    if(m) m.openPopup();
+                };
                 item.innerHTML = `<img src="${p.img}" class="w-12 h-12 rounded-xl object-cover shadow-sm"><div class="flex-1 min-w-0"><p class="font-bold text-sm text-corp-900 truncate">${p.nombre}</p><p class="text-[9px] text-slate-500 font-bold uppercase">${p.productor}</p></div>`;
                 list.appendChild(item);
             });
