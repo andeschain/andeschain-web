@@ -55,8 +55,9 @@ const seedData = [
         historia: "Tomate cal-ace producidas sin agroquímicos por un agricultor con historia en la comuna.",
         img: "assets/tomate.jpg", 
         hitos: [
-            { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." }, // COMA AGREGADA AQUÍ
-            { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Recolección manual. Temp: 20°C." }
+            { titulo: "Siembra", fecha: "10 Oct 2025", desc: "Semillas ancestrales de mi familia." },
+            { titulo: "Trasplante", fecha: "25 Nov 2025", desc: "Semillas ancestrales de mi familia." },
+            { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Cosecha manual. Temp: 20°C." }
         ]
     },
     {
