@@ -42,7 +42,7 @@ const seedData = [
         ]
     },
       {
-        id: "3003",
+        id: "4004",
         nombre: "Tomate Cal-Ace",
         lote: "Lote #06-2026",
         productor: "Familia Alburquenque",
