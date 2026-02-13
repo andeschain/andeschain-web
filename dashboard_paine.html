@@ -163,7 +163,6 @@
                 [-33.802, -70.922], [-33.774, -70.812]
             ];
 
-            // 1. MÁSCARA ACADÉMICA (Matiz Slate translúcido para equilibrio de contraste)
             const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
             L.polygon([worldOuter, paineCoords], {
                 color: 'none',
@@ -171,9 +170,8 @@
                 fillOpacity: 0.4 
             }).addTo(map);
 
-            // 2. POLÍGONO TIPO CRISTAL (Enfoque territorial limpio)
             const painePolygon = L.polygon(paineCoords, {
-                color: '#059669', 
+                color: '#10B981', 
                 weight: 2, 
                 opacity: 1, 
                 fillColor: '#10B981', 
@@ -182,12 +180,20 @@
 
             map.fitBounds(painePolygon.getBounds(), { padding: [40, 40] });
 
-            allData = window.getProductos() || [];
+            // --- LÓGICA DE FILTRADO Y ORDEN ACTUALIZADA ---
+            const rawData = window.getProductos() || [];
+            
+            // Filtramos solo productos que contengan 'Paine' en su ubicación
+            allData = rawData.filter(p => p.ubicacion.toLowerCase().includes('paine'));
+            
+            // Ordenamos: Los más nuevos arriba (reverse)
+            const dataOrdenada = [...allData].reverse();
+
             document.getElementById('count-lots').innerText = allData.length;
             document.getElementById('count-producers').innerText = [...new Set(allData.map(p => p.productor))].length;
 
-            renderList(allData);
-            renderMarkers(allData);
+            renderList(dataOrdenada);
+            renderMarkers(dataOrdenada);
         }
 
         function renderMarkers(data) {
