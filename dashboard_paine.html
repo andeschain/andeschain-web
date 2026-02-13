@@ -28,7 +28,6 @@
     <style>
         #map { height: 650px; border-radius: 32px; z-index: 10; background: #0f172a; }
         
-        /* PIN CON EFECTO PULSO (PING) */
         .custom-pin-wrapper { position: relative; }
         .custom-pin {
             background-color: #022C22;
@@ -155,6 +154,7 @@
 
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
 
+            // PAINE COORDS (EXCLUSIVO)
             const paineCoords = [
                 [-33.774, -70.812], [-33.765, -70.748], [-33.778, -70.684], 
                 [-33.805, -70.620], [-33.844, -70.582], [-33.898, -70.600],
@@ -163,16 +163,32 @@
                 [-33.802, -70.922], [-33.774, -70.812]
             ];
 
+            // 1. MÁSCARA EXTERIOR (FOCO TIPO JUSTOAPP)
             const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
             L.polygon([worldOuter, paineCoords], {
-                color: 'transparent', fillColor: '#000', fillOpacity: 0.6
+                color: 'none',
+                fillColor: '#020617', 
+                fillOpacity: 0.7 
             }).addTo(map);
 
+            // 2. BRILLO DE BORDE (GLOW)
+            L.polygon(paineCoords, {
+                color: '#10B981',
+                weight: 12,
+                opacity: 0.2,
+                fillColor: 'transparent'
+            }).addTo(map);
+
+            // 3. LÍNEA PRINCIPAL
             const painePolygon = L.polygon(paineCoords, {
-                color: '#10B981', weight: 4, opacity: 1, fillColor: 'transparent'
+                color: '#10B981', 
+                weight: 3, 
+                opacity: 1, 
+                fillColor: '#10B981', 
+                fillOpacity: 0.03
             }).addTo(map);
 
-            map.fitBounds(painePolygon.getBounds(), { padding: [30, 30] });
+            map.fitBounds(painePolygon.getBounds(), { padding: [40, 40] });
 
             allData = window.getProductos() || [];
             document.getElementById('count-lots').innerText = allData.length;
