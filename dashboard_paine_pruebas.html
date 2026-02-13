@@ -110,38 +110,42 @@
 
     <script src="js/simulador.js"></script>
     <script>
-        let map, markers = [], geoJsonLayer, maskLayer;
+        let map, markers = [], geoJsonLayer, maskLayer, jsonData = null;
 
         window.onload = function() { initDashboard(); };
 
-        function initDashboard() {
+        async function initDashboard() {
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
             
-            updateTerritory("Paine"); 
+            // Cargar datos una sola vez al inicio para mayor velocidad
+            try {
+                const response = await fetch('https://cdn.jsdelivr.net/gh/carlosepunto/chile-geojson@master/comunas.json');
+                jsonData = await response.json();
+                updateTerritory("Paine"); 
+            } catch (e) {
+                console.error("Error inicializando datos:", e);
+                updateTerritory("Paine"); // Intentará filtrar aunque no haya polígono
+            }
         }
 
-        async function updateTerritory(comunaNombre) {
+        function updateTerritory(comunaNombre) {
             document.getElementById('map-loader').classList.remove('hidden');
             
-            // 1. Limpieza TOTAL de capas previas
+            // Limpieza inmediata
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             markers.forEach(m => map.removeLayer(m));
             markers = [];
 
-            try {
-                const response = await fetch('https://cdn.jsdelivr.net/gh/carlosepunto/chile-geojson@master/comunas.json');
-                const data = await response.json();
-                
+            if (jsonData) {
                 const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                const comunaFeature = data.features.find(f => normalize(f.properties.name) === normalize(comunaNombre));
+                const comunaFeature = jsonData.features.find(f => normalize(f.properties.name) === normalize(comunaNombre));
 
                 if (comunaFeature) {
                     const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
                     
-                    // IMPORTANTE: Invertir coordenadas de [Lng, Lat] a [Lat, Lng] para la máscara manual
                     let coordsLeaflet;
                     if (comunaFeature.geometry.type === "Polygon") {
                         coordsLeaflet = [comunaFeature.geometry.coordinates[0].map(c => [c[1], c[0]])];
@@ -149,34 +153,32 @@
                         coordsLeaflet = comunaFeature.geometry.coordinates.map(poly => poly[0].map(c => [c[1], c[0]]));
                     }
 
-                    // 2. Crear Máscara
                     maskLayer = L.polygon([worldOuter, ...coordsLeaflet], {
                         color: 'none', fillColor: '#475569', fillOpacity: 0.5, interactive: false
                     }).addTo(map);
 
-                    // 3. Crear Borde Comunal usando L.geoJSON (maneja la proyección automáticamente)
                     geoJsonLayer = L.geoJSON(comunaFeature, {
                         style: { color: '#10B981', weight: 3, opacity: 1, fillColor: '#10B981', fillOpacity: 0.05, interactive: false }
                     }).addTo(map);
 
-                    map.fitBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
+                    map.invalidateSize(); // Asegura que el contenedor esté listo
+                    map.fitBounds(geoJsonLayer.getBounds(), { padding: [40, 40], animate: true });
                 }
-            } catch (e) { 
-                console.error("Error cargando polígono:", e);
             }
 
-            // 4. Filtrado y Renderizado de Datos
+            // Datos
             const rawData = window.getProductos() || [];
             const filteredData = rawData.filter(p => p.ubicacion.toLowerCase().includes(comunaNombre.toLowerCase()));
-            const dataOrdenada = [...filteredData].reverse();
-
+            
             document.getElementById('count-lots').innerText = filteredData.length;
             document.getElementById('count-producers').innerText = [...new Set(filteredData.map(p => p.productor))].length;
 
-            renderList(dataOrdenada);
+            renderList([...filteredData].reverse());
             renderMarkers(filteredData);
             
-            document.getElementById('map-loader').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('map-loader').classList.add('hidden');
+            }, 500);
         }
 
         function renderMarkers(data) {
@@ -194,7 +196,7 @@
 
         function renderList(data) {
             const list = document.getElementById('recent-list');
-            list.innerHTML = data.length ? '' : '<div class="flex flex-col items-center justify-center h-full opacity-40"><i class="fas fa-map-marker-alt mb-2 text-2xl"></i><p class="text-xs font-bold uppercase tracking-widest">Sin registros en zona</p></div>';
+            list.innerHTML = data.length ? '' : '<div class="flex flex-col items-center justify-center h-full opacity-40"><i class="fas fa-map-marker-alt mb-2 text-2xl"></i><p class="text-xs font-bold uppercase tracking-widest">Sin registros</p></div>';
             
             data.forEach(p => {
                 const item = document.createElement('div');
