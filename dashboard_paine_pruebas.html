@@ -18,7 +18,11 @@
                 extend: {
                     colors: { 
                         'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' },
-                        'indap': { 400: '#60a5fa', 500: '#3b82f6' },
+                        'segment': { 
+                            'afc': '#10B981',    // Verde para Agricultor AFC
+                            'emp': '#F59E0B',    // Ámbar para Emprendedor
+                            'cia': '#3b82f6'     // Azul para Empresa
+                        },
                         'dark': { 800: '#1e293b', 900: '#0f172a' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
@@ -28,13 +32,21 @@
     </script>
     <style>
         #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
-        .custom-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; border: 1.5px solid rgba(255,255,255,0.8); }
-        .pin-corp { background: #10B981; }
-        .pin-indap { background: #3b82f6; }
+        
+        /* PIN DINÁMICO POR SEGMENTACIÓN */
+        .custom-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+        .pin-afc { background-color: #10B981; }
+        .pin-emp { background-color: #F59E0B; }
+        .pin-cia { background-color: #3b82f6; }
+        
+        /* PULSOS COHERENTES */
         .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite; }
-        .pulse-corp { background: #10B981; }
-        .pulse-indap { background: #3b82f6; }
+        .pulse-afc { background: #10B981; }
+        .pulse-emp { background: #F59E0B; }
+        .pulse-cia { background: #3b82f6; }
+
         @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
+        
         .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; }
         .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.9) 100%); }
@@ -171,12 +183,10 @@
             if (chart1) chart1.destroy();
             if (chart2) chart2.destroy();
 
-            // Lógica AFC, Emprendedor, Empresa
             const afc = data.filter(p => p.tipo === "Agricultor").length;
             const emp = data.filter(p => p.tipo === "Emprendedor").length;
             const cia = data.filter(p => p.tipo === "Empresa").length;
 
-            // Manejo de Producción
             const org = data.filter(p => p.manejo === "Orgánica").length;
             const eco = data.filter(p => p.manejo === "Agroecológica").length;
             const tra = data.filter(p => p.manejo === "Tradicional").length;
@@ -229,12 +239,17 @@
 
         function renderMarkers(data) {
             data.forEach(p => {
-                const isIndap = p.fomento === "INDAP";
+                // LÓGICA DE COLOR BASADA EN TIPO PARA COHERENCIA CON GRÁFICOS
+                let segmentClass = 'afc';
+                if(p.tipo === 'Emprendedor') segmentClass = 'emp';
+                if(p.tipo === 'Empresa') segmentClass = 'cia';
+
                 const icon = L.divIcon({
                     className: 'relative',
-                    html: `<div class="pin-pulse ${isIndap ? 'pulse-indap' : 'pulse-corp'}"></div><div class="custom-pin ${isIndap ? 'pin-indap' : 'pin-corp'}" style="width: 22px; height: 22px; left: -11px; top: -22px;"></div>`,
+                    html: `<div class="pin-pulse pulse-${segmentClass}"></div><div class="custom-pin pin-${segmentClass}" style="width: 22px; height: 22px; left: -11px; top: -22px;"></div>`,
                     iconSize: [22, 22]
                 });
+                
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.bindPopup(`
                     <div class="relative overflow-hidden group">
@@ -247,11 +262,11 @@
                             </div>
                             <div class="absolute bottom-4 left-4 right-4 text-white">
                                 <p class="font-display font-bold text-base leading-tight">${p.nombre}</p>
-                                <p class="${isIndap ? 'text-blue-400' : 'text-corp-500'} text-[9px] font-bold uppercase tracking-widest mt-0.5">${p.productor}</p>
+                                <p class="text-[9px] font-bold uppercase tracking-widest mt-0.5" style="color: ${segmentClass === 'emp' ? '#F59E0B' : (segmentClass === 'cia' ? '#3b82f6' : '#10B981')}">${p.productor}</p>
                             </div>
                         </div>
-                        <div class="p-3 bg-dark-900 text-center">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase transition-all hover:bg-corp-600">Ver Expediente</a>
+                        <div class="p-3 bg-dark-900 text-center border-t border-white/5">
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase transition-all hover:scale-[1.02]">Ver Expediente</a>
                         </div>
                     </div>
                 `);
@@ -261,16 +276,24 @@
 
         function renderList(data) {
             const list = document.getElementById('recent-list');
-            list.innerHTML = [...data].reverse().map(p => `
+            list.innerHTML = [...data].reverse().map(p => {
+                let segmentColor = '#10B981';
+                if(p.tipo === 'Emprendedor') segmentColor = '#F59E0B';
+                if(p.tipo === 'Empresa') segmentColor = '#3b82f6';
+
+                return `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
                      class="group flex items-center gap-3 p-2.5 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
-                    <img src="${p.img}" class="w-9 h-9 rounded-xl object-cover shrink-0">
+                    <div class="relative">
+                        <img src="${p.img}" class="w-9 h-9 rounded-xl object-cover shrink-0">
+                        <div class="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white" style="background-color: ${segmentColor}"></div>
+                    </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-[10px] text-dark-900 truncate">${p.nombre}</p>
-                        <p class="text-[7px] text-slate-400 font-bold uppercase">${p.productor}</p>
+                        <p class="text-[7px] font-bold uppercase" style="color: ${segmentColor}">${p.productor}</p>
                     </div>
                 </div>
-            `).join('') || '<div class="py-10 text-center opacity-30 text-[10px] font-bold uppercase italic">Sin registros</div>';
+            `}).join('') || '<div class="py-10 text-center opacity-30 text-[10px] font-bold uppercase italic">Sin registros</div>';
         }
     </script>
 </body>
