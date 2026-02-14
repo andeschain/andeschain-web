@@ -25,89 +25,86 @@
         }
     </script>
     <style>
-        #map { height: calc(100vh - 160px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
+        #map { height: calc(100vh - 180px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
         .custom-pin { background-color: #022C22; border: 2px solid #10B981; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; }
-        .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: #10B981; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite; }
+        .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: #10B981; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-[#F1F5F9] font-sans text-slate-900 antialiased overflow-hidden">
+<body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-hidden">
 
-    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-4 sticky top-0 z-[1000]">
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-3 sticky top-0 z-[1000]">
         <div class="max-w-[1600px] mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-8">
-                <a href="index.html" class="hover:opacity-80 transition-opacity">
-                    <img src="assets/favicon.png" class="h-9">
-                </a>
-                <div class="h-10 w-[1px] bg-slate-200"></div>
-                <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
+                <img src="assets/favicon.png" class="h-8">
+                <div class="flex items-center gap-4 border-l pl-6 border-slate-200">
                     <img src="assets/LogoPaine.svg" class="h-12 w-auto" onerror="this.src='https://via.placeholder.com/100x50?text=Logo'">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-display font-bold text-xl tracking-tight text-dark-900">Territorial Dashboard</h1>
-                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-corp-500/10 text-corp-600 font-bold text-xs rounded-full px-4 py-1 outline-none cursor-pointer border border-corp-500/20">
-                                <option value="Paine">Paine</option>
+                            <h1 class="font-display font-bold text-lg text-dark-900">GeoDashboard</h1>
+                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-corp-500/10 text-corp-600 font-bold text-xs rounded-full px-4 py-1 outline-none border border-corp-500/20">
+                                <option value="Paine" selected>Paine</option>
                                 <option value="Buin">Buin</option>
+                                <option value="Isla de Maipo">Isla de Maipo</option>
+                                <option value="Pirque">Pirque</option>
+                                <option value="San Francisco Mostazal">Mostazal</option>
+                                <option value="Chonchi">Chonchi</option>
                                 <option value="Valdivia">Valdivia</option>
                             </select>
                         </div>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest uppercase">Nodes: Mainnet Polygon Live</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Trust Protocol: Territorial Ledger</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-dark-900 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl border border-slate-700">
+            <div class="bg-dark-900 px-5 py-2 rounded-2xl flex items-center gap-4 border border-slate-700 shadow-lg">
                 <div class="text-right">
-                    <p class="text-[8px] font-bold text-emerald-400 uppercase tracking-widest leading-none">Blockchain Auditor</p>
-                    <p class="text-white font-display font-extrabold text-sm uppercase">Verified</p>
+                    <p class="text-[7px] font-bold text-emerald-400 uppercase tracking-widest mb-0.5">Blockchain Security</p>
+                    <p class="text-white font-display font-extrabold text-xs uppercase leading-none">Verified Node</p>
                 </div>
-                <div class="h-8 w-[1px] bg-slate-700"></div>
-                <p class="text-[9px] text-slate-400 font-medium max-w-[80px] leading-tight italic">Smart Contract V2.1</p>
+                <div class="h-6 w-[1px] bg-slate-700"></div>
+                <p class="text-[9px] text-slate-400 font-medium italic">Smart Contract V2.1</p>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-[1600px] mx-auto p-6 grid grid-cols-12 gap-6">
+    <main class="max-w-[1600px] mx-auto p-4 grid grid-cols-12 gap-6">
         
-        <div class="col-span-12 lg:col-span-3 space-y-6 overflow-y-auto max-h-[calc(100vh-140px)] pr-2">
+        <div class="col-span-12 lg:col-span-3 space-y-4 flex flex-col h-[calc(100vh-140px)]">
             
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Orígenes</p>
-                    <h3 id="count-lots" class="text-3xl font-display font-bold text-dark-900">0</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Puntos Origen</p>
+                    <h3 id="count-lots" class="text-2xl font-display font-bold text-dark-900">0</h3>
                 </div>
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Productores</p>
-                    <h3 id="count-producers" class="text-3xl font-display font-bold text-corp-500">0</h3>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Productores</p>
+                    <h3 id="count-producers" class="text-2xl font-display font-bold text-corp-500">0</h3>
+                </div>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Superficie Ha</p>
+                    <h3 class="text-2xl font-display font-bold text-dark-900">42.8</h3>
+                </div>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Fomento INDAP</p>
+                    <h3 id="count-indap" class="text-2xl font-display font-bold text-blue-600">0</h3>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[500px]">
-                <div class="mb-6">
-                    <h2 class="font-display font-bold text-lg text-dark-900 mb-4">Expedientes Digitales</h2>
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-sm"></i>
-                        <input type="text" id="search-input" onkeyup="filterItems()" placeholder="Buscar en territorio..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none focus:border-corp-500 transition-all">
-                    </div>
-                </div>
-                <div id="recent-list" class="space-y-3 overflow-y-auto flex-1"></div>
+            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col flex-1 overflow-hidden">
+                <h2 class="font-display font-bold text-base text-dark-900 mb-4 tracking-tight uppercase">Expedientes en Zona</h2>
+                <div id="recent-list" class="space-y-3 overflow-y-auto pr-1"></div>
             </div>
         </div>
 
         <div class="col-span-12 lg:col-span-9 relative">
-            <div id="map" class="shadow-2xl"></div>
-            
+            <div id="map" class="shadow-2xl border border-white"></div>
             <div id="loader" class="absolute inset-0 bg-dark-900/40 backdrop-blur-sm z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
-                <div class="bg-white p-8 rounded-3xl text-center shadow-2xl">
-                    <i class="fas fa-circle-notch animate-spin text-corp-600 text-4xl mb-3"></i>
-                    <p class="text-xs font-bold uppercase tracking-widest text-dark-900 italic">Sincronizando Nodo...</p>
+                <div class="bg-white p-6 rounded-3xl text-center shadow-2xl">
+                    <i class="fas fa-circle-notch animate-spin text-corp-600 text-3xl mb-3"></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-dark-900">Sincronizando Geo-Data...</p>
                 </div>
             </div>
         </div>
@@ -133,6 +130,7 @@
 
         async function updateTerritory(comuna) {
             document.getElementById('loader').classList.remove('hidden');
+            
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             markers.forEach(m => map.removeLayer(m));
@@ -148,36 +146,46 @@
                         ? [feature.geometry.coordinates[0].map(c => [c[1], c[0]])]
                         : feature.geometry.coordinates.map(p => p[0].map(c => [c[1], c[0]]));
 
-                    maskLayer = L.polygon([worldOuter, ...coords], { color: 'none', fillColor: '#0f172a', fillOpacity: 0.65, interactive: false }).addTo(map);
+                    maskLayer = L.polygon([worldOuter, ...coords], { color: 'none', fillColor: '#0f172a', fillOpacity: 0.6, interactive: false }).addTo(map);
                     geoJsonLayer = L.geoJSON(feature, { style: { color: '#10B981', weight: 3, fillOpacity: 0.03, interactive: false } }).addTo(map);
-                    map.fitBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                    
+                    setTimeout(() => {
+                        map.invalidateSize();
+                        map.fitBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                    }, 100);
                 }
             }
 
-            const data = (window.getProductos() || []).filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()));
+            const rawData = window.getProductos() || [];
+            const data = rawData.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()));
+            
+            // Lógica INDAP (asumiendo campo 'fomento: "INDAP"' en simulador.js)
+            const countIndap = data.filter(p => p.fomento === "INDAP").length;
+
             document.getElementById('count-lots').innerText = data.length;
             document.getElementById('count-producers').innerText = [...new Set(data.map(p => p.productor))].length;
+            document.getElementById('count-indap').innerText = countIndap;
 
             renderList(data);
             renderMarkers(data);
-            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600);
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
         }
 
         function renderMarkers(data) {
             data.forEach(p => {
                 const icon = L.divIcon({
                     className: 'relative',
-                    html: `<div class="pin-pulse"></div><div class="custom-pin" style="width: 22px; height: 22px; left: -11px; top: -22px;"></div>`,
-                    iconSize: [22, 22]
+                    html: `<div class="pin-pulse"></div><div class="custom-pin" style="width: 20px; height: 20px; left: -10px; top: -20px;"></div>`,
+                    iconSize: [20, 20]
                 });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.bindPopup(`
-                    <div class="w-52 rounded-2xl overflow-hidden bg-white">
+                    <div class="w-48 rounded-xl overflow-hidden bg-white shadow-xl border border-slate-100">
                         <img src="${p.img}" class="w-full h-24 object-cover">
-                        <div class="p-4">
-                            <p class="font-bold text-sm mb-1">${p.nombre}</p>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-3">${p.productor}</p>
-                            <a href="producto.html?id=${p.id}" target="_blank" class="btn-expediente">Ver Registro</a>
+                        <div class="p-3">
+                            <p class="font-bold text-xs mb-0.5">${p.nombre}</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase mb-2">${p.productor}</p>
+                            <a href="producto.html?id=${p.id}" target="_blank" class="btn-expediente">Expediente</a>
                         </div>
                     </div>
                 `);
@@ -188,22 +196,14 @@
         function renderList(data) {
             const list = document.getElementById('recent-list');
             list.innerHTML = data.reverse().map(p => `
-                <div onclick="map.setView([${p.lat}, ${p.lon}], 16)" class="group flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 hover:shadow-lg transition-all">
-                    <img src="${p.img}" class="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform">
+                <div onclick="map.setView([${p.lat}, ${p.lon}], 16)" class="group flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover">
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-xs text-dark-900 truncate">${p.nombre}</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase">${p.productor}</p>
+                        <p class="font-bold text-[11px] text-dark-900 truncate">${p.nombre}</p>
+                        <p class="text-[8px] text-slate-400 font-bold uppercase">${p.productor}</p>
                     </div>
-                    <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:text-corp-500 transition-colors pr-2"></i>
                 </div>
-            `).join('') || '<p class="text-center text-slate-400 text-xs mt-10 italic">Nodo sin registros</p>';
-        }
-
-        function filterItems() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            document.querySelectorAll('#recent-list > div').forEach(i => {
-                i.style.display = i.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
-            });
+            `).join('') || '<p class="text-center text-slate-400 text-[10px] py-10 italic">Sin registros</p>';
         }
     </script>
 </body>
