@@ -9,6 +9,7 @@ const seedData = [
         lote: "Lote #04-2026",
         productor: "El Otro Huerto (Quillagua)",
         tipo: "Agricultor",
+        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "El Vínculo, Paine",
         lat: "-33.846294574770894", 
         lon: "-70.80930607600027",
@@ -28,6 +29,7 @@ const seedData = [
         lote: "Lote #08-2026",
         productor: "Luis Miranda",
         tipo: "Agricultor",
+        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
@@ -47,6 +49,7 @@ const seedData = [
         lote: "Lote #05-2026",
         productor: "Sol de Almendras",
         tipo: "Agricultor",
+        fomento: "INDAP", // <--- ESTA ES LA LÍNEA CLAVE
         ubicacion: "El Vínculo, Paine",
         lat: "-33.842301",
         lon: "-70.811054",
@@ -85,6 +88,7 @@ const seedData = [
         lote: "Lote #07-2026",
         productor: "Luis Miranda",
         tipo: "Agricultor",
+        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
@@ -103,6 +107,7 @@ const seedData = [
         lote: "Barrica Origen #77",
         productor: "Punta de Fierro",
         tipo: "Emprendedor",
+        fomento: "Patrimonial", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Cayumapu, Valdivia",
         lat: "-39.729432",
         lon: "-73.109730",
