@@ -8,7 +8,8 @@ const seedData = [
         nombre: "Papa Astrid",
         lote: "Lote #04-2026",
         productor: "El Otro Huerto (Quillagua)",
-        tipo: "Agricultor",
+        tipo: "Empresa",
+        manejo: "Agroecológico",
         fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "El Vínculo, Paine",
         lat: "-33.846294574770894", 
@@ -26,10 +27,10 @@ const seedData = [
     {
         id: "5006", // ID correlativo para el segundo producto de Luis Miranda
         nombre: "Poroto Metro (Yarda)",
-        lote: "Lote #08-2026",
         productor: "Luis Miranda",
-        tipo: "Agricultor",
-        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
+        tipo: "Agricultor", // Para el gráfico de Segmentación
+        manejo: "Agroecológica", // Para el gráfico de Sistemas de Producción
+        fomento: "PRODESAL", //<--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
@@ -49,6 +50,7 @@ const seedData = [
         lote: "Lote #05-2026",
         productor: "Sol de Almendras",
         tipo: "Agricultor",
+        manejo: "Tradicional",
         fomento: "INDAP", // <--- ESTA ES LA LÍNEA CLAVE
         ubicacion: "El Vínculo, Paine",
         lat: "-33.842301",
@@ -69,6 +71,8 @@ const seedData = [
         lote: "Lote #06-2026",
         productor: "Familia Alburquenque",
         tipo: "Agricultor",
+        manejo: "Tradicional",
+        fomento: "INDAP", // <--- ESTA ES LA LÍNEA CLAVE
         ubicacion: "Mansel, Paine",
         lat: "-33.85199885495518",
         lon: "-70.78121948081238",
@@ -88,6 +92,7 @@ const seedData = [
         lote: "Lote #07-2026",
         productor: "Luis Miranda",
         tipo: "Agricultor",
+        manejo: "Agroecológico",
         fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
@@ -107,6 +112,7 @@ const seedData = [
         lote: "Barrica Origen #77",
         productor: "Punta de Fierro",
         tipo: "Emprendedor",
+        manejo: "Agroecológico",
         fomento: "Patrimonial", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
         ubicacion: "Cayumapu, Valdivia",
         lat: "-39.729432",
