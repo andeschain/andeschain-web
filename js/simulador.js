@@ -1,4 +1,17 @@
-// js/simulador.js
+/**
+ * ANDESCHAIN - INFRAESTRUCTURA DE TRAZABILIDAD TERRITORIAL
+ * Archivo: js/simulador.js
+ * Descripción: Base de Datos Maestra y Lógica de Sincronización Local.
+ * * GUÍA DE ATRIBUTOS (DICCIONARIO DE DATOS):
+ * -----------------------------------------
+ * @id:        String único (ID correlativo).
+ * @tipo:      [Agricultor | Emprendedor | Empresa] -> Define gráfico "Segmentación".
+ * @manejo:    [Orgánica | Agroecológica | Tradicional] -> Define gráfico "Sistemas de Producción".
+ * @fomento:   [INDAP | PRODESAL | Patrimonial | Vacío] -> Filtra KPI INDAP (Color Azul).
+ * @estado:    [VERIFIED | PENDING] -> Estado de validación en Blockchain.
+ * @lat / @lon: Coordenadas geográficas para el posicionamiento en Mapa Leaflet.
+ */
+
 console.log("✅ Sistema AndesChain: Sincronizando Infraestructura...");
 
 // 1. DATOS SEMILLA (Base de Datos Maestra)
@@ -8,9 +21,9 @@ const seedData = [
         nombre: "Papa Astrid",
         lote: "Lote #04-2026",
         productor: "El Otro Huerto (Quillagua)",
-        tipo: "Empresa",
-        manejo: "Agroecológico",
-        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
+        tipo: "Empresa",        // Clasificación socioproductiva
+        manejo: "Agroecológica", // Tipo de sistema productivo
+        fomento: "",            // Si es INDAP, activar etiqueta azul en mapa
         ubicacion: "El Vínculo, Paine",
         lat: "-33.846294574770894", 
         lon: "-70.80930607600027",
@@ -25,12 +38,12 @@ const seedData = [
         ]
     },
     {
-        id: "5006", // ID correlativo para el segundo producto de Luis Miranda
+        id: "5006",
         nombre: "Poroto Metro (Yarda)",
         productor: "Luis Miranda",
-        tipo: "Agricultor", // Para el gráfico de Segmentación
-        manejo: "Agroecológica", // Para el gráfico de Sistemas de Producción
-        fomento: "PRODESAL", //<--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
+        tipo: "Agricultor",     // Para gráfico: Agricultura Familiar Campesina (AFC)
+        manejo: "Agroecológica", 
+        fomento: "PRODESAL",    // Programa de fomento asociado
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
@@ -51,7 +64,7 @@ const seedData = [
         productor: "Sol de Almendras",
         tipo: "Agricultor",
         manejo: "Tradicional",
-        fomento: "INDAP", // <--- ESTA ES LA LÍNEA CLAVE
+        fomento: "INDAP",       // Activa marcador AZUL en GeoDashboard
         ubicacion: "El Vínculo, Paine",
         lat: "-33.842301",
         lon: "-70.811054",
@@ -66,13 +79,13 @@ const seedData = [
         ]
     },
     {
-        id: "4004", // ID ÚNICO CORREGIDO
+        id: "4004",
         nombre: "Tomate Cal-Ace",
         lote: "Lote #06-2026",
         productor: "Familia Alburquenque",
         tipo: "Agricultor",
         manejo: "Tradicional",
-        fomento: "INDAP", // <--- ESTA ES LA LÍNEA CLAVE
+        fomento: "INDAP",       // Usuario INDAP verificado
         ubicacion: "Mansel, Paine",
         lat: "-33.85199885495518",
         lon: "-70.78121948081238",
@@ -87,20 +100,20 @@ const seedData = [
         ]
     },
     {
-        id: "5005", // ID único para Luis Miranda
+        id: "5005",
         nombre: "Zapallo de Guarda Antiguo",
         lote: "Lote #07-2026",
         productor: "Luis Miranda",
         tipo: "Agricultor",
         manejo: "Agroecológico",
-        fomento: "", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
+        fomento: "", 
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
         fecha: "13 Feb 2026",
         estado: "VERIFIED",
         historia: "Cultivo agroecológico a partir de semilla tradicional, rescatando el sabor y la durabilidad del zapallo de guarda auténtico de la zona.",
-        img: "/assets/zapalloguarda.jpg", // Imagen de referencia (puedes cambiarla por la real)
+        img: "/assets/zapalloguarda.jpg",
         hitos: [
             { titulo: "Siembra Tradicional", fecha: "15 Sep 2025", desc: "Uso de semillas ancestrales sin intervención química." },
             { titulo: "Validación de Origen", fecha: "13 Feb 2026", desc: "Registro de coordenadas en Colonia Kennedy mediante AndesChain." }
@@ -111,9 +124,9 @@ const seedData = [
         nombre: "Sidra Patrimonial",
         lote: "Barrica Origen #77",
         productor: "Punta de Fierro",
-        tipo: "Emprendedor",
+        tipo: "Emprendedor",    // Para gráfico: Generador de valor agregado
         manejo: "Agroecológico",
-        fomento: "Patrimonial", // <--- ESTA ES LA LÍNEA CLAVE INDAP, ORGANICO, AGROECOLOGICO, AFC
+        fomento: "Patrimonial", // Categoría especial de fomento
         ubicacion: "Cayumapu, Valdivia",
         lat: "-39.729432",
         lon: "-73.109730",
@@ -131,9 +144,11 @@ const seedData = [
 
 // 2. INICIALIZADOR CON SINCRONIZACIÓN AUTOMÁTICA
 (function initAndesChain() {
+    // Recuperar base de datos de LocalStorage o iniciar vacía
     let currentDB = JSON.parse(localStorage.getItem('andesDB')) || [];
     let nuevosAgregados = 0;
 
+    // Sincronizar seedData con la memoria local sin duplicar IDs
     seedData.forEach(seedItem => {
         const existe = currentDB.find(dbItem => dbItem.id === seedItem.id);
         if (!existe) {
@@ -150,13 +165,14 @@ const seedData = [
     }
 })();
 
+// 3. MÉTODOS DE ACCESO GLOBALES
 window.getProductos = function() {
     return JSON.parse(localStorage.getItem('andesDB')) || [];
 };
 
 window.saveProducto = function(nuevoProducto) {
     let db = window.getProductos();
-    db.unshift(nuevoProducto);
+    db.unshift(nuevoProducto); // Agrega al inicio para mostrar primero en dashboard
     localStorage.setItem('andesDB', JSON.stringify(db));
-    console.log("💾 Registro guardado.");
+    console.log("💾 Registro guardado en infraestructura local.");
 };
