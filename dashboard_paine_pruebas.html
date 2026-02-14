@@ -19,6 +19,7 @@
                     colors: { 
                         'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' },
                         'segment': { 'afc': '#10B981', 'emp': '#8B5CF6', 'cia': '#3B82F6' },
+                        'indap': { 500: '#06B6D4' }, // Nuevo Cian Institucional
                         'dark': { 800: '#1e293b', 900: '#0f172a' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
@@ -27,20 +28,20 @@
         }
     </script>
     <style>
-        #map { height: calc(100vh - 360px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
+        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
         .custom-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .pin-afc { background-color: #10B981; } .pin-emp { background-color: #8B5CF6; } .pin-cia { background-color: #3B82F6; }
         .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite; }
         .pulse-afc { background: #10B981; } .pulse-emp { background: #8B5CF6; } .pulse-cia { background: #3B82F6; }
         @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
-        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
-        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
-        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        /* Glassmorphism para KPIs */
-        .kpi-card { background: white; border: 1px solid #f1f5f9; transition: all 0.3s ease; }
-        .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        /* Estética de la FOD (Popup) */
+        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
+        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 20%, rgba(15,23,42,0.95) 100%); }
+        
+        .kpi-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .kpi-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
     </style>
 </head>
 <body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-hidden">
@@ -50,31 +51,24 @@
             <div class="flex items-center gap-8">
                 <a href="index.html" class="flex flex-col items-center hover:opacity-70 transition-all border-r pr-8 border-slate-200">
                     <img src="assets/favicon.png" class="h-10 mb-1">
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">AndesChain</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">AndesChain</span>
                 </a>
                 <div class="flex items-center gap-4">
-                    <img src="assets/LogoPaine.svg" class="h-12 w-auto" onerror="this.src='https://via.placeholder.com/100x50?text=Logo'">
+                    <img src="assets/LogoPaine.svg" class="h-12 w-auto">
                     <div>
                         <div class="flex items-center gap-2">
                             <h1 class="font-display font-bold text-xl text-dark-900 tracking-tight leading-none">GeoDashboard</h1>
-                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-50 text-slate-500 font-bold text-xs rounded-full px-4 py-1.5 outline-none border border-slate-200 cursor-pointer hover:border-corp-500 transition-all">
+                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-50 text-slate-500 font-bold text-xs rounded-full px-4 py-1.5 outline-none border border-slate-200 cursor-pointer">
                                 <option value="Paine">Paine</option>
                                 <option value="Buin">Buin</option>
                                 <option value="Melipilla">Melipilla</option>
-                                <option value="Valdivia">Valdivia</option>
                             </select>
-                            <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="p-2 hover:bg-slate-50 rounded-full transition-colors"><i class="fas fa-sync-alt text-slate-300 text-xs"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="bg-dark-900 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl border border-slate-700">
-                <div class="text-right">
-                    <p class="text-[8px] font-bold text-emerald-400 uppercase tracking-[0.2em] mb-1 leading-none text-center">Security Layer</p>
-                    <p class="text-white font-display font-black text-xs uppercase tracking-tight leading-none text-center">Blockchain Node</p>
-                </div>
-                <div class="h-8 w-[px] bg-slate-700"></div>
-                <p class="text-[10px] text-slate-400 font-medium italic leading-tight">V2.1 Smart Contract<br>Verified</p>
+                <p class="text-[10px] text-slate-400 font-medium italic leading-tight text-right">Blockchain V2.1<br><span class="text-emerald-400 not-italic font-black uppercase text-[7px] tracking-widest">Verified Node</span></p>
             </div>
         </div>
     </nav>
@@ -83,71 +77,82 @@
         
         <div class="grid grid-cols-12 gap-6 items-stretch">
             <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-4">
-                <div class="kpi-card p-6 rounded-[2rem] relative overflow-hidden">
-                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Puntos de Origen</p>
-                    <h3 id="count-lots" class="text-4xl font-display font-black text-dark-900">0</h3>
-                    <div class="absolute -right-2 -bottom-2 opacity-[0.03] text-6xl"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">FOD</span>
+                        <div class="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-fingerprint text-sm"></i></div>
+                    </div>
+                    <div>
+                        <h3 id="count-lots" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
+                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Fichas Origen Digital</p>
+                    </div>
                 </div>
-                <div class="kpi-card p-6 rounded-[2rem] border-l-4 border-l-corp-500">
-                    <p class="text-[10px] font-extrabold text-corp-500 uppercase tracking-widest mb-1">Productores</p>
-                    <h3 id="count-producers" class="text-4xl font-display font-black text-dark-900">0</h3>
+                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] font-black text-corp-500 uppercase tracking-widest">Productores</span>
+                        <div class="h-8 w-8 rounded-xl bg-corp-50 flex items-center justify-center text-corp-500"><i class="fas fa-users text-sm"></i></div>
+                    </div>
+                    <div>
+                        <h3 id="count-producers" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
+                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Sujetos de Trazabilidad</p>
+                    </div>
                 </div>
-                <div class="kpi-card p-6 rounded-[2rem] border-l-4 border-l-blue-500 bg-blue-50/10">
-                    <p class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-1">Fomento INDAP</p>
-                    <h3 id="count-indap" class="text-4xl font-display font-black text-dark-900">0</h3>
+                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between border-b-4 border-b-indap-500">
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] font-black text-indap-500 uppercase tracking-widest">INDAP</span>
+                        <div class="h-8 w-8 rounded-xl bg-cyan-50 flex items-center justify-center text-indap-500"><i class="fas fa-landmark text-sm"></i></div>
+                    </div>
+                    <div>
+                        <h3 id="count-indap" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
+                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Fomento Institucional</p>
+                    </div>
                 </div>
-                <div class="kpi-card p-6 rounded-[2rem]">
-                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Superficie Total</p>
-                    <h3 class="text-4xl font-display font-black text-dark-900">42.8<span class="text-lg font-bold text-slate-300 ml-1">Ha</span></h3>
+                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Superficie</span>
+                        <div class="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-vector-square text-sm"></i></div>
+                    </div>
+                    <div>
+                        <h3 class="text-4xl font-display font-black text-dark-900 leading-none">42.8</h3>
+                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Hectáreas Verificadas</p>
+                    </div>
                 </div>
             </div>
 
             <div class="col-span-12 lg:col-span-8 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-between gap-12">
                 <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-1.5 h-6 bg-dark-900 rounded-full"></div>
-                        <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest">Segmentación Territorial</p>
-                    </div>
-                    <div class="flex items-center gap-8">
-                        <div class="h-32 w-32 shrink-0">
-                            <canvas id="chartSegmentacion"></canvas>
-                        </div>
-                        <div id="legendSegmentacion" class="space-y-2 flex-1"></div>
+                    <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-dark-900 rounded-full"></span> Segmentación
+                    </p>
+                    <div class="flex items-center gap-6">
+                        <div class="h-28 w-28 shrink-0"><canvas id="chartSegmentacion"></canvas></div>
+                        <div id="legendSegmentacion" class="space-y-1.5 flex-1"></div>
                     </div>
                 </div>
-
                 <div class="h-32 w-[1px] bg-slate-100"></div>
-
                 <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-1.5 h-6 bg-corp-500 rounded-full"></div>
-                        <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest">Sistemas de Producción</p>
-                    </div>
-                    <div class="flex items-center gap-8">
-                        <div class="h-32 w-32 shrink-0">
-                            <canvas id="chartProduccion"></canvas>
-                        </div>
-                        <div id="legendProduccion" class="space-y-2 flex-1"></div>
+                    <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-corp-500 rounded-full"></span> Manejo
+                    </p>
+                    <div class="flex items-center gap-6">
+                        <div class="h-28 w-28 shrink-0"><canvas id="chartProduccion"></canvas></div>
+                        <div id="legendProduccion" class="space-y-1.5 flex-1"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-12 gap-6">
-            <div class="col-span-12 lg:col-span-3 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-360px)]">
-                <div class="flex items-center justify-between mb-8">
-                    <h2 class="font-display font-black text-sm text-slate-400 uppercase tracking-widest">Expedientes Digitales</h2>
-                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded-lg">ACTIVOS</span>
-                </div>
+            <div class="col-span-12 lg:col-span-3 bg-white p-8 rounded-[2.5rem] border border-slate-100 flex flex-col h-[calc(100vh-340px)]">
+                <h2 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-6">Expedientes Digitales</h2>
                 <div id="recent-list" class="space-y-3 overflow-y-auto pr-2 flex-1"></div>
             </div>
-
             <div class="col-span-12 lg:col-span-9 relative">
-                <div id="map" class="shadow-2xl border-4 border-white"></div>
+                <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-dark-900/40 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
                     <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center">
-                        <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl mb-4"></i>
-                        <p class="text-xs font-black uppercase tracking-[0.3em] text-dark-900">Sincronizando Nodo Territorial</p>
+                        <i class="fas fa-circle-notch animate-spin text-corp-500 text-4xl mb-4"></i>
+                        <p class="text-xs font-black uppercase tracking-widest text-dark-900 italic">Sincronizando Nodo Territorial</p>
                     </div>
                 </div>
             </div>
@@ -176,9 +181,7 @@
                 if (current >= target) {
                     element.innerText = Math.floor(target);
                     clearInterval(timer);
-                } else {
-                    element.innerText = Math.floor(current);
-                }
+                } else { element.innerText = Math.floor(current); }
             }, 30);
         }
 
@@ -199,35 +202,25 @@
             const config = (values, colors) => ({
                 type: 'doughnut',
                 data: { datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
-                options: { cutout: '80%', plugins: { legend: { display: false } }, maintainAspectRatio: false }
+                options: { cutout: '82%', plugins: { legend: { display: false } }, maintainAspectRatio: false }
             });
 
             chart1 = new Chart(ctx1, config([afc, emp, cia], ['#10B981', '#8B5CF6', '#3B82F6']));
             chart2 = new Chart(ctx2, config([org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
 
-            // Crear leyendas personalizadas profesionales
-            createLegend('legendSegmentacion', [
-                { label: 'Agricultor AFC', val: afc, col: '#10B981' },
-                { label: 'Emprendedor', val: emp, col: '#8B5CF6' },
-                { label: 'Empresa', val: cia, col: '#3B82F6' }
-            ]);
-
-            createLegend('legendProduccion', [
-                { label: 'Orgánica', val: org, col: '#059669' },
-                { label: 'Agroecológica', val: eco, col: '#A3E635' },
-                { label: 'Tradicional', val: tra, col: '#94A3B8' }
-            ]);
+            createLegend('legendSegmentacion', [{l:'Agricultor AFC', v:afc, c:'#10B981'}, {l:'Emprendedor', v:emp, c:'#8B5CF6'}, {l:'Empresa', v:cia, c:'#3B82F6'}]);
+            createLegend('legendProduccion', [{l:'Orgánica', v:org, c:'#059669'}, {l:'Agroecológica', v:eco, c:'#A3E635'}, {l:'Tradicional', v:tra, c:'#94A3B8'}]);
         }
 
         function createLegend(id, items) {
             const container = document.getElementById(id);
             container.innerHTML = items.map(i => `
-                <div class="flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2.5 h-2.5 rounded-full" style="background: ${i.col}"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tight">${i.label}</span>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full" style="background:${i.c}"></div>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">${i.l}</span>
                     </div>
-                    <span class="text-xs font-black text-dark-900">${i.val}</span>
+                    <span class="text-[10px] font-black text-dark-900">${i.v}</span>
                 </div>
             `).join('');
         }
@@ -281,25 +274,29 @@
                 });
                 
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
+                
+                // FOD REDISEÑADA: FOCO EN IMAGEN Y TEXTO BLANCO
                 m.bindPopup(`
                     <div class="relative overflow-hidden">
-                        <div class="relative h-48">
-                            <img src="${p.img}" class="w-full h-full object-cover">
+                        <div class="relative h-52">
+                            <img src="${p.img}" class="w-full h-full object-cover shadow-inner">
                             <div class="absolute inset-0 photo-overlay"></div>
-                            <div class="absolute top-4 left-4 flex items-center gap-2 bg-dark-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                            
+                            <div class="absolute top-4 left-4 flex items-center gap-2 bg-dark-900/60 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-white/20">
                                 <i class="fas fa-fingerprint text-[10px] text-corp-500"></i>
-                                <span class="text-[8px] font-black text-white uppercase tracking-[0.1em]">Identity Verified</span>
+                                <span class="text-[8px] font-black text-white uppercase tracking-widest">FOD</span>
                             </div>
-                            <div class="absolute bottom-6 left-6 right-6 text-white">
-                                <p class="font-display font-black text-lg leading-none mb-2">${p.nombre}</p>
+
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <p class="text-white font-display font-black text-xl leading-none mb-2">${p.nombre}</p>
                                 <div class="flex items-center gap-2">
                                     <div class="w-2 h-2 rounded-full pin-${segment}"></div>
-                                    <p class="text-[10px] font-black uppercase tracking-widest opacity-80">${p.productor}</p>
+                                    <p class="text-white/80 text-[10px] font-black uppercase tracking-widest">${p.productor}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 bg-dark-900 text-center border-t border-white/5">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block w-full bg-corp-500 hover:bg-corp-600 text-dark-900 text-[10px] font-black py-4 rounded-2xl uppercase transition-all shadow-lg">Ver Expediente Inmutable</a>
+                        <div class="p-4 bg-dark-900 border-t border-white/5">
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block w-full bg-corp-500 hover:bg-corp-600 text-dark-900 text-[10px] font-black py-4 rounded-2xl uppercase text-center transition-all shadow-lg tracking-widest">Explorar FOD</a>
                         </div>
                     </div>
                 `);
@@ -310,24 +307,20 @@
         function renderList(data) {
             const list = document.getElementById('recent-list');
             list.innerHTML = [...data].reverse().map(p => {
-                let col = '#10B981';
-                if(p.tipo === 'Emprendedor') col = '#8B5CF6';
-                if(p.tipo === 'Empresa') col = '#3B82F6';
-
+                let col = '#10B981'; if(p.tipo==='Emprendedor') col='#8B5CF6'; if(p.tipo==='Empresa') col='#3B82F6';
                 return `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
-                     class="group flex items-center gap-4 p-4 rounded-3xl bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm hover:shadow-xl">
+                     class="group flex items-center gap-4 p-4 rounded-[2rem] bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm hover:shadow-xl">
                     <div class="relative">
-                        <img src="${p.img}" class="w-12 h-12 rounded-2xl object-cover shrink-0">
-                        <div class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white" style="background: ${col}"></div>
+                        <img src="${p.img}" class="w-10 h-10 rounded-2xl object-cover">
+                        <div class="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white" style="background:${col}"></div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-black text-xs text-dark-900 truncate tracking-tight">${p.nombre}</p>
-                        <p class="text-[9px] font-bold uppercase opacity-40 truncate tracking-widest">${p.productor}</p>
+                        <p class="font-black text-xs text-dark-900 truncate tracking-tighter">${p.nombre}</p>
+                        <p class="text-[9px] font-bold uppercase opacity-30 truncate tracking-widest">${p.productor}</p>
                     </div>
-                    <i class="fas fa-chevron-right text-[10px] text-slate-200 group-hover:text-corp-500 transition-colors pr-1"></i>
                 </div>
-            `}).join('') || '<div class="py-20 text-center opacity-20"><i class="fas fa-database text-3xl mb-4"></i><p class="text-[10px] font-black uppercase tracking-widest">Sin Registros</p></div>';
+            `}).join('');
         }
     </script>
 </body>
