@@ -18,7 +18,7 @@
                 extend: {
                     colors: { 
                         'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' },
-                        'indap': { 500: '#06B6D4' }, // Nuevo color cian solicitado para no confundir con azul empresa
+                        'indap': { 500: '#06B6D4' }, 
                         'dark': { 800: '#1e293b', 900: '#0f172a' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
@@ -27,24 +27,21 @@
         }
     </script>
     <style>
-        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; transition: all 0.6s ease; }
+        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
         
-        /* PINS: Tamaño intermedio y anclaje fijo para evitar desplazamiento al hacer zoom */
+        /* PINS: Estabilidad absoluta y estética minimalista */
         .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-        .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 2; }
-        .pin-afc { background: #10B981; } 
-        .pin-emp { background: #F59E0B; } 
-        .pin-cia { background: #3b82f6; }
-        
+        .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.4); z-index: 2; }
+        .pin-afc { background: #10B981; } .pin-emp { background: #F59E0B; } .pin-cia { background: #3b82f6; }
         .pin-pulse { position: absolute; width: 35px; height: 35px; border-radius: 50%; opacity: 0.4; animation: pulse 2s infinite; z-index: 1; }
         .pulse-afc { background: #10B981; } .pulse-emp { background: #F59E0B; } .pulse-cia { background: #3b82f6; }
         @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-        /* Ficha Digital (FOD): Texto blanco para legibilidad y foco en imagen */
-        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; }
+        /* FOD POPUP: Estilo Institucional Oscuro */
+        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
-        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.9) 100%); }
+        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
         
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -60,9 +57,9 @@
                     <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-tighter">AndesChain</span>
                 </a>
                 <div class="flex items-center gap-4 pl-2">
-                    <img src="assets/LogoPaine.svg" class="h-11 w-auto">
-                    <div>
-                        <div class="flex items-center gap-2">
+                    <img src="assets/LogoPaine.svg" class="h-11 w-auto" onerror="this.src='https://via.placeholder.com/100x50?text=Logo'">
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-3">
                             <h1 class="font-display font-bold text-lg text-dark-900 leading-none">GeoDashboard</h1>
                             <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[10px] rounded-full px-3 py-1 outline-none border border-slate-200">
                                 <option value="Paine" selected>Paine</option>
@@ -75,12 +72,12 @@
                                 <option value="Chonchi">Chonchi</option>
                                 <option value="Valdivia">Valdivia</option>
                             </select>
-                            <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="text-slate-300 hover:text-corp-500 transition-colors ml-1">
+                            <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="text-slate-300 hover:text-corp-500 transition-colors" title="Sincronizar Datos">
                                 <i class="fas fa-sync-alt text-xs"></i>
                             </button>
-                            <button onclick="toggleUIMode()" class="bg-dark-900 text-white text-[9px] font-bold px-3 py-1 rounded-full ml-2">MODO MAPA</button>
+                            <button id="present-mode-btn" onclick="toggleUIMode()" class="bg-dark-900 text-white text-[9px] font-bold px-4 py-1.5 rounded-full hover:bg-corp-600 transition-all shadow-md">MODO PRESENTACIÓN</button>
                         </div>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 text-center">Trust Protocol: Territorial Ledger</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Trust Protocol: Territorial Ledger</p>
                     </div>
                 </div>
             </div>
@@ -94,21 +91,33 @@
         
         <div id="stats-panel" class="grid grid-cols-12 gap-6 transition-all duration-500">
             <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Ficha Origen Digital</p>
-                    <h3 id="count-lots" class="text-2xl font-display font-bold text-dark-900 tracking-tight">0</h3>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Ficha Origen Digital</p>
+                        <i class="fas fa-folder-open text-slate-200 text-sm"></i>
+                    </div>
+                    <h3 id="count-lots" class="text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1 text-corp-500">Productores</p>
-                    <h3 id="count-producers" class="text-2xl font-display font-bold text-corp-500 tracking-tight">0</h3>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between border-b-4 border-b-corp-500">
+                    <div class="flex justify-between items-start">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Productores</p>
+                        <i class="fas fa-id-badge text-corp-500/30 text-sm"></i>
+                    </div>
+                    <h3 id="count-producers" class="text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center border-b-2 border-b-indap-500">
-                    <p class="text-[9px] font-bold text-indap-500 uppercase mb-1">Fomento INDAP</p>
-                    <h3 id="count-indap" class="text-2xl font-display font-bold text-dark-900 tracking-tight">0</h3>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between border-b-4 border-b-indap-500">
+                    <div class="flex justify-between items-start">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Fomento INDAP</p>
+                        <i class="fas fa-shield-halved text-indap-500/30 text-sm"></i>
+                    </div>
+                    <h3 id="count-indap" class="text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Superficie</p>
-                    <h3 class="text-2xl font-display font-bold text-dark-900 tracking-tight">42.8</h3>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Superficie</p>
+                        <i class="fas fa-leaf text-slate-200 text-sm"></i>
+                    </div>
+                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none">42.8</h3>
                 </div>
             </div>
 
@@ -126,13 +135,13 @@
         </div>
 
         <div class="grid grid-cols-12 gap-6">
-            <div id="list-panel" class="col-span-12 lg:col-span-3 bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-340px)] transition-all duration-500">
-                <h2 class="font-display font-bold text-[10px] text-slate-400 mb-4 tracking-tight uppercase">Expedientes en Zona</h2>
-                <div id="recent-list" class="space-y-2 overflow-y-auto pr-1 flex-1"></div>
+            <div id="list-panel" class="col-span-12 lg:col-span-4 bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-340px)] transition-all duration-500">
+                <h2 class="font-display font-bold text-[10px] text-slate-400 mb-6 tracking-tight uppercase">Expedientes en Zona</h2>
+                <div id="recent-list" class="grid grid-cols-2 gap-3 overflow-y-auto pr-1 flex-1 content-start"></div>
             </div>
 
-            <div id="map-panel" class="col-span-12 lg:col-span-9 relative">
-                <div id="map" class="shadow-2xl"></div>
+            <div id="map-panel" class="col-span-12 lg:col-span-8 relative">
+                <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-dark-900/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
                     <div class="text-center">
                         <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl"></i>
@@ -160,14 +169,22 @@
             isFullMode = !isFullMode;
             document.getElementById('stats-panel').classList.toggle('hidden');
             document.getElementById('list-panel').classList.toggle('hidden');
-            document.getElementById('map-panel').classList.toggle('lg:col-span-9');
+            document.getElementById('map-panel').classList.toggle('lg:col-span-8');
             document.getElementById('map-panel').classList.toggle('lg:col-span-12');
             document.getElementById('map').classList.toggle('map-full');
-            setTimeout(() => map.invalidateSize(), 600);
+            
+            const btn = document.getElementById('present-mode-btn');
+            btn.innerText = isFullMode ? "VOLVER AL PANEL" : "MODO PRESENTACIÓN";
+            
+            setTimeout(() => { 
+                map.invalidateSize();
+                if (geoJsonLayer) map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
+            }, 650);
         }
 
         function animateNumber(id, target) {
             let current = 0; const element = document.getElementById(id);
+            if (!element) return;
             const increment = target / 30;
             const timer = setInterval(() => {
                 current += increment;
@@ -252,15 +269,15 @@
                             <div class="absolute inset-0 photo-overlay"></div>
                             <div class="absolute top-3 left-3 flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-md border border-white/10">
                                 <i class="fas fa-fingerprint text-[8px] text-corp-500"></i>
-                                <span class="text-[7px] font-bold text-white uppercase tracking-widest">FOD</span>
+                                <span class="text-[7px] font-bold text-white uppercase tracking-widest leading-none">Ficha Origen Digital</span>
                             </div>
                             <div class="absolute bottom-4 left-4 right-4 text-white">
                                 <p class="font-display font-bold text-base leading-tight">${p.nombre}</p>
-                                <p class="text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-80 text-white">${p.productor}</p>
+                                <p class="text-[9px] font-bold uppercase tracking-widest mt-1 opacity-80">${p.productor}</p>
                             </div>
                         </div>
                         <div class="p-3 bg-dark-900 text-center">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase transition-all">Ver Expediente</a>
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase transition-all hover:bg-corp-600">Ver Expediente</a>
                         </div>
                     </div>
                 `);
@@ -270,16 +287,21 @@
 
         function renderList(data) {
             const list = document.getElementById('recent-list');
-            list.innerHTML = [...data].reverse().map(p => `
+            list.innerHTML = [...data].reverse().map(p => {
+                let segmentColor = '#10B981';
+                if(p.tipo === 'Emprendedor') segmentColor = '#F59E0B';
+                if(p.tipo === 'Empresa') segmentColor = '#3b82f6';
+
+                return `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
-                     class="group flex items-center gap-3 p-2 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
-                    <img src="${p.img}" class="w-8 h-8 rounded-xl object-cover shrink-0">
+                     class="group flex flex-col p-2.5 rounded-2xl bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm">
+                    <img src="${p.img}" class="w-full h-20 rounded-xl object-cover mb-2">
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-[10px] text-dark-900 truncate">${p.nombre}</p>
-                        <p class="text-[7px] text-slate-400 font-bold uppercase">${p.productor}</p>
+                        <p class="font-bold text-[10px] text-dark-900 truncate leading-tight">${p.nombre}</p>
+                        <p class="text-[7px] font-bold uppercase mt-1" style="color: ${segmentColor}">${p.productor}</p>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
     </script>
 </body>
