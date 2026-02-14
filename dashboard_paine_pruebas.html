@@ -74,7 +74,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-dark-900 px-5 py-2 rounded-2xl border border-slate-700 shadow-lg flex items-center gap-4">
+            <div class="bg-dark-900 px-5 py-2 rounded-2xl flex items-center gap-4 border border-slate-700 shadow-lg">
                 <p class="text-[9px] text-slate-400 font-medium italic leading-none text-right">Smart Contract V2.1<br><span class="text-emerald-400 not-italic font-bold uppercase text-[7px]">Verified Node</span></p>
             </div>
         </div>
@@ -104,7 +104,7 @@
 
             <div class="col-span-12 lg:col-span-8 bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-around gap-6">
                 <div class="w-1/2 flex flex-col items-center">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Segmentación Socioproductiva</p>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Segmentación Territorio</p>
                     <div class="h-24 w-full">
                         <canvas id="chartSegmentacion"></canvas>
                     </div>
@@ -121,7 +121,7 @@
 
         <div class="grid grid-cols-12 gap-6">
             <div class="col-span-12 lg:col-span-3 bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-340px)]">
-                <h2 class="font-display font-bold text-[10px] text-slate-400 mb-4 tracking-tight uppercase">Expedientes en Territorio</h2>
+                <h2 class="font-display font-bold text-[10px] text-slate-400 mb-4 tracking-tight uppercase">Expedientes en Zona</h2>
                 <div id="recent-list" class="space-y-2 overflow-y-auto pr-1 flex-1"></div>
             </div>
 
@@ -171,8 +171,12 @@
             if (chart1) chart1.destroy();
             if (chart2) chart2.destroy();
 
+            // Lógica AFC, Emprendedor, Empresa
             const afc = data.filter(p => p.tipo === "Agricultor").length;
             const emp = data.filter(p => p.tipo === "Emprendedor").length;
+            const cia = data.filter(p => p.tipo === "Empresa").length;
+
+            // Manejo de Producción
             const org = data.filter(p => p.manejo === "Orgánica").length;
             const eco = data.filter(p => p.manejo === "Agroecológica").length;
             const tra = data.filter(p => p.manejo === "Tradicional").length;
@@ -183,8 +187,8 @@
                 options: { cutout: '75%', plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 6, font: { size: 7, weight: 'bold' } } } }, maintainAspectRatio: false }
             });
 
-            chart1 = new Chart(ctx1, config(['Familiar', 'Empresa'], [afc, emp], ['#10B981', '#3b82f6']));
-            chart2 = new Chart(ctx2, config(['Org', 'Eco', 'Tra'], [org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
+            chart1 = new Chart(ctx1, config(['Agricultor AFC', 'Emprendedor', 'Empresa'], [afc, emp, cia], ['#10B981', '#F59E0B', '#3b82f6']));
+            chart2 = new Chart(ctx2, config(['Orgánica', 'Agroecológica', 'Tradicional'], [org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
         }
 
         async function updateTerritory(comuna) {
@@ -233,17 +237,21 @@
                 });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.bindPopup(`
-                    <div class="relative overflow-hidden">
+                    <div class="relative overflow-hidden group">
                         <div class="relative h-44">
                             <img src="${p.img}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 photo-overlay"></div>
+                            <div class="absolute top-3 left-3 flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-md border border-white/10">
+                                <i class="fas fa-shield-alt text-[8px] text-corp-500"></i>
+                                <span class="text-[7px] font-bold text-white uppercase tracking-widest">Inmutable</span>
+                            </div>
                             <div class="absolute bottom-4 left-4 right-4 text-white">
                                 <p class="font-display font-bold text-base leading-tight">${p.nombre}</p>
                                 <p class="${isIndap ? 'text-blue-400' : 'text-corp-500'} text-[9px] font-bold uppercase tracking-widest mt-0.5">${p.productor}</p>
                             </div>
                         </div>
                         <div class="p-3 bg-dark-900 text-center">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase">Ver Expediente</a>
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase transition-all hover:bg-corp-600">Ver Expediente</a>
                         </div>
                     </div>
                 `);
@@ -255,14 +263,14 @@
             const list = document.getElementById('recent-list');
             list.innerHTML = [...data].reverse().map(p => `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
-                     class="group flex items-center gap-3 p-2 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
-                    <img src="${p.img}" class="w-8 h-8 rounded-xl object-cover shrink-0">
+                     class="group flex items-center gap-3 p-2.5 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
+                    <img src="${p.img}" class="w-9 h-9 rounded-xl object-cover shrink-0">
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-[10px] text-dark-900 truncate">${p.nombre}</p>
                         <p class="text-[7px] text-slate-400 font-bold uppercase">${p.productor}</p>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || '<div class="py-10 text-center opacity-30 text-[10px] font-bold uppercase italic">Sin registros</div>';
         }
     </script>
 </body>
