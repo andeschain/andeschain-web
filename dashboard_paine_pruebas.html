@@ -20,8 +20,7 @@
                         'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' },
                         'indap': { 500: '#06B6D4' }, 
                         'dark': { 800: '#1e293b', 900: '#0f172a' }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    }
                 }
             }
         }
@@ -30,7 +29,7 @@
         #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
         
-        /* PINS: Estabilidad absoluta y estética minimalista */
+        /* PINS: Estabilidad absoluta con iconAnchor centrado */
         .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.4); z-index: 2; }
         .pin-afc { background: #10B981; } .pin-emp { background: #F59E0B; } .pin-cia { background: #3b82f6; }
@@ -38,7 +37,7 @@
         .pulse-afc { background: #10B981; } .pulse-emp { background: #F59E0B; } .pulse-cia { background: #3b82f6; }
         @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-        /* FOD POPUP: Estilo Institucional Oscuro */
+        /* FOD POPUP: Corrección de colores para legibilidad crítica */
         .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
@@ -54,35 +53,25 @@
             <div class="flex items-center gap-6">
                 <a href="index.html" class="flex flex-col items-center hover:opacity-70 transition-all border-r pr-6 border-slate-200">
                     <img src="assets/favicon.png" class="h-8 mb-1">
-                    <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-tighter">AndesChain</span>
+                    <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-tighter text-center">AndesChain</span>
                 </a>
                 <div class="flex items-center gap-4 pl-2">
-                    <img src="assets/LogoPaine.svg" class="h-11 w-auto" onerror="this.src='https://via.placeholder.com/100x50?text=Logo'">
+                    <img src="assets/LogoPaine.svg" class="h-11 w-auto">
                     <div class="flex flex-col">
                         <div class="flex items-center gap-3">
                             <h1 class="font-display font-bold text-lg text-dark-900 leading-none">GeoDashboard</h1>
                             <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[10px] rounded-full px-3 py-1 outline-none border border-slate-200">
                                 <option value="Paine" selected>Paine</option>
                                 <option value="Buin">Buin</option>
-                                <option value="Peñaflor">Peñaflor</option>
-                                <option value="Pirque">Pirque</option>
-                                <option value="Isla de Maipo">Isla de Maipo</option>
-                                <option value="San Francisco de Mostazal">Mostazal</option>
                                 <option value="Melipilla">Melipilla</option>
-                                <option value="Chonchi">Chonchi</option>
-                                <option value="Valdivia">Valdivia</option>
                             </select>
-                            <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="text-slate-300 hover:text-corp-500 transition-colors" title="Sincronizar Datos">
+                            <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="text-slate-300 hover:text-corp-500 transition-colors">
                                 <i class="fas fa-sync-alt text-xs"></i>
                             </button>
-                            <button id="present-mode-btn" onclick="toggleUIMode()" class="bg-dark-900 text-white text-[9px] font-bold px-4 py-1.5 rounded-full hover:bg-corp-600 transition-all shadow-md">MODO PRESENTACIÓN</button>
+                            <button id="present-mode-btn" onclick="toggleUIMode()" class="bg-dark-900 text-white text-[9px] font-bold px-4 py-1.5 rounded-full hover:bg-corp-600 transition-all shadow-md tracking-tighter">MODO PRESENTACIÓN</button>
                         </div>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Trust Protocol: Territorial Ledger</p>
                     </div>
                 </div>
-            </div>
-            <div class="bg-dark-900 px-5 py-2 rounded-2xl border border-slate-700 shadow-lg flex items-center gap-4">
-                <p class="text-[9px] text-slate-400 font-medium italic leading-none text-right">Smart Contract V2.1<br><span class="text-emerald-400 not-italic font-bold uppercase text-[7px]">Verified Node</span></p>
             </div>
         </div>
     </nav>
@@ -94,7 +83,7 @@
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <p class="text-[9px] font-bold text-slate-400 uppercase">Ficha Origen Digital</p>
-                        <i class="fas fa-folder-open text-slate-200 text-sm"></i>
+                        <i class="fas fa-fingerprint text-slate-200 text-sm"></i>
                     </div>
                     <h3 id="count-lots" class="text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
@@ -123,12 +112,12 @@
 
             <div class="col-span-12 lg:col-span-8 bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-around gap-6">
                 <div class="w-1/2 flex flex-col items-center">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Segmentación Territorio</p>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest text-center">Segmentación Territorio</p>
                     <div class="h-24 w-full"><canvas id="chartSegmentacion"></canvas></div>
                 </div>
                 <div class="h-16 w-[1px] bg-slate-100"></div>
                 <div class="w-1/2 flex flex-col items-center">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Sistemas de Producción</p>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest text-center">Sistemas de Producción</p>
                     <div class="h-24 w-full"><canvas id="chartProduccion"></canvas></div>
                 </div>
             </div>
@@ -172,10 +161,7 @@
             document.getElementById('map-panel').classList.toggle('lg:col-span-8');
             document.getElementById('map-panel').classList.toggle('lg:col-span-12');
             document.getElementById('map').classList.toggle('map-full');
-            
-            const btn = document.getElementById('present-mode-btn');
-            btn.innerText = isFullMode ? "VOLVER AL PANEL" : "MODO PRESENTACIÓN";
-            
+            document.getElementById('present-mode-btn').innerText = isFullMode ? "VOLVER AL PANEL" : "MODO PRESENTACIÓN";
             setTimeout(() => { 
                 map.invalidateSize();
                 if (geoJsonLayer) map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
@@ -197,22 +183,21 @@
             const ctx1 = document.getElementById('chartSegmentacion').getContext('2d');
             const ctx2 = document.getElementById('chartProduccion').getContext('2d');
             if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
-
-            const afc = data.filter(p => p.tipo === "Agricultor").length;
-            const emp = data.filter(p => p.tipo === "Emprendedor").length;
-            const cia = data.filter(p => p.tipo === "Empresa").length;
-            const org = data.filter(p => p.manejo === "Orgánica").length;
-            const eco = data.filter(p => p.manejo === "Agroecológica").length;
-            const tra = data.filter(p => p.manejo === "Tradicional").length;
-
             const config = (labels, values, colors) => ({
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
                 options: { cutout: '75%', plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 6, font: { size: 8 } } } }, maintainAspectRatio: false }
             });
-
-            chart1 = new Chart(ctx1, config(['AFC', 'Emprendedor', 'Empresa'], [afc, emp, cia], ['#10B981', '#F59E0B', '#3b82f6']));
-            chart2 = new Chart(ctx2, config(['Orgánica', 'Agroecológica', 'Tradicional'], [org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
+            chart1 = new Chart(ctx1, config(['AFC', 'Emprendedor', 'Empresa'], [
+                data.filter(p => p.tipo === "Agricultor").length,
+                data.filter(p => p.tipo === "Emprendedor").length,
+                data.filter(p => p.tipo === "Empresa").length
+            ], ['#10B981', '#F59E0B', '#3b82f6']));
+            chart2 = new Chart(ctx2, config(['Orgánica', 'Agroecológica', 'Tradicional'], [
+                data.filter(p => p.manejo === "Orgánica").length,
+                data.filter(p => p.manejo === "Agroecológica").length,
+                data.filter(p => p.manejo === "Tradicional").length
+            ], ['#059669', '#A3E635', '#94A3B8']));
         }
 
         async function updateTerritory(comuna) {
@@ -226,7 +211,6 @@
                 const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&polygon_geojson=1&format=json&limit=1`);
                 const results = await response.json();
                 const data = results[0];
-
                 if (data && data.geojson) {
                     const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
                     let coords = data.geojson.type === "Polygon" ? [data.geojson.coordinates[0].map(c => [c[1], c[0]])] : data.geojson.coordinates.map(p => p[0].map(c => [c[1], c[0]]));
@@ -255,13 +239,17 @@
                 if(p.tipo === 'Emprendedor') segmentClass = 'emp';
                 if(p.tipo === 'Empresa') segmentClass = 'cia';
 
+                // LÓGICA DE SPIDERFY (Variación milimétrica para evitar solapamiento en coordenadas iguales)
+                const lat = parseFloat(p.lat) + (Math.random() - 0.5) * 0.0003;
+                const lon = parseFloat(p.lon) + (Math.random() - 0.5) * 0.0003;
+
                 const icon = L.divIcon({
                     className: 'pin-custom-wrapper',
                     html: `<div class="pin-wrapper"><div class="pin-pulse pulse-${segmentClass}"></div><div class="pin-main pin-${segmentClass}"></div></div>`,
                     iconSize: [40, 40], iconAnchor: [20, 20]
                 });
                 
-                const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
+                const m = L.marker([lat, lon], { icon }).addTo(map);
                 m.bindPopup(`
                     <div class="relative overflow-hidden group">
                         <div class="relative h-44">
@@ -273,7 +261,7 @@
                             </div>
                             <div class="absolute bottom-4 left-4 right-4 text-white">
                                 <p class="font-display font-bold text-base leading-tight">${p.nombre}</p>
-                                <p class="text-[9px] font-bold uppercase tracking-widest mt-1 opacity-80">${p.productor}</p>
+                                <p class="text-[9px] font-bold uppercase tracking-widest mt-1 opacity-80 text-white">${p.productor}</p>
                             </div>
                         </div>
                         <div class="p-3 bg-dark-900 text-center">
@@ -291,7 +279,6 @@
                 let segmentColor = '#10B981';
                 if(p.tipo === 'Emprendedor') segmentColor = '#F59E0B';
                 if(p.tipo === 'Empresa') segmentColor = '#3b82f6';
-
                 return `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
                      class="group flex flex-col p-2.5 rounded-2xl bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm">
