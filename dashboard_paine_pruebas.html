@@ -27,7 +27,7 @@
         }
     </script>
     <style>
-        #map { height: calc(100vh - 160px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
+        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; }
         .custom-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; border: 1.5px solid rgba(255,255,255,0.8); }
         .pin-corp { background: #10B981; }
         .pin-indap { background: #3b82f6; }
@@ -74,25 +74,26 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-dark-900 px-5 py-2 rounded-2xl flex items-center gap-4 border border-slate-700 shadow-lg">
+            <div class="bg-dark-900 px-5 py-2 rounded-2xl border border-slate-700 shadow-lg flex items-center gap-4">
                 <p class="text-[9px] text-slate-400 font-medium italic leading-none text-right">Smart Contract V2.1<br><span class="text-emerald-400 not-italic font-bold uppercase text-[7px]">Verified Node</span></p>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-[1600px] mx-auto p-4 grid grid-cols-12 gap-6">
-        <div class="col-span-12 lg:col-span-3 space-y-4 flex flex-col h-[calc(100vh-140px)]">
-            <div class="grid grid-cols-2 gap-3">
+    <main class="max-w-[1600px] mx-auto p-4 space-y-6">
+        
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
                     <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Orígenes</p>
                     <h3 id="count-lots" class="text-2xl font-display font-bold text-dark-900 tracking-tight">0</h3>
                 </div>
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Productores</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1 text-corp-500">Productores</p>
                     <h3 id="count-producers" class="text-2xl font-display font-bold text-corp-500 tracking-tight">0</h3>
                 </div>
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <p class="text-[9px] font-bold text-blue-500 uppercase mb-1">INDAP</p>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center border-b-2 border-b-blue-500">
+                    <p class="text-[9px] font-bold text-blue-500 uppercase mb-1">Fomento INDAP</p>
                     <h3 id="count-indap" class="text-2xl font-display font-bold text-blue-500 tracking-tight">0</h3>
                 </div>
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
@@ -101,34 +102,36 @@
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-4">
-                <div>
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 text-center">Segmentación Territorio</p>
-                    <div class="h-28 flex justify-center">
+            <div class="col-span-12 lg:col-span-8 bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-around gap-6">
+                <div class="w-1/2 flex flex-col items-center">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Segmentación Socioproductiva</p>
+                    <div class="h-24 w-full">
                         <canvas id="chartSegmentacion"></canvas>
                     </div>
                 </div>
-                <div class="h-[1px] bg-slate-100 w-full"></div>
-                <div>
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 text-center">Sistemas de Producción</p>
-                    <div class="h-28 flex justify-center">
+                <div class="h-16 w-[1px] bg-slate-100"></div>
+                <div class="w-1/2 flex flex-col items-center">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest">Sistemas de Producción</p>
+                    <div class="h-24 w-full">
                         <canvas id="chartProduccion"></canvas>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col flex-1 overflow-hidden">
-                <h2 class="font-display font-bold text-xs text-dark-900 mb-4 tracking-tight uppercase">Expedientes en Zona</h2>
-                <div id="recent-list" class="space-y-2 overflow-y-auto pr-1 flex-1"></div>
-            </div>
         </div>
 
-        <div class="col-span-12 lg:col-span-9 relative">
-            <div id="map" class="shadow-2xl"></div>
-            <div id="loader" class="absolute inset-0 bg-dark-900/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
-                <div class="text-center">
-                    <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl"></i>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-white mt-4 animate-pulse">Analizando Territorio</p>
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 lg:col-span-3 bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-340px)]">
+                <h2 class="font-display font-bold text-[10px] text-slate-400 mb-4 tracking-tight uppercase">Expedientes en Territorio</h2>
+                <div id="recent-list" class="space-y-2 overflow-y-auto pr-1 flex-1"></div>
+            </div>
+
+            <div class="col-span-12 lg:col-span-9 relative">
+                <div id="map" class="shadow-2xl"></div>
+                <div id="loader" class="absolute inset-0 bg-dark-900/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
+                    <div class="text-center">
+                        <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl"></i>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-white mt-4 animate-pulse">Sincronizando Nodo</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,14 +139,14 @@
 
     <script src="js/simulador.js"></script>
     <script>
-        let map, markers = [], geoJsonLayer, maskLayer;
-        let chart1, chart2;
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2;
 
         window.onload = () => { initMap(); };
 
         function initMap() {
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
             updateTerritory("Paine");
         }
 
@@ -177,10 +180,10 @@
             const config = (labels, values, colors) => ({
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
-                options: { cutout: '70%', plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 6, font: { size: 7 } } } }, maintainAspectRatio: false }
+                options: { cutout: '75%', plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 6, font: { size: 7, weight: 'bold' } } } }, maintainAspectRatio: false }
             });
 
-            chart1 = new Chart(ctx1, config(['Familiar', 'Emprendedor'], [afc, emp], ['#10B981', '#3b82f6']));
+            chart1 = new Chart(ctx1, config(['Familiar', 'Empresa'], [afc, emp], ['#10B981', '#3b82f6']));
             chart2 = new Chart(ctx2, config(['Org', 'Eco', 'Tra'], [org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
         }
 
@@ -230,7 +233,7 @@
                 });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.bindPopup(`
-                    <div class="relative overflow-hidden group">
+                    <div class="relative overflow-hidden">
                         <div class="relative h-44">
                             <img src="${p.img}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 photo-overlay"></div>
@@ -239,11 +242,8 @@
                                 <p class="${isIndap ? 'text-blue-400' : 'text-corp-500'} text-[9px] font-bold uppercase tracking-widest mt-0.5">${p.productor}</p>
                             </div>
                         </div>
-                        <div class="p-3 bg-dark-900">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="flex items-center justify-between bg-white/5 hover:bg-corp-500 px-4 py-2 rounded-xl transition-all">
-                                <span class="text-[8px] font-bold text-white uppercase">Ver Expediente</span>
-                                <i class="fas fa-arrow-right text-[8px] text-corp-500"></i>
-                            </a>
+                        <div class="p-3 bg-dark-900 text-center">
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block bg-corp-500 text-dark-900 text-[10px] font-extrabold py-2 rounded-xl uppercase">Ver Expediente</a>
                         </div>
                     </div>
                 `);
@@ -256,7 +256,7 @@
             list.innerHTML = [...data].reverse().map(p => `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
                      class="group flex items-center gap-3 p-2 rounded-2xl bg-white border border-slate-100 cursor-pointer hover:border-corp-500 transition-all shadow-sm">
-                    <img src="${p.img}" class="w-9 h-9 rounded-xl object-cover shrink-0">
+                    <img src="${p.img}" class="w-8 h-8 rounded-xl object-cover shrink-0">
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-[10px] text-dark-900 truncate">${p.nombre}</p>
                         <p class="text-[7px] text-slate-400 font-bold uppercase">${p.productor}</p>
