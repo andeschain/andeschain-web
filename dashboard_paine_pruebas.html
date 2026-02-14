@@ -27,8 +27,9 @@
         }
     </script>
     <style>
-        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-        .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
+        /* Transición de altura suave para efecto cinemático */
+        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        .map-full { height: calc(100vh - 120px) !important; }
         
         .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.4); z-index: 2; }
@@ -37,7 +38,7 @@
         .pulse-afc { background: #10B981; } .pulse-emp { background: #F59E0B; } .pulse-cia { background: #3b82f6; }
         @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
         
@@ -138,7 +139,7 @@
                 <div id="recent-list" class="grid grid-cols-2 gap-3 overflow-y-auto pr-1 flex-1 content-start"></div>
             </div>
 
-            <div id="map-panel" class="col-span-12 lg:col-span-8 relative">
+            <div id="map-panel" class="col-span-12 lg:col-span-8 relative transition-all duration-700">
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-dark-900/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
                     <div class="text-center">
@@ -163,28 +164,42 @@
             updateTerritory("Paine");
         }
 
+        // MEJORA EXPONENCIAL: Recalibración del visor en tiempo real
         function toggleUIMode() {
             isFullMode = !isFullMode;
-            document.getElementById('stats-panel').classList.toggle('hidden');
-            document.getElementById('list-panel').classList.toggle('hidden');
-            document.getElementById('map-panel').classList.toggle('lg:col-span-8');
-            document.getElementById('map-panel').classList.toggle('lg:col-span-12');
-            document.getElementById('map').classList.toggle('map-full');
             
+            const statsPanel = document.getElementById('stats-panel');
+            const listPanel = document.getElementById('list-panel');
+            const mapPanel = document.getElementById('map-panel');
+            const mapDiv = document.getElementById('map');
             const btn = document.getElementById('present-mode-btn');
-            btn.innerText = isFullMode ? "VOLVER AL PANEL" : "MODO PRESENTACIÓN";
+
+            if (isFullMode) {
+                statsPanel.classList.add('hidden');
+                listPanel.classList.add('hidden');
+                mapPanel.classList.replace('lg:col-span-8', 'lg:col-span-12');
+                mapDiv.classList.add('map-full');
+                btn.innerText = "VOLVER AL PANEL";
+            } else {
+                statsPanel.classList.remove('hidden');
+                listPanel.classList.remove('hidden');
+                mapPanel.classList.replace('lg:col-span-12', 'lg:col-span-8');
+                mapDiv.classList.remove('map-full');
+                btn.innerText = "MODO PRESENTACIÓN";
+            }
             
-            // CORRECCIÓN: REAJUSTE DE CÁMARA DESPUÉS DE LA TRANSICIÓN
+            // Re-centrado Maestro: Leaflet necesita recalcular su centro visual
             setTimeout(() => { 
-                map.invalidateSize(); // Notifica al mapa que su tamaño cambió
+                map.invalidateSize(); 
                 if (geoJsonLayer) {
-                    // Fuerza al mapa a centrarse en el territorio (la división de color)
+                    // Fly cinematico al centro del territorio para que "baje" visualmente
                     map.flyToBounds(geoJsonLayer.getBounds(), { 
-                        padding: [50, 50],
-                        duration: 1.0 
+                        padding: [60, 60], 
+                        duration: 1.2,
+                        easeLinearity: 0.25
                     });
                 }
-            }, 750); // Esperamos a que la transición CSS termine
+            }, 750); 
         }
 
         function animateNumber(id, target) {
