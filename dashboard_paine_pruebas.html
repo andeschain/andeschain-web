@@ -19,140 +19,113 @@
                     colors: { 
                         'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' },
                         'segment': { 'afc': '#10B981', 'emp': '#8B5CF6', 'cia': '#3B82F6' },
-                        'indap': { 500: '#06B6D4' }, // Nuevo Cian Institucional
+                        'indap': { 500: '#06B6D4' },
                         'dark': { 800: '#1e293b', 900: '#0f172a' }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    }
                 }
             }
         }
     </script>
     <style>
-        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
-        .custom-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); position: absolute; border: 2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .pin-afc { background-color: #10B981; } .pin-emp { background-color: #8B5CF6; } .pin-cia { background-color: #3B82F6; }
-        .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite; }
-        .pulse-afc { background: #10B981; } .pulse-emp { background: #8B5CF6; } .pulse-cia { background: #3B82F6; }
-        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
+        #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
         
-        /* Estética de la FOD (Popup) */
-        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important; }
+        /* DISEÑO DE PIN ELITE (Nivel Figma) */
+        .pin-container { position: relative; width: 32px; height: 32px; transform: translate(-50%, -100%); }
+        .pin-main { width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+        .pin-afc { background: #10B981; } .pin-emp { background: #8B5CF6; } .pin-cia { background: #3B82F6; }
+        
+        .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; opacity: 0.4; animation: pulse 2.5s infinite; z-index: 1; }
+        .pulse-afc { background: rgba(16,185,129,0.6); } .pulse-emp { background: rgba(139,92,246,0.6); } .pulse-cia { background: rgba(59,130,246,0.6); }
+        
+        @keyframes pulse { 0% { width: 10px; height: 10px; opacity: 0.8; } 100% { width: 45px; height: 45px; opacity: 0; } }
+
+        /* POPUP REFINADO (FOD) */
+        .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.6) !important; }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
-        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 20%, rgba(15,23,42,0.95) 100%); }
-        
-        .kpi-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .kpi-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+        .leaflet-popup-tip { background: #0f172a !important; }
+        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.6) 40%, rgba(15,23,42,1) 100%); }
     </style>
 </head>
 <body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-hidden">
 
-    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-100 px-8 py-4 sticky top-0 z-[1000]">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-100 px-8 py-3 sticky top-0 z-[1000]">
         <div class="max-w-[1600px] mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-8">
-                <a href="index.html" class="flex flex-col items-center hover:opacity-70 transition-all border-r pr-8 border-slate-200">
-                    <img src="assets/favicon.png" class="h-10 mb-1">
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">AndesChain</span>
+            <div class="flex items-center gap-6">
+                <a href="index.html" class="flex flex-col items-center hover:opacity-70 transition-all border-r pr-6 border-slate-200">
+                    <img src="assets/favicon.png" class="h-8">
+                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">AndesChain</span>
                 </a>
                 <div class="flex items-center gap-4">
-                    <img src="assets/LogoPaine.svg" class="h-12 w-auto">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="font-display font-bold text-xl text-dark-900 tracking-tight leading-none">GeoDashboard</h1>
-                            <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-50 text-slate-500 font-bold text-xs rounded-full px-4 py-1.5 outline-none border border-slate-200 cursor-pointer">
-                                <option value="Paine">Paine</option>
-                                <option value="Buin">Buin</option>
-                                <option value="Melipilla">Melipilla</option>
-                            </select>
-                        </div>
+                    <img src="assets/LogoPaine.svg" class="h-10 w-auto">
+                    <div class="flex items-center gap-3">
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[11px] rounded-full px-4 py-1.5 outline-none border-none">
+                            <option value="Paine">Paine</option>
+                            <option value="Buin">Buin</option>
+                            <option value="Melipilla">Melipilla</option>
+                        </select>
+                        <button onclick="toggleUIMode()" class="bg-dark-900 text-white text-[10px] font-bold px-4 py-1.5 rounded-full hover:bg-corp-600 transition-all flex items-center gap-2 shadow-lg">
+                            <i class="fas fa-expand-arrows-alt"></i> <span id="btn-mode-text">FULL MAP</span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="bg-dark-900 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl border border-slate-700">
-                <p class="text-[10px] text-slate-400 font-medium italic leading-tight text-right">Blockchain V2.1<br><span class="text-emerald-400 not-italic font-black uppercase text-[7px] tracking-widest">Verified Node</span></p>
+            <div class="bg-dark-900 px-5 py-2 rounded-2xl border border-slate-700 shadow-xl flex items-center gap-4">
+                <p class="text-[9px] text-slate-400 font-medium italic leading-none text-right">Node Cluster V2.1<br><span class="text-emerald-400 not-italic font-black uppercase text-[7px] tracking-widest">Verified</span></p>
+                <div class="h-6 w-px bg-slate-700"></div>
+                <button onclick="location.reload()" class="text-slate-400 hover:text-white"><i class="fas fa-sync-alt text-xs"></i></button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-[1600px] mx-auto p-6 space-y-6">
+    <main class="max-w-[1600px] mx-auto p-4 space-y-6">
         
-        <div class="grid grid-cols-12 gap-6 items-stretch">
-            <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-4">
-                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">FOD</span>
-                        <div class="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-fingerprint text-sm"></i></div>
-                    </div>
-                    <div>
-                        <h3 id="count-lots" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
-                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Fichas Origen Digital</p>
-                    </div>
+        <div id="stats-panel" class="grid grid-cols-12 gap-6 transition-all duration-700">
+            <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">FOD</p>
+                    <h3 id="count-lots" class="text-3xl font-display font-black text-dark-900">0</h3>
+                    <i class="fas fa-fingerprint absolute -right-2 -bottom-2 text-5xl opacity-[0.03] group-hover:scale-110 transition-transform"></i>
                 </div>
-                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] font-black text-corp-500 uppercase tracking-widest">Productores</span>
-                        <div class="h-8 w-8 rounded-xl bg-corp-50 flex items-center justify-center text-corp-500"><i class="fas fa-users text-sm"></i></div>
-                    </div>
-                    <div>
-                        <h3 id="count-producers" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
-                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Sujetos de Trazabilidad</p>
-                    </div>
+                <div class="bg-white p-4 rounded-[2rem] border-l-4 border-corp-500 shadow-sm">
+                    <p class="text-[9px] font-black text-corp-500 uppercase tracking-widest mb-1">Productores</p>
+                    <h3 id="count-producers" class="text-3xl font-display font-black text-dark-900">0</h3>
                 </div>
-                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between border-b-4 border-b-indap-500">
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] font-black text-indap-500 uppercase tracking-widest">INDAP</span>
-                        <div class="h-8 w-8 rounded-xl bg-cyan-50 flex items-center justify-center text-indap-500"><i class="fas fa-landmark text-sm"></i></div>
-                    </div>
-                    <div>
-                        <h3 id="count-indap" class="text-4xl font-display font-black text-dark-900 leading-none">0</h3>
-                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Fomento Institucional</p>
-                    </div>
+                <div class="bg-white p-4 rounded-[2rem] border-l-4 border-indap-500 shadow-sm">
+                    <p class="text-[9px] font-black text-indap-500 uppercase tracking-widest mb-1">INDAP</p>
+                    <h3 id="count-indap" class="text-3xl font-display font-black text-dark-900">0</h3>
                 </div>
-                <div class="kpi-card bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Superficie</span>
-                        <div class="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400"><i class="fas fa-vector-square text-sm"></i></div>
-                    </div>
-                    <div>
-                        <h3 class="text-4xl font-display font-black text-dark-900 leading-none">42.8</h3>
-                        <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Hectáreas Verificadas</p>
-                    </div>
+                <div class="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Superficie</p>
+                    <h3 class="text-3xl font-display font-black text-dark-900">42.8 <span class="text-xs text-slate-300">Ha</span></h3>
                 </div>
             </div>
 
-            <div class="col-span-12 lg:col-span-8 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-between gap-12">
-                <div class="flex-1">
-                    <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <span class="w-1.5 h-4 bg-dark-900 rounded-full"></span> Segmentación
-                    </p>
-                    <div class="flex items-center gap-6">
-                        <div class="h-28 w-28 shrink-0"><canvas id="chartSegmentacion"></canvas></div>
-                        <div id="legendSegmentacion" class="space-y-1.5 flex-1"></div>
-                    </div>
+            <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center justify-around gap-10">
+                <div class="flex-1 flex items-center gap-6">
+                    <div class="h-24 w-24 shrink-0"><canvas id="chartSegmentacion"></canvas></div>
+                    <div id="legendSegmentacion" class="space-y-1 flex-1"></div>
                 </div>
-                <div class="h-32 w-[1px] bg-slate-100"></div>
-                <div class="flex-1">
-                    <p class="text-[11px] font-black text-dark-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <span class="w-1.5 h-4 bg-corp-500 rounded-full"></span> Manejo
-                    </p>
-                    <div class="flex items-center gap-6">
-                        <div class="h-28 w-28 shrink-0"><canvas id="chartProduccion"></canvas></div>
-                        <div id="legendProduccion" class="space-y-1.5 flex-1"></div>
-                    </div>
+                <div class="h-16 w-px bg-slate-100"></div>
+                <div class="flex-1 flex items-center gap-6">
+                    <div class="h-24 w-24 shrink-0"><canvas id="chartProduccion"></canvas></div>
+                    <div id="legendProduccion" class="space-y-1 flex-1"></div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-6">
-            <div class="col-span-12 lg:col-span-3 bg-white p-8 rounded-[2.5rem] border border-slate-100 flex flex-col h-[calc(100vh-340px)]">
-                <h2 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-6">Expedientes Digitales</h2>
-                <div id="recent-list" class="space-y-3 overflow-y-auto pr-2 flex-1"></div>
+        <div class="grid grid-cols-12 gap-6 items-start">
+            <div id="list-panel" class="col-span-12 lg:col-span-3 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col h-[calc(100vh-340px)] transition-all duration-700">
+                <h2 class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-6">Expedientes Digitales</h2>
+                <div id="recent-list" class="space-y-2 overflow-y-auto pr-2 flex-1"></div>
             </div>
-            <div class="col-span-12 lg:col-span-9 relative">
+
+            <div id="map-panel" class="col-span-12 lg:col-span-9 relative">
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-dark-900/40 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
                     <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center">
-                        <i class="fas fa-circle-notch animate-spin text-corp-500 text-4xl mb-4"></i>
-                        <p class="text-xs font-black uppercase tracking-widest text-dark-900 italic">Sincronizando Nodo Territorial</p>
+                        <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl mb-4"></i>
+                        <p class="text-xs font-black uppercase tracking-widest text-dark-900">Sincronizando Nodo</p>
                     </div>
                 </div>
             </div>
@@ -161,7 +134,7 @@
 
     <script src="js/simulador.js"></script>
     <script>
-        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2;
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2, isFullMode = false;
 
         window.onload = () => { initMap(); };
 
@@ -172,32 +145,35 @@
             updateTerritory("Paine");
         }
 
+        function toggleUIMode() {
+            isFullMode = !isFullMode;
+            document.getElementById('stats-panel').classList.toggle('opacity-0');
+            document.getElementById('stats-panel').classList.toggle('pointer-events-none');
+            document.getElementById('list-panel').classList.toggle('opacity-0');
+            document.getElementById('list-panel').classList.toggle('pointer-events-none');
+            document.getElementById('map').classList.toggle('map-full');
+            document.getElementById('btn-mode-text').innerText = isFullMode ? "RESTORE UI" : "FULL MAP";
+            setTimeout(() => map.invalidateSize(), 600);
+        }
+
         function animateNumber(id, target) {
-            let current = 0;
-            const element = document.getElementById(id);
+            let current = 0; const element = document.getElementById(id);
             const increment = target / 30;
             const timer = setInterval(() => {
                 current += increment;
-                if (current >= target) {
-                    element.innerText = Math.floor(target);
-                    clearInterval(timer);
-                } else { element.innerText = Math.floor(current); }
+                if (current >= target) { element.innerText = Math.floor(target); clearInterval(timer); }
+                else { element.innerText = Math.floor(current); }
             }, 30);
         }
 
         function initCharts(data) {
             const ctx1 = document.getElementById('chartSegmentacion').getContext('2d');
             const ctx2 = document.getElementById('chartProduccion').getContext('2d');
-            if (chart1) chart1.destroy();
-            if (chart2) chart2.destroy();
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
 
             const afc = data.filter(p => p.tipo === "Agricultor").length;
             const emp = data.filter(p => p.tipo === "Emprendedor").length;
             const cia = data.filter(p => p.tipo === "Empresa").length;
-
-            const org = data.filter(p => p.manejo === "Orgánica").length;
-            const eco = data.filter(p => p.manejo === "Agroecológica").length;
-            const tra = data.filter(p => p.manejo === "Tradicional").length;
 
             const config = (values, colors) => ({
                 type: 'doughnut',
@@ -206,21 +182,18 @@
             });
 
             chart1 = new Chart(ctx1, config([afc, emp, cia], ['#10B981', '#8B5CF6', '#3B82F6']));
-            chart2 = new Chart(ctx2, config([org, eco, tra], ['#059669', '#A3E635', '#94A3B8']));
+            chart2 = new Chart(ctx2, config([1, 1, 1], ['#059669', '#A3E635', '#94A3B8'])); // Demo estática
 
             createLegend('legendSegmentacion', [{l:'Agricultor AFC', v:afc, c:'#10B981'}, {l:'Emprendedor', v:emp, c:'#8B5CF6'}, {l:'Empresa', v:cia, c:'#3B82F6'}]);
-            createLegend('legendProduccion', [{l:'Orgánica', v:org, c:'#059669'}, {l:'Agroecológica', v:eco, c:'#A3E635'}, {l:'Tradicional', v:tra, c:'#94A3B8'}]);
+            createLegend('legendProduccion', [{l:'Orgánica', v:'-', c:'#059669'}, {l:'Agroecológica', v:'-', c:'#A3E635'}, {l:'Tradicional', v:'-', c:'#94A3B8'}]);
         }
 
         function createLegend(id, items) {
             const container = document.getElementById(id);
             container.innerHTML = items.map(i => `
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full" style="background:${i.c}"></div>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">${i.l}</span>
-                    </div>
-                    <span class="text-[10px] font-black text-dark-900">${i.v}</span>
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-tight">
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${i.c}"></div><span class="text-slate-400">${i.l}</span></div>
+                    <span class="text-dark-900">${i.v}</span>
                 </div>
             `).join('');
         }
@@ -229,31 +202,26 @@
             document.getElementById('loader').classList.remove('hidden');
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
-            markers.forEach(m => map.removeLayer(m));
-            markers = [];
+            markers.forEach(m => map.removeLayer(m)); markers = [];
 
             try {
-                const query = encodeURIComponent(`${comuna}, Chile`);
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&polygon_geojson=1&format=json&limit=1`);
-                const results = await response.json();
-                const data = results[0];
-
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await response.json(); const data = results[0];
                 if (data && data.geojson) {
                     const worldOuter = [[90, -180], [90, 180], [-90, 180], [-90, -180]];
                     let coords = data.geojson.type === "Polygon" ? [data.geojson.coordinates[0].map(c => [c[1], c[0]])] : data.geojson.coordinates.map(p => p[0].map(c => [c[1], c[0]]));
-                    maskLayer = L.polygon([worldOuter, ...coords], { color: 'none', fillColor: '#020617', fillOpacity: 0.75, interactive: false }).addTo(map);
+                    maskLayer = L.polygon([worldOuter, ...coords], { color: 'none', fillColor: '#020617', fillOpacity: 0.7, interactive: false }).addTo(map);
                     geoJsonLayer = L.geoJSON({type: "Feature", geometry: data.geojson}, { style: { color: '#10B981', weight: 4, fillOpacity: 0.05, interactive: false } }).addTo(map);
-                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.8 });
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
                 }
             } catch (e) { console.error(e); }
 
             const rawData = window.getProductos() || [];
             const filteredData = rawData.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()));
-            const countIndap = filteredData.filter(p => p.fomento === "INDAP").length;
-
+            
             animateNumber('count-lots', filteredData.length);
             animateNumber('count-producers', [...new Set(filteredData.map(p => p.productor))].length);
-            animateNumber('count-indap', countIndap);
+            animateNumber('count-indap', filteredData.filter(p => p.fomento === "INDAP").length);
 
             initCharts(filteredData);
             renderList(filteredData);
@@ -263,40 +231,37 @@
 
         function renderMarkers(data) {
             data.forEach(p => {
-                let segment = 'afc';
-                if(p.tipo === 'Emprendedor') segment = 'emp';
-                if(p.tipo === 'Empresa') segment = 'cia';
-
+                let seg = 'afc'; if(p.tipo==='Emprendedor') seg='emp'; if(p.tipo==='Empresa') seg='cia';
+                
+                // PIN DISEÑO ELITE
                 const icon = L.divIcon({
-                    className: 'relative',
-                    html: `<div class="pin-pulse pulse-${segment}"></div><div class="custom-pin pin-${segment}" style="width: 24px; height: 24px; left: -12px; top: -24px;"></div>`,
-                    iconSize: [24, 24]
+                    className: 'pin-custom-wrapper',
+                    html: `<div class="pin-container"><div class="pin-pulse pulse-${seg}"></div><div class="pin-main pin-${seg}"></div></div>`,
+                    iconSize: [32, 32], iconAnchor: [16, 32]
                 });
                 
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
-                
-                // FOD REDISEÑADA: FOCO EN IMAGEN Y TEXTO BLANCO
                 m.bindPopup(`
-                    <div class="relative overflow-hidden">
-                        <div class="relative h-52">
-                            <img src="${p.img}" class="w-full h-full object-cover shadow-inner">
+                    <div class="relative group">
+                        <div class="relative h-56 overflow-hidden">
+                            <img src="${p.img}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 photo-overlay"></div>
                             
-                            <div class="absolute top-4 left-4 flex items-center gap-2 bg-dark-900/60 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-white/20">
+                            <div class="absolute top-4 left-4 flex items-center gap-2 bg-dark-900/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
                                 <i class="fas fa-fingerprint text-[10px] text-corp-500"></i>
-                                <span class="text-[8px] font-black text-white uppercase tracking-widest">FOD</span>
+                                <span class="text-[8px] font-black text-white uppercase tracking-widest leading-none mt-0.5">Ficha Origen Digital</span>
                             </div>
 
                             <div class="absolute bottom-6 left-6 right-6">
-                                <p class="text-white font-display font-black text-xl leading-none mb-2">${p.nombre}</p>
+                                <p class="text-white font-display font-black text-2xl leading-none mb-2 tracking-tight">${p.nombre}</p>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full pin-${segment}"></div>
+                                    <div class="w-2 h-2 rounded-full pin-${seg}"></div>
                                     <p class="text-white/80 text-[10px] font-black uppercase tracking-widest">${p.productor}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 bg-dark-900 border-t border-white/5">
-                            <a href="producto.html?id=${p.id}" target="_blank" class="block w-full bg-corp-500 hover:bg-corp-600 text-dark-900 text-[10px] font-black py-4 rounded-2xl uppercase text-center transition-all shadow-lg tracking-widest">Explorar FOD</a>
+                        <div class="p-4 bg-dark-900">
+                            <a href="producto.html?id=${p.id}" target="_blank" class="block w-full bg-corp-500 hover:bg-corp-600 text-dark-900 text-[11px] font-black py-4 rounded-2xl uppercase text-center transition-all shadow-xl tracking-widest">Explorar FOD</a>
                         </div>
                     </div>
                 `);
@@ -307,17 +272,14 @@
         function renderList(data) {
             const list = document.getElementById('recent-list');
             list.innerHTML = [...data].reverse().map(p => {
-                let col = '#10B981'; if(p.tipo==='Emprendedor') col='#8B5CF6'; if(p.tipo==='Empresa') col='#3B82F6';
+                let c = '#10B981'; if(p.tipo==='Emprendedor') c='#8B5CF6'; if(p.tipo==='Empresa') c='#3B82F6';
                 return `
                 <div onclick="map.flyTo([${p.lat}, ${p.lon}], 16); markers.find(m => m.getLatLng().lat == ${p.lat}).openPopup();" 
-                     class="group flex items-center gap-4 p-4 rounded-[2rem] bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm hover:shadow-xl">
-                    <div class="relative">
-                        <img src="${p.img}" class="w-10 h-10 rounded-2xl object-cover">
-                        <div class="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white" style="background:${col}"></div>
-                    </div>
+                     class="group flex items-center gap-3 p-3 rounded-[1.5rem] bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover shrink-0">
                     <div class="flex-1 min-w-0">
-                        <p class="font-black text-xs text-dark-900 truncate tracking-tighter">${p.nombre}</p>
-                        <p class="text-[9px] font-bold uppercase opacity-30 truncate tracking-widest">${p.productor}</p>
+                        <p class="font-black text-[11px] text-dark-900 truncate">${p.nombre}</p>
+                        <p class="text-[8px] font-bold uppercase opacity-30 truncate tracking-widest" style="color:${c}">${p.productor}</p>
                     </div>
                 </div>
             `}).join('');
