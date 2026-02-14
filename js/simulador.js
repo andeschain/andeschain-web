@@ -23,6 +23,25 @@ const seedData = [
         ]
     },
     {
+        id: "5006", // ID correlativo para el segundo producto de Luis Miranda
+        nombre: "Poroto Metro (Yarda)",
+        lote: "Lote #08-2026",
+        productor: "Luis Miranda",
+        tipo: "Agricultor",
+        ubicacion: "Colonia Kennedy, Paine",
+        lat: "-33.857142", 
+        lon: "-70.730938",
+        fecha: "13 Feb 2026",
+        estado: "VERIFIED",
+        historia: "Variedad de poroto para consumo en verde de gran longitud. El cultivo es custodiado por bandas florales de biodiversidad que favorecen el control natural de plagas, eliminando el uso de pesticidas sintéticos.",
+        img: "assets/porotoyarda.jpg", 
+        hitos: [
+            { titulo: "Instalación de Banda Floral", fecha: "10 Oct 2025", desc: "Siembra de especies melíferas para atraer polinizadores y controladores naturales." },
+            { titulo: "Aparición de Vainas", fecha: "05 Jan 2026", desc: "Desarrollo de vainas de más de 40cm de largo bajo manejo agroecológico." },
+            { titulo: "Validación de Origen Digital", fecha: "13 Feb 2026", desc: "Certificación de geolocalización y prácticas en Colonia Kennedy, Paine." }
+        ]
+    },
+    {
         id: "3003",
         nombre: "Almendra Nonpareil",
         lote: "Lote #05-2026",
