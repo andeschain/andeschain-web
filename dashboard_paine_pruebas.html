@@ -30,21 +30,20 @@
         #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
         
-        /* DISEÑO DE PIN ELITE (Nivel Figma) */
-        .pin-container { position: relative; width: 32px; height: 32px; transform: translate(-50%, -100%); }
-        .pin-main { width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+        /* PIN ELITE V2 - TAMAÑO INTERMEDIO Y ANCLAJE FIJO */
+        .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; items-center; justify-content: center; }
+        .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid white; box-shadow: 0 0 12px rgba(0,0,0,0.6); z-index: 2; position: relative; }
         .pin-afc { background: #10B981; } .pin-emp { background: #8B5CF6; } .pin-cia { background: #3B82F6; }
         
-        .pin-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; opacity: 0.4; animation: pulse 2.5s infinite; z-index: 1; }
-        .pulse-afc { background: rgba(16,185,129,0.6); } .pulse-emp { background: rgba(139,92,246,0.6); } .pulse-cia { background: rgba(59,130,246,0.6); }
+        .pin-pulse { position: absolute; width: 35px; height: 35px; border-radius: 50%; opacity: 0.5; animation: pulse 2.2s infinite; z-index: 1; }
+        .pulse-afc { background: rgba(16,185,129,0.5); } .pulse-emp { background: rgba(139,92,246,0.5); } .pulse-cia { background: rgba(59,130,246,0.5); }
         
-        @keyframes pulse { 0% { width: 10px; height: 10px; opacity: 0.8; } 100% { width: 45px; height: 45px; opacity: 0; } }
+        @keyframes pulse { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-        /* POPUP REFINADO (FOD) */
+        /* POPUP FOD - TEXTO BLANCO CINEMÁTICO */
         .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.6) !important; }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
-        .leaflet-popup-tip { background: #0f172a !important; }
-        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.6) 40%, rgba(15,23,42,1) 100%); }
+        .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.4) 30%, rgba(15,23,42,1) 100%); }
     </style>
 </head>
 <body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-hidden">
@@ -67,13 +66,16 @@
                         <button onclick="toggleUIMode()" class="bg-dark-900 text-white text-[10px] font-bold px-4 py-1.5 rounded-full hover:bg-corp-600 transition-all flex items-center gap-2 shadow-lg">
                             <i class="fas fa-expand-arrows-alt"></i> <span id="btn-mode-text">FULL MAP</span>
                         </button>
+                        <button onclick="updateTerritory(document.getElementById('comuna-selector').value)" class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-corp-500 hover:bg-white rounded-full transition-all border border-slate-100 shadow-sm" title="Refrescar Sincronización">
+                            <i class="fas fa-sync-alt text-xs"></i>
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="bg-dark-900 px-5 py-2 rounded-2xl border border-slate-700 shadow-xl flex items-center gap-4">
                 <p class="text-[9px] text-slate-400 font-medium italic leading-none text-right">Node Cluster V2.1<br><span class="text-emerald-400 not-italic font-black uppercase text-[7px] tracking-widest">Verified</span></p>
                 <div class="h-6 w-px bg-slate-700"></div>
-                <button onclick="location.reload()" class="text-slate-400 hover:text-white"><i class="fas fa-sync-alt text-xs"></i></button>
+                <i class="fas fa-check-circle text-emerald-500 text-xs animate-pulse"></i>
             </div>
         </div>
     </nav>
@@ -83,21 +85,21 @@
         <div id="stats-panel" class="grid grid-cols-12 gap-6 transition-all duration-700">
             <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-3">
                 <div class="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden group">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">FOD</p>
-                    <h3 id="count-lots" class="text-3xl font-display font-black text-dark-900">0</h3>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">FOD</p>
+                    <h3 id="count-lots" class="text-3xl font-display font-black text-dark-900 leading-none">0</h3>
                     <i class="fas fa-fingerprint absolute -right-2 -bottom-2 text-5xl opacity-[0.03] group-hover:scale-110 transition-transform"></i>
                 </div>
                 <div class="bg-white p-4 rounded-[2rem] border-l-4 border-corp-500 shadow-sm">
-                    <p class="text-[9px] font-black text-corp-500 uppercase tracking-widest mb-1">Productores</p>
-                    <h3 id="count-producers" class="text-3xl font-display font-black text-dark-900">0</h3>
+                    <p class="text-[9px] font-black text-corp-500 uppercase tracking-widest mb-1 leading-none">Productores</p>
+                    <h3 id="count-producers" class="text-3xl font-display font-black text-dark-900 leading-none">0</h3>
                 </div>
                 <div class="bg-white p-4 rounded-[2rem] border-l-4 border-indap-500 shadow-sm">
-                    <p class="text-[9px] font-black text-indap-500 uppercase tracking-widest mb-1">INDAP</p>
-                    <h3 id="count-indap" class="text-3xl font-display font-black text-dark-900">0</h3>
+                    <p class="text-[9px] font-black text-indap-500 uppercase tracking-widest mb-1 leading-none">INDAP</p>
+                    <h3 id="count-indap" class="text-3xl font-display font-black text-dark-900 leading-none">0</h3>
                 </div>
                 <div class="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Superficie</p>
-                    <h3 class="text-3xl font-display font-black text-dark-900">42.8 <span class="text-xs text-slate-300">Ha</span></h3>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Superficie</p>
+                    <h3 class="text-3xl font-display font-black text-dark-900 leading-none">42.8 <span class="text-xs text-slate-300">Ha</span></h3>
                 </div>
             </div>
 
@@ -125,7 +127,7 @@
                 <div id="loader" class="absolute inset-0 bg-dark-900/40 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2.5rem] hidden">
                     <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center">
                         <i class="fas fa-circle-notch animate-spin text-corp-500 text-5xl mb-4"></i>
-                        <p class="text-xs font-black uppercase tracking-widest text-dark-900">Sincronizando Nodo</p>
+                        <p class="text-xs font-black uppercase tracking-widest text-dark-900 italic">Sincronizando Nodo Territorial</p>
                     </div>
                 </div>
             </div>
@@ -182,7 +184,7 @@
             });
 
             chart1 = new Chart(ctx1, config([afc, emp, cia], ['#10B981', '#8B5CF6', '#3B82F6']));
-            chart2 = new Chart(ctx2, config([1, 1, 1], ['#059669', '#A3E635', '#94A3B8'])); // Demo estática
+            chart2 = new Chart(ctx2, config([1, 1, 1], ['#059669', '#A3E635', '#94A3B8'])); 
 
             createLegend('legendSegmentacion', [{l:'Agricultor AFC', v:afc, c:'#10B981'}, {l:'Emprendedor', v:emp, c:'#8B5CF6'}, {l:'Empresa', v:cia, c:'#3B82F6'}]);
             createLegend('legendProduccion', [{l:'Orgánica', v:'-', c:'#059669'}, {l:'Agroecológica', v:'-', c:'#A3E635'}, {l:'Tradicional', v:'-', c:'#94A3B8'}]);
@@ -233,11 +235,11 @@
             data.forEach(p => {
                 let seg = 'afc'; if(p.tipo==='Emprendedor') seg='emp'; if(p.tipo==='Empresa') seg='cia';
                 
-                // PIN DISEÑO ELITE
                 const icon = L.divIcon({
                     className: 'pin-custom-wrapper',
-                    html: `<div class="pin-container"><div class="pin-pulse pulse-${seg}"></div><div class="pin-main pin-${seg}"></div></div>`,
-                    iconSize: [32, 32], iconAnchor: [16, 32]
+                    // EL ICONO SE CENTRA USANDO FLEX Y EL iconAnchor [20,20] PARA QUE NO SE MUEVA
+                    html: `<div class="pin-wrapper"><div class="pin-pulse pulse-${seg}"></div><div class="pin-main pin-${seg}"></div></div>`,
+                    iconSize: [40, 40], iconAnchor: [20, 20]
                 });
                 
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
@@ -246,12 +248,10 @@
                         <div class="relative h-56 overflow-hidden">
                             <img src="${p.img}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 photo-overlay"></div>
-                            
                             <div class="absolute top-4 left-4 flex items-center gap-2 bg-dark-900/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
                                 <i class="fas fa-fingerprint text-[10px] text-corp-500"></i>
                                 <span class="text-[8px] font-black text-white uppercase tracking-widest leading-none mt-0.5">Ficha Origen Digital</span>
                             </div>
-
                             <div class="absolute bottom-6 left-6 right-6">
                                 <p class="text-white font-display font-black text-2xl leading-none mb-2 tracking-tight">${p.nombre}</p>
                                 <div class="flex items-center gap-2">
