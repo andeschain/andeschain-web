@@ -30,7 +30,6 @@
         #map { height: calc(100vh - 340px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         .map-full { height: calc(100vh - 120px) !important; margin-top: -220px; }
         
-        /* PINS: Estabilidad absoluta y estética minimalista */
         .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 18px; height: 18px; border-radius: 50%; border: 3.5px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.4); z-index: 2; }
         .pin-afc { background: #10B981; } .pin-emp { background: #F59E0B; } .pin-cia { background: #3b82f6; }
@@ -38,7 +37,6 @@
         .pulse-afc { background: #10B981; } .pulse-emp { background: #F59E0B; } .pulse-cia { background: #3b82f6; }
         @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-        /* FOD POPUP: Estilo Institucional Oscuro */
         .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
@@ -64,11 +62,10 @@
                             <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[10px] rounded-full px-3 py-1 outline-none border border-slate-200">
                                 <option value="Paine" selected>Paine</option>
                                 <option value="Buin">Buin</option>
-                                <option value="Calera de Tango">Calera de Tango</option>
+                                <option value="Peñaflor">Peñaflor</option>
                                 <option value="Pirque">Pirque</option>
                                 <option value="Isla de Maipo">Isla de Maipo</option>
-                                <option value="Limache">Limache</option>
-                                <option value="Talagante">Talagante</option>
+                                <option value="San Francisco de Mostazal">Mostazal</option>
                                 <option value="Melipilla">Melipilla</option>
                                 <option value="Chonchi">Chonchi</option>
                                 <option value="Valdivia">Valdivia</option>
@@ -177,10 +174,17 @@
             const btn = document.getElementById('present-mode-btn');
             btn.innerText = isFullMode ? "VOLVER AL PANEL" : "MODO PRESENTACIÓN";
             
+            // CORRECCIÓN: REAJUSTE DE CÁMARA DESPUÉS DE LA TRANSICIÓN
             setTimeout(() => { 
-                map.invalidateSize();
-                if (geoJsonLayer) map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
-            }, 650);
+                map.invalidateSize(); // Notifica al mapa que su tamaño cambió
+                if (geoJsonLayer) {
+                    // Fuerza al mapa a centrarse en el territorio (la división de color)
+                    map.flyToBounds(geoJsonLayer.getBounds(), { 
+                        padding: [50, 50],
+                        duration: 1.0 
+                    });
+                }
+            }, 750); // Esperamos a que la transición CSS termine
         }
 
         function animateNumber(id, target) {
