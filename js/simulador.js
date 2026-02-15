@@ -157,7 +157,7 @@ const seedData = [
         estado: "VERIFIED",
         demo: "NO",
         historia: "Cosecha de flores de jamaica para deshidratar sus cálices, cultivo agroecológico bajo el protocolo de confianza AndesChain.",
-        img: "assets/1771088120209350107628372198493501.jpg", 
+        img: "assets/flordejamaica.jpg", 
         hitos: [
             { titulo: "Cosecha de Cálices", fecha: "15 Feb 2026", desc: "Recolección manual de cálices de Flor de Jamaica." },
             { titulo: "Validación de Origen", fecha: "15 Feb 2026", desc: "Certificación de geolocalización en Colonia Kennedy." }
