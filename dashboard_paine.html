@@ -41,6 +41,7 @@
         .leaflet-popup-content-wrapper { background: #0f172a !important; color: white !important; border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
+        
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         #beta-modal { backdrop-filter: blur(8px); display: none; }
@@ -50,14 +51,14 @@
 
     <div id="beta-modal" class="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-dark-900/90">
         <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6">
-            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
                 <i class="fas fa-laptop-code"></i>
             </div>
             <div class="space-y-2">
                 <h3 class="font-display font-bold text-xl text-dark-900 leading-tight">Modo Beta</h3>
-                <p class="text-slate-500 text-sm leading-relaxed text-center">Para mejor experiencia navegación ingresa desde un computador.</p>
+                <p class="text-slate-500 text-sm leading-relaxed text-center font-medium px-2">Para mejor experiencia navegación ingresa desde un computador.</p>
             </div>
-            <button onclick="document.getElementById('beta-modal').style.display='none'" class="w-full py-4 bg-dark-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-corp-600 transition-all">Entendido</button>
+            <a href="index.html" class="block w-full py-4 bg-dark-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-corp-600 transition-all text-center">Volver al Inicio</a>
         </div>
     </div>
 
@@ -117,7 +118,7 @@
                         <p class="text-[9px] font-bold text-slate-400 uppercase">Superficie</p>
                         <i class="fas fa-leaf text-slate-200 text-sm"></i>
                     </div>
-                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none">42.8</h3>
+                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none text-center">42.8</h3>
                 </div>
             </div>
 
@@ -156,12 +157,12 @@
     <script>
         let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2, isFullMode = false;
 
-        // EJECUCIÓN INMEDIATA PARA EL MODAL
+        // Detección inmediata de Móvil
         (function detectMobile() {
             if (window.innerWidth < 1024) {
                 setTimeout(() => {
                     document.getElementById('beta-modal').style.display = 'flex';
-                }, 500);
+                }, 400);
             }
         })();
 
@@ -199,7 +200,6 @@
             }, 30);
         }
 
-        // Gráficos con nombres institucionales completos
         function initCharts(data) {
             const ctx1 = document.getElementById('chartSegmentacion');
             const ctx2 = document.getElementById('chartProduccion');
