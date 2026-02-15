@@ -38,6 +38,33 @@ const seedData = [
         ]
     },
     {
+        id: "5007",
+        nombre: "Flor de Jamaica Agroecológica",
+        productor: "Luis Miranda",
+        tipo: "Agricultor",        // Para gráfico: AFC
+        manejo: "Agroecológica",    // Para gráfico: Producción limpia
+        fomento: "PRODESAL",        // Vinculado a su perfil de agricultor en la zona
+        ubicacion: "Colonia Kennedy, Paine",
+        lat: "-33.856950", 
+        lon: "-70.730958",
+        fecha: "15 Feb 2026",
+        estado: "VERIFIED",
+        historia: "Cosecha de flores de jamaica para deshidratar sus cálices, cultivo agroecológico bajo el protocolo de confianza AndesChain.",
+        img: "assets/flordejamaica.jpg", 
+        hitos: [
+            { 
+                titulo: "Cosecha de Cálices", 
+                fecha: "15 Feb 2026", 
+                desc: "Recolección manual de cálices de Flor de Jamaica para proceso de deshidratado natural." 
+            },
+            { 
+                titulo: "Validación de Origen", 
+                fecha: "15 Feb 2026", 
+                desc: "Certificación de geolocalización y manejo agroecológico en Colonia Kennedy." 
+            }
+        ]
+    },
+    {
         id: "5006",
         nombre: "Poroto Metro (Yarda)",
         productor: "Luis Miranda",
