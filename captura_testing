@@ -1,0 +1,44 @@
+document.getElementById('form-captura').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!fotoBase64) { alert("Cargue evidencia fotográfica"); return; }
+
+    // Generamos el ID y la fecha
+    const idGenerado = "FOD-" + Date.now().toString().slice(-4);
+    const fechaActual = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    // Construimos el bloque de código exacto para simulador.js
+    const codigoParaSimulador = `
+    {
+        id: "${idGenerado}",
+        nombre: "${document.getElementById('nombre').value}",
+        productor: "${document.getElementById('productor').value}",
+        tipo: "${document.getElementById('tipo').value}",
+        manejo: "${document.getElementById('manejo').value}",
+        ubicacion: "${document.getElementById('ubicacion').value}",
+        lat: "${document.getElementById('lat').value}",
+        lon: "${document.getElementById('lon').value}",
+        fomento: "", 
+        fecha: "${fechaActual}",
+        estado: "VERIFIED",
+        img: "${fotoBase64}", 
+        historia: "Registro certificado vía protocolo AndesChain. Metadata verificada en origen.",
+        hitos: [
+            { 
+                titulo: "${document.getElementById('hito-titulo').value}", 
+                fecha: "${fechaActual}", 
+                desc: "${document.getElementById('hito-desc').value}" 
+            }
+        ]
+    },`;
+
+    // 1. Lo mostramos en consola para que lo copies (si estás en PC)
+    console.log("Copia este bloque en seedData de simulador.js:");
+    console.log(codigoParaSimulador);
+
+    // 2. Simulación de envío por correo (Abre el gestor de correo con los datos)
+    const subject = encodeURIComponent(`NUEVA CAPTURA FOD: ${document.getElementById('nombre').value}`);
+    const body = encodeURIComponent(`Hola Validador,\n\nAdjunto datos para el simulador:\n\n${codigoParaSimulador}`);
+    window.location.href = `mailto:tu-correo@andeschain.io?subject=${subject}&body=${body}`;
+
+    alert("✨ Datos preparados. Se abrirá tu correo para enviar el reporte al Nodo Validador.");
+});
