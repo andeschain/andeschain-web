@@ -145,7 +145,7 @@ const seedData = [
     },
     {
         id: "5007",
-        nombre: "Flor de Jamaica agroecológica",
+        nombre: "Flor de Jamaica Agroecológica",
         productor: "Luis Miranda",
         tipo: "Agricultor",
         manejo: "Agroecológica",
