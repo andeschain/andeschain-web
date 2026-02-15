@@ -21,16 +21,13 @@
         }
     </script>
     <style>
-        .step-content { display: none; transition: all 0.4s ease; }
-        .step-content.active { display: block; animation: fadeIn 0.5s ease-out; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .drop-zone { border: 2px dashed #e2e8f0; transition: all 0.3s ease; background: #ffffff; }
-        .drop-zone.active { border-color: #10B981; background: #ecfdf5; }
-        #preview-img { display: none; width: 100%; height: 300px; object-fit: cover; border-radius: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        
+        .drop-zone { border: 2px dashed #e2e8f0; background: #ffffff; transition: all 0.3s ease; }
+        #preview-img { display: none; width: 100%; height: 320px; object-fit: cover; border-radius: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         .step-dot { transition: all 0.3s ease; }
-        .step-dot.active { background: #10B981; transform: scale(1.2); }
+        .step-dot.active { background: #10B981; transform: scale(1.15); box-shadow: 0 0 15px rgba(16,185,129,0.3); }
         .step-dot.completed { background: #059669; }
     </style>
 </head>
@@ -40,6 +37,7 @@
         <div class="max-w-3xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="assets/favicon.png" class="h-8">
+                <div class="h-6 w-px bg-slate-200 mx-1"></div>
                 <h1 class="font-display font-bold text-lg text-dark-900 tracking-tight">Registro FOD</h1>
             </div>
             <a href="dashboard.html" class="text-[10px] font-black text-slate-400 hover:text-corp-500 uppercase tracking-widest">Salir</a>
@@ -47,118 +45,98 @@
     </nav>
 
     <main class="max-w-3xl mx-auto p-6 pb-32">
-        <div class="flex justify-between items-center mb-12 px-4 relative">
+        <div class="flex justify-between items-center mb-12 px-8 relative">
             <div class="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 -z-10"></div>
-            <div id="dot-1" class="step-dot active w-8 h-8 rounded-full border-4 border-[#F8FAFC] shadow-sm flex items-center justify-center text-[10px] font-black text-white bg-slate-300">1</div>
-            <div id="dot-2" class="step-dot w-8 h-8 rounded-full border-4 border-[#F8FAFC] shadow-sm flex items-center justify-center text-[10px] font-black text-white bg-slate-300">2</div>
-            <div id="dot-3" class="step-dot w-8 h-8 rounded-full border-4 border-[#F8FAFC] shadow-sm flex items-center justify-center text-[10px] font-black text-white bg-slate-300">3</div>
+            <div id="dot-1" class="step-dot active w-9 h-9 rounded-full border-4 border-[#F8FAFC] flex items-center justify-center text-[10px] font-black text-white bg-slate-300">1</div>
+            <div id="dot-2" class="step-dot w-9 h-9 rounded-full border-4 border-[#F8FAFC] flex items-center justify-center text-[10px] font-black text-white bg-slate-300">2</div>
+            <div id="dot-3" class="step-dot w-9 h-9 rounded-full border-4 border-[#F8FAFC] flex items-center justify-center text-[10px] font-black text-white bg-slate-300">3</div>
         </div>
 
         <form id="form-captura">
-            
             <div id="step-1" class="step-content active space-y-6">
                 <header class="mb-6">
-                    <h2 class="text-2xl font-display font-extrabold text-dark-900 tracking-tight">Datos de Origen</h2>
-                    <p class="text-sm text-slate-500 mt-2">Identifique el producto y al titular responsable.</p>
+                    <h2 class="text-2xl font-display font-extrabold text-dark-900">Origen del Activo</h2>
+                    <p class="text-sm text-slate-500 mt-2">Ingrese la información base del producto.</p>
                 </header>
-
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
                     <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Producto</label>
-                        <input type="text" id="nombre" placeholder="Ej: Papa Astrid" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-4 ring-corp-500/5 transition-all">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">¿Qué certificamos?</label>
+                        <input type="text" id="nombre" placeholder="Ej: Poroto Yarda" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-4 ring-corp-500/5">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre del Agricultor</label>
-                        <input type="text" id="productor" placeholder="Nombre completo" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-4 ring-corp-500/5 transition-all">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Productor Responsable</label>
+                        <input type="text" id="productor" placeholder="Nombre completo" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-4 ring-corp-500/5">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Perfil (@tipo)</label>
-                            <select id="tipo" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-sm outline-none">
-                                <option value="Agricultor">Agricultor AFC</option>
-                                <option value="Emprendedor">Emprendedor</option>
-                                <option value="Empresa">Empresa</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Manejo (@manejo)</label>
-                            <select id="manejo" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-sm outline-none">
-                                <option value="Agroecológica">Agroecológica</option>
-                                <option value="Orgánica">Orgánica</option>
-                                <option value="Tradicional">Tradicional</option>
-                            </select>
-                        </div>
+                        <select id="tipo" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-sm">
+                            <option value="Agricultor">Agricultor AFC</option>
+                            <option value="Emprendedor">Emprendedor</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
+                        <select id="manejo" class="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-sm">
+                            <option value="Agroecológica">Agroecológica</option>
+                            <option value="Orgánica">Orgánica</option>
+                            <option value="Tradicional">Tradicional</option>
+                        </select>
                     </div>
                 </div>
-                <button type="button" onclick="changeStep(2)" class="w-full py-6 bg-dark-900 text-white rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl">Siguiente Paso <i class="fas fa-chevron-right ml-2"></i></button>
+                <button type="button" onclick="changeStep(2)" class="w-full py-6 bg-dark-900 text-white rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl">Siguiente <i class="fas fa-arrow-right ml-2"></i></button>
             </div>
 
             <div id="step-2" class="step-content space-y-6">
                 <header class="mb-6">
-                    <h2 class="text-2xl font-display font-extrabold text-dark-900 tracking-tight">Ubicación & Hito</h2>
-                    <p class="text-sm text-slate-500 mt-2">Capture la georeferencia y defina la etapa actual.</p>
+                    <h2 class="text-2xl font-display font-extrabold text-dark-900">Ubicación & Hito</h2>
+                    <p class="text-sm text-slate-500 mt-2">Defina el hito y capture el punto GPS.</p>
                 </header>
-
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Etapa de Trazabilidad</label>
-                        <select id="hito-titulo" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none">
-                            <option value="Siembra">Siembra</option>
-                            <option value="Preparación Suelo">Preparación Suelo</option>
-                            <option value="Cosecha">Cosecha</option>
-                            <option value="Validación Origen">Validación Origen</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Descripción del Hito</label>
-                        <input type="text" id="hito-desc" placeholder="Ej: Siembra manual de semilla ancestral" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none transition-all">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Predio / Comuna</label>
-                        <input type="text" id="ubicacion" placeholder="Ej: El Vínculo, Paine" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none transition-all">
-                    </div>
+                    <select id="hito-titulo" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none font-bold text-dark-900">
+                        <option value="Siembra">Siembra</option>
+                        <option value="Preparación Suelo">Preparación Suelo</option>
+                        <option value="Cosecha">Cosecha</option>
+                        <option value="Validación Origen">Validación Origen</option>
+                    </select>
+                    <input type="text" id="hito-desc" placeholder="Descripción breve del proceso..." required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none">
+                    <input type="text" id="ubicacion" placeholder="Comuna / Predio (Ej: Paine)" required class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm outline-none">
                     
-                    <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center gap-4 text-center">
-                        <button type="button" onclick="obtenerGPS()" class="bg-white text-dark-900 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-slate-200 shadow-sm transition-all hover:bg-slate-50">
-                            <i class="fas fa-satellite-dish text-emerald-500"></i> Capturar GPS Real
+                    <div class="bg-slate-900 p-6 rounded-3xl flex flex-col items-center gap-4">
+                        <button type="button" onclick="obtenerGPS()" class="bg-corp-500 text-dark-900 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-satellite-dish"></i> Sincronizar GPS
                         </button>
-                        <p class="text-[10px] font-mono text-slate-400">Lat: <span id="lat-display">---</span> | Lon: <span id="lon-display">---</span></p>
+                        <div class="text-[10px] font-mono text-emerald-400/70">
+                            Lat: <span id="lat-display" class="text-white font-bold">---</span> | 
+                            Lon: <span id="lon-display" class="text-white font-bold">---</span>
+                        </div>
                         <input type="hidden" id="lat"><input type="hidden" id="lon">
                     </div>
                 </div>
                 <div class="flex gap-4">
-                    <button type="button" onclick="changeStep(1)" class="w-1/3 py-6 bg-slate-100 text-slate-500 rounded-[2rem] font-black text-xs uppercase tracking-widest">Atrás</button>
-                    <button type="button" onclick="changeStep(3)" class="w-2/3 py-6 bg-dark-900 text-white rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl">Sello Final <i class="fas fa-chevron-right ml-2"></i></button>
+                    <button type="button" onclick="changeStep(1)" class="w-1/3 py-6 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-xs uppercase tracking-widest">Atrás</button>
+                    <button type="button" onclick="changeStep(3)" class="w-2/3 py-6 bg-dark-900 text-white rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl font-bold">Sello Final</button>
                 </div>
             </div>
 
-            <div id="step-3" class="step-content space-y-6">
-                <header class="mb-6 text-center">
-                    <h2 class="text-2xl font-display font-extrabold text-dark-900 tracking-tight">Evidencia Visual</h2>
-                    <p class="text-sm text-slate-500 mt-2">Finalice con la captura de terreno.</p>
+            <div id="step-3" class="step-content space-y-6 text-center">
+                <header class="mb-6">
+                    <h2 class="text-2xl font-display font-extrabold text-dark-900">Evidencia Visual</h2>
+                    <p class="text-sm text-slate-500 mt-2">Tome la fotografía para cerrar el bloque.</p>
                 </header>
-
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                    <div id="drop-zone" class="drop-zone relative rounded-[2rem] p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]">
+                    <div id="drop-zone" class="drop-zone relative rounded-[2rem] p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[320px]">
                         <input type="file" id="input-foto" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer" required>
                         <div id="upload-prompt" class="space-y-4">
                             <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto shadow-inner text-slate-300 text-3xl">
                                 <i class="fas fa-camera"></i>
                             </div>
-                            <div class="space-y-1">
-                                <p class="text-base font-bold text-dark-900 leading-tight">Tomar Fotografía</p>
-                                <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-none">Incluye metadata de clima y horario</p>
-                            </div>
+                            <p class="text-base font-bold text-dark-900">Tocar para Capturar</p>
                         </div>
-                        <img id="preview-img" src="" alt="Previsualización">
+                        <img id="preview-img" src="" alt="FOD Preview">
                     </div>
                 </div>
                 <div class="flex gap-4">
-                    <button type="button" onclick="changeStep(2)" class="w-1/3 py-6 bg-slate-100 text-slate-500 rounded-[2rem] font-black text-xs uppercase tracking-widest">Atrás</button>
-                    <button type="submit" class="w-2/3 py-6 bg-corp-500 text-dark-900 rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl shadow-corp-500/30 transition-all transform active:scale-95">Emitir Ficha Digital</button>
+                    <button type="button" onclick="changeStep(2)" class="w-1/3 py-6 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-xs uppercase tracking-widest font-bold">Atrás</button>
+                    <button type="submit" class="w-2/3 py-6 bg-corp-500 text-dark-900 rounded-[2rem] font-display font-black text-xs uppercase tracking-widest shadow-xl shadow-corp-500/30 font-bold transform active:scale-95 transition-all">Emitir Registro</button>
                 </div>
             </div>
-
         </form>
     </main>
 
@@ -168,23 +146,19 @@
 
         function changeStep(step) {
             if (step > currentStep) {
-                const stepElement = document.getElementById(`step-${currentStep}`);
-                const requiredInputs = stepElement.querySelectorAll('input[required]');
+                const inputs = document.getElementById(`step-${currentStep}`).querySelectorAll('input[required]');
                 let valid = true;
-                requiredInputs.forEach(i => { if(!i.value) valid = false; });
-                if(!valid) { alert("⚠️ Por favor, complete todos los campos obligatorios."); return; }
-                if(step === 3 && !document.getElementById('lat').value) { alert("📍 Debe capturar las coordenadas GPS antes de continuar."); return; }
+                inputs.forEach(i => { if(!i.value) valid = false; });
+                if(!valid) { alert("⚠️ Ingrese todos los campos obligatorios."); return; }
+                if(step === 3 && !document.getElementById('lat').value) { alert("📍 Se requiere señal GPS para certificar."); return; }
             }
-
             document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
             document.getElementById(`step-${step}`).classList.add('active');
-            
             document.querySelectorAll('.step-dot').forEach((dot, idx) => {
                 if(idx + 1 === step) dot.classList.add('active');
                 else if(idx + 1 < step) dot.classList.add('completed');
                 else dot.classList.remove('active', 'completed');
             });
-            
             currentStep = step;
             window.scrollTo(0, 0);
         }
@@ -214,61 +188,52 @@
                     document.getElementById('lon').value = pos.coords.longitude.toFixed(8);
                     document.getElementById('lat-display').innerText = pos.coords.latitude.toFixed(5);
                     document.getElementById('lon-display').innerText = pos.coords.longitude.toFixed(5);
-                }, (err) => alert("❌ No se pudo acceder al GPS. Verifique los permisos de su navegador."));
+                }, (err) => alert("Habilite el GPS del dispositivo."));
             }
         }
 
         document.getElementById('form-captura').addEventListener('submit', (e) => {
             e.preventDefault();
-            if(!fotoBase64) { alert("📸 La fotografía de evidencia es obligatoria."); return; }
+            if(!fotoBase64) { alert("Evidencia fotográfica necesaria."); return; }
 
-            // Generamos el ID y la fecha
             const idGenerado = "FOD-" + Date.now().toString().slice(-4);
             const fechaActual = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
 
-            // Construimos el bloque de código exacto para simulador.js
-            const codigoParaSimulador = `
-            {
-                id: "${idGenerado}",
-                nombre: "${document.getElementById('nombre').value}",
-                productor: "${document.getElementById('productor').value}",
-                tipo: "${document.getElementById('tipo').value}",
-                manejo: "${document.getElementById('manejo').value}",
-                ubicacion: "${document.getElementById('ubicacion').value}",
-                lat: "${document.getElementById('lat').value}",
-                lon: "${document.getElementById('lon').value}",
-                fomento: "", 
-                fecha: "${fechaActual}",
-                estado: "VERIFIED",
-                img: "${fotoBase64}", 
-                historia: "Registro certificado vía protocolo AndesChain. Metadata verificada en origen.",
-                hitos: [
-                    { 
-                        titulo: "${document.getElementById('hito-titulo').value}", 
-                        fecha: "${fechaActual}", 
-                        desc: "${document.getElementById('hito-desc').value}" 
-                    }
-                ]
-            },`;
+            // Bloque JSON perfectamente formateado para simulador.js
+            const codigoParaSimulador = `    {
+        id: "${idGenerado}",
+        nombre: "${document.getElementById('nombre').value}",
+        productor: "${document.getElementById('productor').value}",
+        tipo: "${document.getElementById('tipo').value}",
+        manejo: "${document.getElementById('manejo').value}",
+        ubicacion: "${document.getElementById('ubicacion').value}",
+        lat: "${document.getElementById('lat').value}",
+        lon: "${document.getElementById('lon').value}",
+        fomento: "", 
+        fecha: "${fechaActual}",
+        estado: "VERIFIED",
+        img: "${fotoBase64}", 
+        historia: "Registro certificado vía protocolo AndesChain. Metadata verificada en origen.",
+        hitos: [
+            { 
+                titulo: "${document.getElementById('hito-titulo').value}", 
+                fecha: "${fechaActual}", 
+                desc: "${document.getElementById('hito-desc').value}" 
+            }
+        ]
+    },`;
 
-            // 1. Lo mostramos en consola para que lo copies (si estás en PC)
-            console.log("Copia este bloque en seedData de simulador.js:");
-            console.log(codigoParaSimulador);
-
-            // 2. Simulación de envío por correo (Abre el gestor de correo con los datos)
-            const subject = encodeURIComponent(`NUEVA CAPTURA FOD: ${document.getElementById('nombre').value}`);
-            const body = encodeURIComponent(`Hola Validador,\n\nAdjunto datos estructurados para el simulador AndesChain:\n\n${codigoParaSimulador}`);
+            const subject = encodeURIComponent(`FOD NODO EMISOR: ${document.getElementById('nombre').value}`);
+            const body = encodeURIComponent(`Sincronización AndesChain.\n\nPegar el siguiente bloque en seedData de simulador.js:\n\n${codigoParaSimulador}`);
             
-            // Redirección al cliente de correo
-            window.location.href = `mailto:tu-correo@andeschain.io?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:admin@andeschain.io?subject=${subject}&body=${body}`;
 
-            alert("✨ Ficha preparada. Se abrirá su aplicación de correo para enviar el reporte al Nodo Validador.");
-            
-            // Feedback visual final
             const btn = e.target.querySelector('button[type="submit"]');
-            btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Reporte Enviado';
+            btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Reporte Generado';
             btn.classList.replace('bg-corp-500', 'bg-dark-900');
             btn.classList.add('text-white');
+            
+            alert("✨ Se ha generado el bloque de código. Por favor, pulse enviar en su aplicación de correo.");
         });
     </script>
 </body>
