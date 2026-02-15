@@ -13,7 +13,7 @@
  * @demo:       [SI | NO] -> SI: dato generado aleatoriamente; NO: dato real capturado.
  */
 
-console.log("✅ Sistema AndesChain: Sincronizando Infraestructura con Soporte Demo...");
+console.log("✅ Sistema AndesChain: Sincronizando Infraestructura con Soporte Demo y Evidencia Visual...");
 
 // 1. DATOS SEMILLA (Base de Datos Maestra)
 const seedData = [
@@ -165,18 +165,18 @@ const seedData = [
     }
 ];
 
-// --- MOTOR DE GENERACIÓN TERRITORIAL (100 BLOQUES PAINE) ---
+// --- MOTOR DE GENERACIÓN TERRITORIAL (100 BLOQUES CON FOTOGRAFÍA) ---
 const productosPaine = [
-    { n: "Sandía de Paine Primor", m: "Tradicional", img: "https://images.unsplash.com/photo-1587049633562-ad78524921ea?w=400" },
-    { n: "Huevos de Gallina Libre", m: "Orgánica", img: "https://images.unsplash.com/photo-1582733315328-84999961730d?w=400" },
-    { n: "Miel de Azahar", m: "Agroecológica", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400" },
-    { n: "Uva de Mesa Thompson", m: "Tradicional", img: "https://images.unsplash.com/photo-1537640538966-79f369b41f8f?w=400" },
-    { n: "Cebolla Morada", m: "Tradicional", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400" },
-    { n: "Choclo Pastelero", m: "Agroecológica", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400" },
-    { n: "Lechuga Hidropónica", m: "Orgánica", img: "https://images.unsplash.com/photo-1622206141842-16709899326e?w=400" },
-    { n: "Nuez Chandler", m: "Tradicional", img: "https://images.unsplash.com/photo-1536620942726-595e0ce99c4d?w=400" },
-    { n: "Durazno Conservero", m: "Tradicional", img: "https://images.unsplash.com/photo-1629995614350-8a4991266281?w=400" },
-    { n: "Frutilla Albión", m: "Agroecológica", img: "https://images.unsplash.com/photo-1543528176-61b2395143a4?w=400" }
+    { n: "Sandía de Paine Primor", m: "Tradicional", img: "https://images.unsplash.com/photo-1587049633562-ad78524921ea?w=600&q=80" },
+    { n: "Huevos de Gallina Libre", m: "Orgánica", img: "https://images.unsplash.com/photo-1582733315328-84999961730d?w=600&q=80" },
+    { n: "Miel de Azahar Nativa", m: "Agroecológica", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&q=80" },
+    { n: "Uva de Mesa Thompson", m: "Tradicional", img: "https://images.unsplash.com/photo-1537640538966-79f369b41f8f?w=600&q=80" },
+    { n: "Cebolla Morada de Guarda", m: "Tradicional", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&q=80" },
+    { n: "Choclo Pastelero", m: "Agroecológica", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&q=80" },
+    { n: "Lechuga Hidropónica", m: "Orgánica", img: "https://images.unsplash.com/photo-1622206141842-16709899326e?w=600&q=80" },
+    { n: "Nuez Chandler Export", m: "Tradicional", img: "https://images.unsplash.com/photo-1536620942726-595e0ce99c4d?w=600&q=80" },
+    { n: "Durazno Conservero", m: "Tradicional", img: "https://images.unsplash.com/photo-1629995614350-8a4991266281?w=600&q=80" },
+    { n: "Frutilla Albión de Paine", m: "Agroecológica", img: "https://images.unsplash.com/photo-1543528176-61b2395143a4?w=600&q=80" }
 ];
 
 const productoresPaine = ["Cooperativa Paine", "Familia Catalán", "Huertos del Maipo", "Agrícola El Sol", "Sra. Elena de Huelquén", "Juan Pérez Silva", "María Soto", "Granja Los Lingues"];
@@ -194,7 +194,6 @@ for (let i = 1; i <= 100; i++) {
     const tipo = i % 3 === 0 ? "Empresa" : i % 2 === 0 ? "Emprendedor" : "Agricultor";
     const fomento = i % 4 === 0 ? "INDAP" : i % 5 === 0 ? "PRODESAL" : "";
     
-    // Dispersión geográfica para evitar solapamiento visual total
     const randomLat = sector.lat + (Math.random() * 0.04 - 0.02);
     const randomLon = sector.lon + (Math.random() * 0.04 - 0.02);
 
@@ -211,11 +210,11 @@ for (let i = 1; i <= 100; i++) {
         fecha: `${1 + (i % 14)} Feb 2026`,
         estado: "VERIFIED",
         demo: "SI",
-        img: prodBase.img,
-        historia: `Registro generado automáticamente para demostración de densidad territorial en ${sector.n}. Representa la cadena de confianza AndesChain.`,
+        img: prodBase.img, // CADA REGISTRO TIENE AHORA UNA FOTO VINCULADA
+        historia: `Registro generado automáticamente para demostración de densidad territorial en ${sector.n}.`,
         hitos: [
-            { titulo: "Validación Satelital", fecha: "Feb 2026", desc: "Punto georeferenciado verificado por red de nodos." },
-            { titulo: "Certificación de Manejo", fecha: "Feb 2026", desc: `Cumplimiento de estándares de producción ${prodBase.m}.` }
+            { titulo: "Validación Satelital", fecha: "Feb 2026", desc: "Punto georeferenciado verificado." },
+            { titulo: "Certificación de Manejo", fecha: "Feb 2026", desc: `Producción bajo estándar ${prodBase.m}.` }
         ]
     });
 }
@@ -233,9 +232,8 @@ for (let i = 1; i <= 100; i++) {
         }
     });
 
-    // Sobrescribimos siempre con los cambios de seedData para reflejar los 100 nuevos
     localStorage.setItem('andesDB', JSON.stringify(currentDB));
-    console.log(`✨ Sincronización completa. Total registros en Ledger: ${currentDB.length}`);
+    console.log(`✨ Sincronización completa. Registros totales: ${currentDB.length}`);
 })();
 
 // 3. MÉTODOS DE ACCESO GLOBALES
