@@ -27,7 +27,6 @@
         }
     </script>
     <style>
-        /* Ajuste responsivo de altura del mapa */
         #map { height: calc(100vh - 400px); border-radius: 2.5rem; z-index: 10; background: #0f172a; border: 4px solid white; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         @media (min-width: 1024px) { #map { height: calc(100vh - 340px); } }
         .map-full { height: calc(100vh - 120px) !important; margin-top: -20px; }
@@ -43,18 +42,33 @@
         .leaflet-popup-content { margin: 0 !important; width: 280px !important; }
         .photo-overlay { background: linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.95) 100%); }
         
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Modal Banner Beta */
+        #beta-modal { backdrop-filter: blur(8px); display: none; }
     </style>
 </head>
-<body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased">
+<body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-x-hidden">
+
+    <div id="beta-modal" class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-dark-900/80">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="font-display font-bold text-xl text-dark-900 leading-tight">Modo Beta</h3>
+                <p class="text-slate-500 text-sm leading-relaxed text-center">Para mejor experiencia navegación ingresa desde un computador.</p>
+            </div>
+            <button onclick="document.getElementById('beta-modal').style.display='none'" class="w-full py-4 bg-dark-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-corp-600 transition-all">Entendido</button>
+        </div>
+    </div>
 
     <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 lg:px-8 py-3 sticky top-0 z-[1000]">
         <div class="max-w-[1600px] mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-6">
                 <a href="index.html" class="flex flex-col items-center hover:opacity-70 transition-all border-r pr-3 lg:pr-6 border-slate-200">
                     <img src="assets/favicon.png" class="h-6 lg:h-8 mb-1">
-                    <span class="hidden lg:block text-[8px] font-extrabold text-slate-400 uppercase tracking-tighter">AndesChain</span>
+                    <span class="hidden lg:block text-[8px] font-extrabold text-slate-400 uppercase tracking-tighter text-center leading-none">AndesChain</span>
                 </a>
                 <div class="flex flex-col">
                     <div class="flex items-center gap-2 lg:gap-3">
@@ -81,7 +95,7 @@
             <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-2 lg:gap-3">
                 <div class="bg-white p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between min-h-[80px]">
                     <div class="flex justify-between items-start">
-                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase">FOD</p>
+                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight">Ficha de Origen Digital</p>
                         <i class="fas fa-folder-open text-slate-200 text-xs"></i>
                     </div>
                     <h3 id="count-lots" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
@@ -91,33 +105,33 @@
                         <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight">Productores</p>
                         <i class="fas fa-id-badge text-corp-500/30 text-xs"></i>
                     </div>
-                    <h3 id="count-producers" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
+                    <h3 id="count-producers" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none text-center">0</h3>
                 </div>
                 <div class="bg-white p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between border-b-4 border-b-indap-500 min-h-[80px]">
                     <div class="flex justify-between items-start">
-                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase">INDAP</p>
+                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight text-center">Fomento INDAP</p>
                         <i class="fas fa-shield-halved text-indap-500/30 text-xs"></i>
                     </div>
-                    <h3 id="count-indap" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
+                    <h3 id="count-indap" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none text-center">0</h3>
                 </div>
                 <div class="hidden lg:flex bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <p class="text-[9px] font-bold text-slate-400 uppercase">Superficie</p>
                         <i class="fas fa-leaf text-slate-200 text-sm"></i>
                     </div>
-                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none">42.8</h3>
+                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none text-center">42.8</h3>
                 </div>
             </div>
 
-            <div class="hidden lg:flex col-span-12 lg:col-span-8 bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 items-center justify-around gap-6">
+            <div class="hidden lg:flex col-span-12 lg:col-span-8 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 items-center justify-around gap-12">
                 <div class="w-1/2 flex flex-col items-center">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest text-center">Segmentación Territorio</p>
-                    <div class="h-24 w-full"><canvas id="chartSegmentacion"></canvas></div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-4 tracking-widest text-center">Segmentación Territorio</p>
+                    <div class="h-28 w-full"><canvas id="chartSegmentacion"></canvas></div>
                 </div>
-                <div class="h-16 w-[1px] bg-slate-100"></div>
+                <div class="h-24 w-[1px] bg-slate-100"></div>
                 <div class="w-1/2 flex flex-col items-center">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-2 tracking-widest text-center">Sistemas de Producción</p>
-                    <div class="h-24 w-full"><canvas id="chartProduccion"></canvas></div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-4 tracking-widest text-center">Sistemas de Producción</p>
+                    <div class="h-28 w-full"><canvas id="chartProduccion"></canvas></div>
                 </div>
             </div>
         </div>
@@ -144,7 +158,17 @@
     <script>
         let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2, isFullMode = false;
 
-        window.onload = () => { initMap(); };
+        window.onload = () => { 
+            initMap(); 
+            checkMobile();
+        };
+
+        // 1. Mensaje Beta para móviles
+        function checkMobile() {
+            if (window.innerWidth < 1024) {
+                document.getElementById('beta-modal').style.display = 'flex';
+            }
+        }
 
         function initMap() {
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
@@ -178,27 +202,53 @@
             }, 30);
         }
 
+        // 2. Gráficos con nombres completos y leyendas centradas
         function initCharts(data) {
             const ctx1 = document.getElementById('chartSegmentacion');
             const ctx2 = document.getElementById('chartProduccion');
-            if(!ctx1 || !ctx2) return; // Evitar error en móvil si están ocultos
+            if(!ctx1 || !ctx2) return;
 
             if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            
             const config = (labels, values, colors) => ({
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
-                options: { cutout: '75%', plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 6, font: { size: 8 } } } }, maintainAspectRatio: false }
+                options: { 
+                    cutout: '75%', 
+                    plugins: { 
+                        legend: { 
+                            display: true, 
+                            position: 'bottom', 
+                            labels: { 
+                                boxWidth: 8, 
+                                padding: 15,
+                                font: { size: 9, family: 'Plus Jakarta Sans', weight: '600' } 
+                            } 
+                        } 
+                    }, 
+                    maintainAspectRatio: false 
+                }
             });
-            chart1 = new Chart(ctx1.getContext('2d'), config(['AFC', 'Empren.', 'Empresa'], [
-                data.filter(p => p.tipo === "Agricultor").length,
-                data.filter(p => p.tipo === "Emprendedor").length,
-                data.filter(p => p.tipo === "Empresa").length
-            ], ['#10B981', '#F59E0B', '#3b82f6']));
-            chart2 = new Chart(ctx2.getContext('2d'), config(['Org.', 'Agro.', 'Trad.'], [
-                data.filter(p => p.manejo === "Orgánica").length,
-                data.filter(p => p.manejo === "Agroecológica").length,
-                data.filter(p => p.manejo === "Tradicional").length
-            ], ['#059669', '#A3E635', '#94A3B8']));
+
+            chart1 = new Chart(ctx1.getContext('2d'), config(
+                ['Agricultura Familiar Campesina', 'Emprendedor', 'Empresa'], 
+                [
+                    data.filter(p => p.tipo === "Agricultor").length,
+                    data.filter(p => p.tipo === "Emprendedor").length,
+                    data.filter(p => p.tipo === "Empresa").length
+                ], 
+                ['#10B981', '#F59E0B', '#3b82f6']
+            ));
+
+            chart2 = new Chart(ctx2.getContext('2d'), config(
+                ['Orgánico', 'Agroecológico', 'Tradicional'], 
+                [
+                    data.filter(p => p.manejo === "Orgánica").length,
+                    data.filter(p => p.manejo === "Agroecológica").length,
+                    data.filter(p => p.manejo === "Tradicional").length
+                ], 
+                ['#059669', '#A3E635', '#94A3B8']
+            ));
         }
 
         async function updateTerritory(comuna) {
@@ -276,7 +326,7 @@
                 <div onclick="focusMarker('${p.id}', ${p.lat}, ${p.lon})" 
                      class="group flex items-center lg:flex-col gap-3 lg:gap-2 p-2.5 rounded-2xl bg-slate-50 hover:bg-white border border-transparent hover:border-corp-500 transition-all cursor-pointer shadow-sm">
                     <img src="${p.img}" class="w-12 h-12 lg:w-full lg:h-20 rounded-xl object-cover shrink-0">
-                    <div class="flex-1 min-w-0 lg:text-center">
+                    <div class="flex-1 min-w-0 lg:text-center text-center">
                         <p class="font-bold text-[10px] text-dark-900 truncate leading-tight">${p.nombre}</p>
                         <p class="text-[7px] font-bold uppercase mt-1" style="color: ${segmentColor}">${p.productor}</p>
                     </div>
