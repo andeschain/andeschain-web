@@ -4,15 +4,16 @@
  * Descripción: Base de Datos Maestra y Lógica de Sincronización Local.
  * * GUÍA DE ATRIBUTOS (DICCIONARIO DE DATOS):
  * -----------------------------------------
- * @id:        String único (ID correlativo).
- * @tipo:      [Agricultor | Emprendedor | Empresa] -> Define gráfico "Segmentación".
- * @manejo:    [Orgánica | Agroecológica | Tradicional] -> Define gráfico "Sistemas de Producción".
- * @fomento:   [INDAP | PRODESAL | Patrimonial | Vacío] -> Filtra KPI INDAP (Color Azul).
- * @estado:    [VERIFIED | PENDING] -> Estado de validación en Blockchain.
+ * @id:         String único (ID correlativo).
+ * @tipo:       [Agricultor | Emprendedor | Empresa] -> Define gráfico "Segmentación".
+ * @manejo:     [Orgánica | Agroecológica | Tradicional] -> Define gráfico "Sistemas de Producción".
+ * @fomento:    [INDAP | PRODESAL | Patrimonial | Vacío] -> Filtra KPI INDAP (Color Azul).
+ * @estado:     [VERIFIED | PENDING] -> Estado de validación en Blockchain.
  * @lat / @lon: Coordenadas geográficas para el posicionamiento en Mapa Leaflet.
+ * @demo:       [SI | NO] -> SI: dato generado aleatoriamente; NO: dato real capturado.
  */
 
-console.log("✅ Sistema AndesChain: Sincronizando Infraestructura...");
+console.log("✅ Sistema AndesChain: Sincronizando Infraestructura con Soporte Demo...");
 
 // 1. DATOS SEMILLA (Base de Datos Maestra)
 const seedData = [
@@ -21,14 +22,15 @@ const seedData = [
         nombre: "Papa Astrid",
         lote: "Lote #04-2026",
         productor: "El Otro Huerto (Quillagua)",
-        tipo: "Empresa",        // Clasificación socioproductiva
-        manejo: "Agroecológica", // Tipo de sistema productivo
-        fomento: "",            // Si es INDAP, activar etiqueta azul en mapa
+        tipo: "Empresa",
+        manejo: "Agroecológica",
+        fomento: "",
         ubicacion: "El Vínculo, Paine",
         lat: "-33.846294574770894", 
         lon: "-70.80930607600027",
         fecha: "30 Ene 2026",
         estado: "VERIFIED",
+        demo: "NO",
         historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
         img: "assets/papa.jpg", 
         hitos: [
@@ -38,49 +40,22 @@ const seedData = [
         ]
     },
     {
-        id: "5007",
-        nombre: "Flor de Jamaica Agroecológica",
-        productor: "Luis Miranda",
-        tipo: "Agricultor",        // Para gráfico: AFC
-        manejo: "Agroecológica",    // Para gráfico: Producción limpia
-        fomento: "PRODESAL",        // Vinculado a su perfil de agricultor en la zona
-        ubicacion: "Colonia Kennedy, Paine",
-        lat: "-33.856950", 
-        lon: "-70.730958",
-        fecha: "15 Feb 2026",
-        estado: "VERIFIED",
-        historia: "Cosecha de flores de jamaica para deshidratar sus cálices, cultivo agroecológico bajo el protocolo de confianza AndesChain.",
-        img: "assets/flordejamaica.jpg", 
-        hitos: [
-            { 
-                titulo: "Cosecha de Cálices", 
-                fecha: "15 Feb 2026", 
-                desc: "Recolección manual de cálices de Flor de Jamaica para proceso de deshidratado natural." 
-            },
-            { 
-                titulo: "Validación de Origen", 
-                fecha: "15 Feb 2026", 
-                desc: "Certificación de geolocalización y manejo agroecológico en Colonia Kennedy." 
-            }
-        ]
-    },
-    {
         id: "5006",
         nombre: "Poroto Metro (Yarda)",
         productor: "Luis Miranda",
-        tipo: "Agricultor",     // Para gráfico: Agricultura Familiar Campesina (AFC)
+        tipo: "Agricultor",
         manejo: "Agroecológica", 
-        fomento: "PRODESAL",    // Programa de fomento asociado
+        fomento: "PRODESAL",
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
         fecha: "13 Feb 2026",
         estado: "VERIFIED",
-        historia: "Variedad de poroto para consumo en verde de gran longitud. El cultivo es custodiado por bandas florales de biodiversidad que favorecen el control natural de plagas, eliminando el uso de pesticidas sintéticos.",
+        demo: "NO",
+        historia: "Variedad de poroto para consumo en verde de gran longitud. El cultivo es custodiado por bandas florales de biodiversidad que favorecen el control natural de plagas.",
         img: "assets/porotoyarda.jpg", 
         hitos: [
-            { titulo: "Instalación de Banda Floral", fecha: "10 Oct 2025", desc: "Siembra de especies melíferas para atraer polinizadores y controladores naturales." },
-            { titulo: "Aparición de Vainas", fecha: "05 Jan 2026", desc: "Desarrollo de vainas de más de 40cm de largo bajo manejo agroecológico." },
+            { titulo: "Instalación de Banda Floral", fecha: "10 Oct 2025", desc: "Siembra de especies melíferas para atraer polinizadores." },
             { titulo: "Validación de Origen Digital", fecha: "13 Feb 2026", desc: "Certificación de geolocalización y prácticas en Colonia Kennedy, Paine." }
         ]
     },
@@ -91,17 +66,17 @@ const seedData = [
         productor: "Sol de Almendras",
         tipo: "Agricultor",
         manejo: "Tradicional",
-        fomento: "INDAP",       // Activa marcador AZUL en GeoDashboard
+        fomento: "INDAP",
         ubicacion: "El Vínculo, Paine",
         lat: "-33.842301",
         lon: "-70.811054",
         fecha: "12 Feb 2026",
         estado: "VERIFIED",
+        demo: "NO",
         historia: "Almendras de calibre exportación. Producidas con riego por goteo optimizado. Polinización natural certificada.",
         img: "assets/almendra.jpg", 
         hitos: [
             { titulo: "Floración", fecha: "15 Ago 2025", desc: "Polinización con abejas locales." },
-            { titulo: "Cuaja", fecha: "20 Nov 2025", desc: "Control de carga frutal." },
             { titulo: "Cosecha", fecha: "10 Feb 2026", desc: "Recolección mecánica. Temp: 28°C." }
         ]
     },
@@ -112,17 +87,17 @@ const seedData = [
         productor: "Familia Alburquenque",
         tipo: "Agricultor",
         manejo: "Tradicional",
-        fomento: "INDAP",       // Usuario INDAP verificado
+        fomento: "INDAP",
         ubicacion: "Mansel, Paine",
         lat: "-33.85199885495518",
         lon: "-70.78121948081238",
         fecha: "13 Feb 2026",
         estado: "VERIFIED",
+        demo: "NO",
         historia: "Tomate cal-ace producidas sin agroquímicos por un agricultor con historia en la comuna.",
         img: "assets/tomate.jpg", 
         hitos: [
             { titulo: "Siembra", fecha: "10 Oct 2025", desc: "Semillas ancestrales de mi familia." },
-            { titulo: "Trasplante", fecha: "25 Nov 2025", desc: "Semillas ancestrales de mi familia." },
             { titulo: "Cosecha", fecha: "13 Feb 2026", desc: "Cosecha manual. Temp: 20°C." }
         ]
     },
@@ -132,15 +107,16 @@ const seedData = [
         lote: "Lote #07-2026",
         productor: "Luis Miranda",
         tipo: "Agricultor",
-        manejo: "Agroecológico",
+        manejo: "Agroecológica",
         fomento: "", 
         ubicacion: "Colonia Kennedy, Paine",
         lat: "-33.857142", 
         lon: "-70.730938",
         fecha: "13 Feb 2026",
         estado: "VERIFIED",
+        demo: "NO",
         historia: "Cultivo agroecológico a partir de semilla tradicional, rescatando el sabor y la durabilidad del zapallo de guarda auténtico de la zona.",
-        img: "/assets/zapalloguarda.jpg",
+        img: "assets/zapalloguarda.jpg",
         hitos: [
             { titulo: "Siembra Tradicional", fecha: "15 Sep 2025", desc: "Uso de semillas ancestrales sin intervención química." },
             { titulo: "Validación de Origen", fecha: "13 Feb 2026", desc: "Registro de coordenadas en Colonia Kennedy mediante AndesChain." }
@@ -151,31 +127,104 @@ const seedData = [
         nombre: "Sidra Patrimonial",
         lote: "Barrica Origen #77",
         productor: "Punta de Fierro",
-        tipo: "Emprendedor",    // Para gráfico: Generador de valor agregado
-        manejo: "Agroecológico",
-        fomento: "Patrimonial", // Categoría especial de fomento
+        tipo: "Emprendedor",
+        manejo: "Agroecológica",
+        fomento: "Patrimonial",
         ubicacion: "Cayumapu, Valdivia",
         lat: "-39.729432",
         lon: "-73.109730",
         fecha: "10 Feb 2026",
         estado: "VERIFIED",
+        demo: "NO",
         historia: "Sidra elaborada en colaboración con la Sra. María (AFC). Manzanas de quintas patrimoniales recuperadas.",
         img: "assets/puchacay.jpg",
         hitos: [
-            { titulo: "Recepción", fecha: "15 Dic 2025", desc: "Vínculo con Agricultura Familiar Campesina." },
             { titulo: "Fermentación", fecha: "20 Dic 2025", desc: "Proceso natural sin aditivos." },
             { titulo: "Embotellado", fecha: "08 Feb 2026", desc: "Lote limitado." }
+        ]
+    },
+    {
+        id: "5007",
+        nombre: "Flor de Jamaica agroecológica",
+        productor: "Luis Miranda",
+        tipo: "Agricultor",
+        manejo: "Agroecológica",
+        fomento: "PRODESAL",
+        ubicacion: "Colonia Kennedy, Paine",
+        lat: "-33.856950", 
+        lon: "-70.730958",
+        fecha: "15 Feb 2026",
+        estado: "VERIFIED",
+        demo: "NO",
+        historia: "Cosecha de flores de jamaica para deshidratar sus cálices, cultivo agroecológico bajo el protocolo de confianza AndesChain.",
+        img: "assets/1771088120209350107628372198493501.jpg", 
+        hitos: [
+            { titulo: "Cosecha de Cálices", fecha: "15 Feb 2026", desc: "Recolección manual de cálices de Flor de Jamaica." },
+            { titulo: "Validación de Origen", fecha: "15 Feb 2026", desc: "Certificación de geolocalización en Colonia Kennedy." }
         ]
     }
 ];
 
+// --- MOTOR DE GENERACIÓN TERRITORIAL (100 BLOQUES PAINE) ---
+const productosPaine = [
+    { n: "Sandía de Paine Primor", m: "Tradicional", img: "https://images.unsplash.com/photo-1587049633562-ad78524921ea?w=400" },
+    { n: "Huevos de Gallina Libre", m: "Orgánica", img: "https://images.unsplash.com/photo-1582733315328-84999961730d?w=400" },
+    { n: "Miel de Azahar", m: "Agroecológica", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400" },
+    { n: "Uva de Mesa Thompson", m: "Tradicional", img: "https://images.unsplash.com/photo-1537640538966-79f369b41f8f?w=400" },
+    { n: "Cebolla Morada", m: "Tradicional", img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400" },
+    { n: "Choclo Pastelero", m: "Agroecológica", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400" },
+    { n: "Lechuga Hidropónica", m: "Orgánica", img: "https://images.unsplash.com/photo-1622206141842-16709899326e?w=400" },
+    { n: "Nuez Chandler", m: "Tradicional", img: "https://images.unsplash.com/photo-1536620942726-595e0ce99c4d?w=400" },
+    { n: "Durazno Conservero", m: "Tradicional", img: "https://images.unsplash.com/photo-1629995614350-8a4991266281?w=400" },
+    { n: "Frutilla Albión", m: "Agroecológica", img: "https://images.unsplash.com/photo-1543528176-61b2395143a4?w=400" }
+];
+
+const productoresPaine = ["Cooperativa Paine", "Familia Catalán", "Huertos del Maipo", "Agrícola El Sol", "Sra. Elena de Huelquén", "Juan Pérez Silva", "María Soto", "Granja Los Lingues"];
+const sectoresPaine = [
+    { n: "Pintué", lat: -33.895, lon: -70.885 },
+    { n: "Hospital", lat: -33.872, lon: -70.755 },
+    { n: "Chada", lat: -33.915, lon: -70.685 },
+    { n: "Huelquén", lat: -33.882, lon: -70.645 },
+    { n: "Abrantes", lat: -33.825, lon: -70.765 }
+];
+
+for (let i = 1; i <= 100; i++) {
+    const prodBase = productosPaine[i % productosPaine.length];
+    const sector = sectoresPaine[i % sectoresPaine.length];
+    const tipo = i % 3 === 0 ? "Empresa" : i % 2 === 0 ? "Emprendedor" : "Agricultor";
+    const fomento = i % 4 === 0 ? "INDAP" : i % 5 === 0 ? "PRODESAL" : "";
+    
+    // Dispersión geográfica para evitar solapamiento visual total
+    const randomLat = sector.lat + (Math.random() * 0.04 - 0.02);
+    const randomLon = sector.lon + (Math.random() * 0.04 - 0.02);
+
+    seedData.push({
+        id: `DEMO-${1000 + i}`,
+        nombre: prodBase.n,
+        productor: productoresPaine[i % productoresPaine.length],
+        tipo: tipo,
+        manejo: prodBase.m,
+        fomento: fomento,
+        ubicacion: `${sector.n}, Paine`,
+        lat: randomLat.toFixed(6),
+        lon: randomLon.toFixed(6),
+        fecha: `${1 + (i % 14)} Feb 2026`,
+        estado: "VERIFIED",
+        demo: "SI",
+        img: prodBase.img,
+        historia: `Registro generado automáticamente para demostración de densidad territorial en ${sector.n}. Representa la cadena de confianza AndesChain.`,
+        hitos: [
+            { titulo: "Validación Satelital", fecha: "Feb 2026", desc: "Punto georeferenciado verificado por red de nodos." },
+            { titulo: "Certificación de Manejo", fecha: "Feb 2026", desc: `Cumplimiento de estándares de producción ${prodBase.m}.` }
+        ]
+    });
+}
+
 // 2. INICIALIZADOR CON SINCRONIZACIÓN AUTOMÁTICA
 (function initAndesChain() {
-    // Recuperar base de datos de LocalStorage o iniciar vacía
     let currentDB = JSON.parse(localStorage.getItem('andesDB')) || [];
     let nuevosAgregados = 0;
 
-    // Sincronizar seedData con la memoria local sin duplicar IDs
     seedData.forEach(seedItem => {
         const existe = currentDB.find(dbItem => dbItem.id === seedItem.id);
         if (!existe) {
@@ -184,12 +233,9 @@ const seedData = [
         }
     });
 
-    if (nuevosAgregados > 0) {
-        localStorage.setItem('andesDB', JSON.stringify(currentDB));
-        console.log(`✨ Sincronizados ${nuevosAgregados} productos nuevos.`);
-    } else {
-        console.log("🔄 Memoria local actualizada.");
-    }
+    // Sobrescribimos siempre con los cambios de seedData para reflejar los 100 nuevos
+    localStorage.setItem('andesDB', JSON.stringify(currentDB));
+    console.log(`✨ Sincronización completa. Total registros en Ledger: ${currentDB.length}`);
 })();
 
 // 3. MÉTODOS DE ACCESO GLOBALES
@@ -199,7 +245,8 @@ window.getProductos = function() {
 
 window.saveProducto = function(nuevoProducto) {
     let db = window.getProductos();
-    db.unshift(nuevoProducto); // Agrega al inicio para mostrar primero en dashboard
+    if (!nuevoProducto.demo) nuevoProducto.demo = "NO"; 
+    db.unshift(nuevoProducto);
     localStorage.setItem('andesDB', JSON.stringify(db));
     console.log("💾 Registro guardado en infraestructura local.");
 };
