@@ -44,7 +44,7 @@
         
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* Modal Banner Beta */
+        /* Modal Banner Beta - Corregido para visibilidad */
         #beta-modal { backdrop-filter: blur(8px); display: none; }
     </style>
 </head>
@@ -76,6 +76,9 @@
                         <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[9px] lg:text-[10px] rounded-full px-2 lg:px-3 py-1 outline-none border border-slate-200 max-w-[100px] lg:max-w-none">
                             <option value="Paine" selected>Paine</option>
                             <option value="Buin">Buin</option>
+                            <option value="Pirque">Pirque</option>
+                            <option value="Talagante">Talagante</option>
+                            <option value="Isla de Maipo">Isla de Maipo</option>
                             <option value="Melipilla">Melipilla</option>
                             <option value="Valdivia">Valdivia</option>
                         </select>
@@ -105,21 +108,21 @@
                         <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight">Productores</p>
                         <i class="fas fa-id-badge text-corp-500/30 text-xs"></i>
                     </div>
-                    <h3 id="count-producers" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none text-center">0</h3>
+                    <h3 id="count-producers" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
                 <div class="bg-white p-3 lg:p-4 rounded-2xl lg:rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between border-b-4 border-b-indap-500 min-h-[80px]">
                     <div class="flex justify-between items-start">
-                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight text-center">Fomento INDAP</p>
+                        <p class="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase leading-tight">Fomento INDAP</p>
                         <i class="fas fa-shield-halved text-indap-500/30 text-xs"></i>
                     </div>
-                    <h3 id="count-indap" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none text-center">0</h3>
+                    <h3 id="count-indap" class="text-xl lg:text-3xl font-display font-bold text-dark-900 leading-none">0</h3>
                 </div>
                 <div class="hidden lg:flex bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <p class="text-[9px] font-bold text-slate-400 uppercase">Superficie</p>
                         <i class="fas fa-leaf text-slate-200 text-sm"></i>
                     </div>
-                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none text-center">42.8</h3>
+                    <h3 class="text-3xl font-display font-bold text-dark-900 leading-none">42.8</h3>
                 </div>
             </div>
 
@@ -160,10 +163,10 @@
 
         window.onload = () => { 
             initMap(); 
-            checkMobile();
+            checkMobile(); // Se activa inmediatamente
         };
 
-        // 1. Mensaje Beta para móviles
+        // CORRECCIÓN: Detección forzada de móvil al cargar
         function checkMobile() {
             if (window.innerWidth < 1024) {
                 document.getElementById('beta-modal').style.display = 'flex';
@@ -202,7 +205,6 @@
             }, 30);
         }
 
-        // 2. Gráficos con nombres completos y leyendas centradas
         function initCharts(data) {
             const ctx1 = document.getElementById('chartSegmentacion');
             const ctx2 = document.getElementById('chartProduccion');
