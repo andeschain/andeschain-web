@@ -30,7 +30,7 @@
         .timeline-container { position: relative; padding-left: 1.5rem; }
         .timeline-line { position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #10B981, #1e293b); }
         .timeline-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; }
-        #timeline-map { border-radius: 1.5rem; filter: grayscale(0.2) contrast(1.1); touch-action: pan-y; }
+        #timeline-map { border-radius: 1.5rem; filter: grayscale(0.2) contrast(1.1); touch-action: pan-y; z-index: 10; }
         #location-modal { backdrop-filter: blur(12px); display: none; }
         .fade-up { animation: fadeUp 0.6s ease-out forwards; opacity: 0; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -45,24 +45,26 @@
             </div>
             <div class="space-y-2">
                 <h3 class="font-display font-bold text-2xl text-slate-900 leading-tight">Conciencia Territorial</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Calcularemos la distancia y el ahorro de CO2 de este producto.</p>
+                <p class="text-slate-500 text-sm leading-relaxed px-2">Calcularemos la distancia real y el <b>ahorro de CO2</b> que generas al preferir producción local.</p>
             </div>
-            <button onclick="requestGPS()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg">
-                VERIFICAR CERCANÍA
+            <button onclick="requestGPS()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-100">
+                Verificar Cercanía
             </button>
-            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-widest">Omitir</button>
+            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-widest py-2">Omitir por ahora</button>
         </div>
     </div>
 
     <nav class="fixed w-full glass-header py-4 px-5 z-50 flex justify-between items-center">
         <div class="flex items-center gap-2">
-            <img src="assets/favicon.png" class="h-6" onerror="this.style.display='none'">
+            <img src="assets/favicon.png" class="h-6">
             <span class="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-white">AndesChain Ledger</span>
         </div>
-        <button onclick="window.history.back()" class="bg-white/5 px-4 py-2 rounded-full text-[9px] font-bold text-slate-300 uppercase">Atrás</button>
+        <button onclick="window.history.back()" class="bg-white/5 px-4 py-2 rounded-full text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+            Atrás
+        </button>
     </nav>
 
-    <main id="timeline-app" class="pt-24 px-5 max-w-2xl mx-auto hidden">
+    <main id="timeline-app" class="pt-24 lg:pt-32 px-5 max-w-2xl mx-auto hidden">
         <header class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 bg-corp-500/10 border border-corp-500/30 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-corp-500 mb-6 italic">
                 <i class="fas fa-check-circle"></i> Sincronización Local OK
@@ -71,7 +73,7 @@
             <p id="p-location" class="text-slate-400 text-xs font-medium uppercase tracking-widest">...</p>
         </header>
 
-        <section class="grid grid-cols-3 gap-2 mb-10">
+        <section class="grid grid-cols-3 gap-2 mb-12">
             <div class="bg-slate-800/40 p-3 rounded-2xl border border-white/5 text-center">
                 <p class="text-[6px] font-black text-slate-500 uppercase tracking-widest mb-1">Ciclo Cultivo</p>
                 <span id="kpi-days" class="text-lg font-display font-bold text-corp-500">---</span>
@@ -98,14 +100,15 @@
 
         <section class="mb-10 space-y-4">
             <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Ubicación del Cultivo</h3>
-            <div id="timeline-map" style="height: 250px; width: 100%;"></div>
+            <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 relative">
+                <div id="timeline-map" style="height: 250px; width: 100%;"></div>
+                <div class="p-5 bg-slate-900/90 flex flex-col gap-4 border-t border-white/5 text-left">
+                    <p class="text-[7px] text-slate-500 uppercase font-black tracking-widest italic">Coordenadas</p>
+                    <p id="geo-coords" class="font-mono text-[9px] text-emerald-500 break-all leading-none italic">...</p>
+                    <a id="btn-google-maps" href="#" target="_blank" class="w-fit bg-corp-500 text-dark-900 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest">Ver en Maps</a>
+                </div>
+            </div>
         </section>
-
-        <footer class="mt-16 pt-10 border-t border-white/10 text-center pb-12 opacity-50 italic">
-            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-[0.2em] leading-relaxed">
-                Protocolo AndesChain de Confianza Territorial
-            </p>
-        </footer>
     </main>
 
     <div id="loader" class="fixed inset-0 bg-slate-900 z-[60] flex flex-col items-center justify-center">
@@ -119,7 +122,7 @@
         const cacheVersion = new Date().getTime();
 
         window.onload = () => {
-            // Reset de base de datos para asegurar que tome los cambios del simulador
+            // Limpia y recarga solo si es necesario para evitar el loop
             if (!sessionStorage.getItem('sync_done')) {
                 localStorage.removeItem('andesDB');
                 sessionStorage.setItem('sync_done', 'true');
@@ -154,36 +157,51 @@
         function renderTimeline() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id') || "1001";
-            const db = window.getProductos();
+            
+            // Forzar a que el simulador se ejecute si no hay datos
+            if (!localStorage.getItem('andesDB')) {
+                location.reload(); // Último recurso si el simulador no cargó
+                return;
+            }
+
+            const db = JSON.parse(localStorage.getItem('andesDB'));
             const p = db.find(item => item.id == id);
 
-            if (!p) return;
-            prodLat = parseFloat(p.lat); prodLon = parseFloat(p.lon);
+            if (!p) {
+                document.getElementById('loader').innerHTML = '<p class="text-white">ID no encontrado.</p>';
+                return;
+            }
 
+            prodLat = parseFloat(p.lat); prodLon = parseFloat(p.lon);
             document.getElementById('loader').style.display = 'none';
             document.getElementById('timeline-app').classList.remove('hidden');
             document.getElementById('p-name').innerText = p.nombre;
             document.getElementById('p-location').innerText = p.ubicacion;
+            document.getElementById('geo-coords').innerText = `${p.lat}, ${p.lon}`;
 
+            // Ciclo de vida
             const parseD = (d) => {
                 const m = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
-                const parts = d.split(' '); return new Date(parts[2], m[parts[1]], parts[0]);
+                const s = d.split(' '); return new Date(s[2], m[s[1]], s[0]);
             };
             const sorted = [...p.hitos].sort((a,b) => parseD(a.fecha) - parseD(b.fecha));
             document.getElementById('kpi-days').innerText = Math.ceil(Math.abs(parseD(sorted[sorted.length-1].fecha) - parseD(sorted[0].fecha)) / 86400000);
 
+            // Mapa
             const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([pLat, pLon], 15);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
-            L.marker([pLat, pLon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white' }) }).addTo(tMap);
+            L.marker([pLat, pLon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white shadow-lg' }) }).addTo(tMap);
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps/search/?api=1&query=${pLat},${pLon}`;
 
+            // Render Hitos
             const list = document.getElementById('timeline-list');
             [...p.hitos].reverse().forEach((h, i) => {
                 const card = document.createElement('div');
                 card.className = "relative pl-8 pb-10 fade-up";
                 card.style.animationDelay = `${i * 0.15}s`;
                 
-                // RUTA RELATIVA DIRECTA + CACHE BUSTER
-                const imagePath = h.img ? h.img + '?v=' + cacheVersion : '';
+                // Forzar la ruta para GitHub agregando versión para saltar caché
+                const finalImg = h.img + "?v=" + cacheVersion;
 
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-lg z-10"></div>
@@ -196,9 +214,9 @@
                             <p class="text-slate-400 text-xs font-light italic">"${h.desc}"</p>
                         </div>
                         <div class="px-5 pb-5">
-                             <img src="${imagePath}" 
+                             <img src="${finalImg}" 
                                   class="w-full h-auto rounded-xl shadow-lg border border-white/5"
-                                  onerror="this.style.display='none'">
+                                  onerror="this.src='https://images.unsplash.com/photo-1518977676601-b53f02ac6d5d?w=600&q=80'">
                         </div>
                     </div>`;
                 list.appendChild(card);
