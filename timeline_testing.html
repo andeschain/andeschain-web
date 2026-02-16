@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pasaporte de Origen | AndesChain</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,112 +25,116 @@
     </script>
     
     <style>
-        body { background-color: #0f172a; color: #f8fafc; }
-        .glass-header { background: rgba(15, 23, 42, 0.8); backdrop-blur: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .timeline-container { position: relative; padding-left: 2rem; }
+        body { background-color: #0f172a; color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .glass-header { background: rgba(15, 23, 42, 0.85); backdrop-blur: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .timeline-container { position: relative; padding-left: 1.5rem; }
         .timeline-line { position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #10B981, #1e293b); }
-        .timeline-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; transition: all 0.3s; }
-        #timeline-map { border-radius: 2rem; filter: grayscale(0.2) contrast(1.1); }
-        #location-modal { backdrop-filter: blur(8px); display: none; }
+        .timeline-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+        #timeline-map { border-radius: 1.5rem; filter: grayscale(0.2) contrast(1.1); touch-action: pan-y; }
+        #location-modal { backdrop-filter: blur(10px); display: none; }
+        /* Animación suave para la entrada de tarjetas */
+        .fade-up { animation: fadeUp 0.6s ease out forwards; opacity: 0; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="pb-20 antialiased overflow-x-hidden">
+<body class="pb-10 antialiased overflow-x-hidden selection:bg-corp-500/30">
 
-    <div id="location-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-slate-900/90">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6">
+    <div id="location-modal" class="fixed inset-0 z-[1000] flex items-end lg:items-center justify-center p-4 lg:p-6 bg-slate-900/95">
+        <div class="bg-white p-8 rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6 mb-4 lg:mb-0">
             <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl animate-bounce">
-                <i class="fas fa-leaf"></i>
+                <i class="fas fa-location-crosshairs"></i>
             </div>
             <div class="space-y-2">
-                <h3 class="font-display font-bold text-xl text-slate-900 leading-tight">Activa tu conciencia territorial</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Verificaremos a cuántos Km estás de este cultivo para calcular el ahorro de CO2 vs mercados tradicionales.</p>
+                <h3 class="font-display font-bold text-2xl text-slate-900 leading-tight tracking-tight">Activa tu conciencia territorial</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Calcularemos los kilómetros que viajó este alimento y el <b>CO2 ahorrado</b> al preferir producción local.</p>
             </div>
-            <button onclick="requestGPS()" class="w-full py-4 bg-dark-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-corp-600 transition-all">Verificar Cercanía</button>
-            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Cerrar</button>
+            <button onclick="requestGPS()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-100">
+                Verificar Cercanía
+            </button>
+            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-widest py-2">Omitir por ahora</button>
         </div>
     </div>
 
-    <nav class="fixed w-full glass-header py-4 px-6 z-50 flex justify-between items-center">
-        <div class="flex items-center gap-3">
+    <nav class="fixed w-full glass-header py-4 px-5 z-50 flex justify-between items-center">
+        <div class="flex items-center gap-2">
             <img src="assets/favicon.png" class="h-6">
-            <span class="font-display font-bold text-xs uppercase tracking-widest text-white">AndesChain Ledger</span>
+            <span class="font-display font-bold text-[10px] lg:text-xs uppercase tracking-[0.2em] text-white">AndesChain Ledger</span>
         </div>
-        <button onclick="window.history.back()" class="text-xs font-bold text-slate-400 hover:text-white transition-colors">
-            <i class="fas fa-times mr-2"></i>CERRAR
+        <button onclick="window.history.back()" class="bg-white/5 px-4 py-2 rounded-full text-[9px] font-bold text-slate-300 hover:text-white transition-colors uppercase tracking-widest">
+            <i class="fas fa-arrow-left mr-2"></i>Atrás
         </button>
     </nav>
 
-    <main id="timeline-app" class="pt-28 px-6 max-w-2xl mx-auto hidden">
+    <main id="timeline-app" class="pt-24 lg:pt-32 px-5 max-w-2xl mx-auto hidden">
         
         <header class="mb-10 text-center">
-            <div class="inline-flex items-center gap-2 bg-corp-500/10 border border-corp-500/30 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest text-corp-500 mb-6">
-                <i class="fas fa-certificate"></i> Trazabilidad Inmutable Activa
+            <div class="inline-flex items-center gap-2 bg-corp-500/10 border border-corp-500/30 px-3 py-1 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-widest text-corp-500 mb-6">
+                <i class="fas fa-fingerprint"></i> Trazabilidad Verificada
             </div>
-            <h1 id="p-name" class="font-display text-5xl font-extrabold text-white leading-tight mb-4 italic">...</h1>
-            <p id="p-location" class="text-slate-400 text-sm font-medium tracking-tight">...</p>
+            <h1 id="p-name" class="font-display text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] mb-4 italic">...</h1>
+            <div class="flex items-center justify-center gap-2 text-slate-400 text-xs font-medium">
+                <i class="fas fa-map-pin text-corp-500"></i>
+                <span id="p-location">...</span>
+            </div>
         </header>
 
-        <section class="grid grid-cols-3 gap-3 mb-12">
-            <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
-                <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Ciclo Vida</p>
-                <span id="kpi-days" class="text-xl font-display font-bold text-corp-500">---</span>
-                <p class="text-[9px] text-slate-400">Días</p>
+        <section class="grid grid-cols-3 gap-2 lg:gap-3 mb-12">
+            <div class="bg-slate-800/40 p-3 lg:p-4 rounded-2xl lg:rounded-3xl border border-white/5 text-center">
+                <p class="text-[6px] lg:text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Ciclo Vida</p>
+                <span id="kpi-days" class="text-lg lg:text-xl font-display font-bold text-corp-500">---</span>
+                <p class="text-[8px] text-slate-400">Días</p>
             </div>
-            <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
-                <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Distancia</p>
-                <span id="kpi-km" class="text-xl font-display font-bold text-corp-500">0.0</span>
-                <p class="text-[9px] text-slate-400">Km</p>
+            <div class="bg-slate-800/40 p-3 lg:p-4 rounded-2xl lg:rounded-3xl border border-white/5 text-center">
+                <p class="text-[6px] lg:text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Distancia</p>
+                <span id="kpi-km" class="text-lg lg:text-xl font-display font-bold text-corp-500">0.0</span>
+                <p class="text-[8px] text-slate-400">Km</p>
             </div>
-            <div class="bg-impact-500/10 p-4 rounded-3xl border border-impact-500/20 text-center">
-                <p class="text-[7px] font-black text-impact-500 uppercase tracking-widest mb-1">Ahorro CO2</p>
-                <span id="kpi-co2" class="text-xl font-display font-bold text-impact-500">---</span>
-                <p class="text-[9px] text-slate-400">vs Vega</p>
+            <div class="bg-impact-500/10 p-3 lg:p-4 rounded-2xl lg:rounded-3xl border border-impact-500/20 text-center">
+                <p class="text-[6px] lg:text-[7px] font-black text-impact-500 uppercase tracking-widest mb-1">Ahorro CO2</p>
+                <span id="kpi-co2" class="text-lg lg:text-xl font-display font-bold text-impact-500">---</span>
+                <p class="text-[8px] text-slate-400">vs Mercado</p>
             </div>
         </section>
 
-        <section class="space-y-12 mb-16">
-            <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 border-b border-white/5 pb-4">Evidencia de Proceso</h3>
+        <section class="space-y-8 mb-16">
+            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 border-b border-white/5 pb-4">Evidencia de Proceso</h3>
             <div class="timeline-container" id="timeline-list">
                 <div class="timeline-line"></div>
             </div>
         </section>
 
-        <section class="mb-12 space-y-6">
-            <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Georeferencia del Predio</h3>
-            <div class="overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900 relative">
-                <div class="absolute top-4 right-4 z-[400] bg-dark-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
-                    <i class="fas fa-satellite text-red-500 text-[8px] animate-pulse"></i>
-                    <span class="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Sat Feed Active</span>
-                </div>
+        <section class="mb-10 space-y-4">
+            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] px-1">Georeferencia Predial</h3>
+            <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 relative">
                 <div id="timeline-map" style="height: 250px; width: 100%;"></div>
-                <div class="p-5 bg-slate-900/90 flex justify-between items-center border-t border-white/5">
-                    <div>
-                        <p class="text-[8px] text-slate-500 uppercase font-black tracking-widest">Coordenadas de Origen</p>
-                        <p id="geo-coords" class="font-mono text-[10px] text-emerald-500">...</p>
+                <div class="p-5 bg-slate-900/90 flex flex-col gap-4 border-t border-white/5">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-[7px] text-slate-500 uppercase font-black tracking-widest mb-1">Hash de Origen</p>
+                            <p id="geo-coords" class="font-mono text-[9px] text-emerald-500 break-all leading-none">...</p>
+                        </div>
+                        <a id="btn-google-maps" href="#" target="_blank" class="bg-corp-500 text-dark-900 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest">Maps</a>
                     </div>
-                    <a id="btn-google-maps" href="#" target="_blank" class="bg-corp-500/10 text-corp-500 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-corp-500 hover:text-white transition-all">Google Maps</a>
                 </div>
             </div>
         </section>
 
-        <footer class="mt-20 pt-10 border-t border-white/10 text-center pb-12">
-            <img src="assets/favicon.png" class="h-8 mx-auto opacity-20 mb-4 grayscale">
-            <p class="text-[9px] text-slate-500 uppercase font-bold tracking-[0.2em] leading-relaxed">
-                Este pasaporte digital ha sido emitido bajo el <br>Protocolo AndesChain de Confianza Territorial.
+        <footer class="mt-16 pt-10 border-t border-white/10 text-center pb-12">
+            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-[0.2em] leading-relaxed opacity-50">
+                Protocolo AndesChain de Confianza Territorial <br> Paine, Región Metropolitana
             </p>
         </footer>
     </main>
 
     <div id="loader" class="fixed inset-0 bg-slate-900 z-[60] flex flex-col items-center justify-center">
         <div class="w-10 h-10 border-2 border-corp-500/20 border-t-corp-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Sincronizando Ledger</p>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Decodificando Bloques</p>
     </div>
 
     <script src="js/simulador.js"></script>
     <script>
-        let productLat, productLon;
-
-        window.onload = function() { setTimeout(renderTimeline, 800); };
+        let pLat, pLon;
+        window.onload = () => setTimeout(renderTimeline, 800);
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; 
@@ -139,34 +144,10 @@
             return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
         }
 
-        function renderTimeline() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id') || "1001";
-            const db = window.getProductos();
-            const p = db.find(item => item.id == id);
-
-            if (!p) { alert("Expediente no encontrado."); return; }
-
-            productLat = parseFloat(p.lat);
-            productLon = parseFloat(p.lon);
-
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('timeline-app').classList.remove('hidden');
-            document.getElementById('p-name').innerText = p.nombre;
-            document.getElementById('p-location').innerText = p.ubicacion;
-            document.getElementById('kpi-days').innerText = calculateCycle(p.hitos);
-            document.getElementById('geo-coords').innerText = `${p.lat}, ${p.lon}`;
-
-            initTimelineMap(p.lat, p.lon);
-            renderHitos(p.hitos);
-
-            setTimeout(() => { document.getElementById('location-modal').style.display = 'flex'; }, 1000);
-        }
-
         function requestGPS() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((pos) => {
-                    const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, productLat, productLon);
+                    const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, pLat, pLon);
                     document.getElementById('kpi-km').innerText = dist;
                     const ahorro = Math.max(0, ((800 - dist) / 800) * 100).toFixed(0);
                     document.getElementById('kpi-co2').innerText = ahorro + "%";
@@ -177,43 +158,54 @@
 
         function closeModal() { document.getElementById('location-modal').style.display = 'none'; }
 
-        function initTimelineMap(lat, lon) {
-            const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([lat, lon], 16);
-            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
-            L.marker([lat, lon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white shadow-lg' }) }).addTo(tMap);
-            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${lat},${lon}`;
-        }
+        function renderTimeline() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id') || "1001";
+            const db = window.getProductos();
+            const p = db.find(item => item.id == id);
+            if (!p) return;
 
-        function renderHitos(hitos) {
-            const container = document.getElementById('timeline-list');
-            [...hitos].reverse().forEach((h, index) => {
-                const item = document.createElement('div');
-                item.className = "relative pl-10 pb-12 group";
-                item.innerHTML = `
-                    <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-[0_0_15px_rgba(16,185,129,0.4)] z-10 transition-transform group-hover:scale-125"></div>
-                    <div class="timeline-card p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <h4 class="font-display font-bold text-xl text-white leading-tight">${h.titulo}</h4>
-                            <span class="text-[10px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded-md uppercase tracking-widest">${h.fecha}</span>
-                        </div>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-6 font-light italic">"${h.desc}"</p>
-                        <div class="overflow-hidden rounded-2xl border border-white/5 shadow-inner">
-                            <img src="${h.img || 'https://via.placeholder.com/800x500?text=Evidencia+AndesChain'}" class="w-full h-auto grayscale-[0.3] hover:grayscale-0 transition-all duration-700">
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
+            pLat = parseFloat(p.lat); pLon = parseFloat(p.lon);
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('timeline-app').classList.remove('hidden');
+            document.getElementById('p-name').innerText = p.nombre;
+            document.getElementById('p-location').innerText = p.ubicacion;
+            document.getElementById('geo-coords').innerText = `${p.lat}, ${p.lon}`;
 
-        function calculateCycle(hitos) {
-            if (hitos.length < 2) return "---";
-            const parseDate = (d) => {
+            // Cálculo días ciclo
+            const parseD = (d) => {
                 const m = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
-                const p = d.split(' '); return new Date(p[2], m[p[1]], p[0]);
+                const s = d.split(' '); return new Date(s[2], m[s[1]], s[0]);
             };
-            const s = [...hitos].sort((a,b) => parseDate(a.fecha) - parseDate(b.fecha));
-            return Math.ceil(Math.abs(parseDate(s[s.length-1].fecha) - parseDate(s[0].fecha)) / 86400000);
+            const sorted = [...p.hitos].sort((a,b) => parseD(a.fecha) - parseD(b.fecha));
+            document.getElementById('kpi-days').innerText = Math.ceil(Math.abs(parseD(sorted[sorted.length-1].fecha) - parseD(sorted[0].fecha)) / 86400000);
+
+            // Mapa Leaflet
+            const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([pLat, pLon], 15);
+            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
+            L.marker([pLat, pLon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white' }) }).addTo(tMap);
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${pLat},${pLon}`;
+
+            // Render Hitos con Delay Visual
+            const list = document.getElementById('timeline-list');
+            [...p.hitos].reverse().forEach((h, i) => {
+                const card = document.createElement('div');
+                card.className = "relative pl-8 pb-10 fade-up";
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.innerHTML = `
+                    <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-lg z-10"></div>
+                    <div class="timeline-card p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="font-bold text-lg text-white leading-tight">${h.titulo}</h4>
+                            <span class="text-[8px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded uppercase">${h.fecha}</span>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed mb-4 font-light italic">"${h.desc}"</p>
+                        <img src="${h.img || 'https://via.placeholder.com/600x400'}" class="w-full h-auto rounded-xl">
+                    </div>`;
+                list.appendChild(card);
+            });
+
+            setTimeout(() => { document.getElementById('location-modal').style.display = 'flex'; }, 1500);
         }
     </script>
 </body>
