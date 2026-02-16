@@ -30,7 +30,6 @@
         .timeline-card:hover { border-color: #10B981; transform: translateX(5px); }
         .img-cert { border-radius: 18px; filter: saturate(1.1); }
         .badge-verified { background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #10B981; }
-        /* Estilo para el mapa satelital */
         #timeline-map { border-radius: 2rem; filter: grayscale(0.2) contrast(1.1); }
     </style>
 </head>
@@ -73,7 +72,7 @@
             </div>
             <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
                 <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Huella Origen</p>
-                <span class="text-xl font-display font-bold text-corp-500">0.0</span>
+                <span id="kpi-km" class="text-xl font-display font-bold text-corp-500">0.0</span>
                 <p class="text-[9px] text-slate-400">Km</p>
             </div>
             <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
@@ -90,13 +89,12 @@
             <div id="timeline-map" style="height: 220px; width: 100%;"></div>
             <div class="p-4 bg-slate-900/90 flex justify-between items-center border-t border-white/5">
                 <p id="geo-coords" class="font-mono text-[9px] text-slate-500">COORD: ---</p>
-                <a id="btn-google-maps" href="#" target="_blank" class="text-[9px] font-bold text-corp-500 uppercase tracking-widest">Ver Mapa <i class="fas fa-external-link-alt ml-1"></i></a>
+                <a id="btn-google-maps" href="#" target="_blank" class="text-[9px] font-bold text-corp-500 uppercase tracking-widest transition-colors hover:text-white">Ver Mapa <i class="fas fa-external-link-alt ml-1"></i></a>
             </div>
         </section>
 
         <section class="space-y-12">
             <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8">Cronología Inmutable</h3>
-            
             <div class="timeline-container" id="timeline-list">
                 <div class="timeline-line"></div>
             </div>
@@ -108,7 +106,6 @@
                 Este pasaporte digital ha sido emitido bajo el <br>Protocolo AndesChain de Confianza Territorial.
             </p>
         </footer>
-
     </main>
 
     <div id="loader" class="fixed inset-0 bg-slate-900 z-[60] flex flex-col items-center justify-center">
@@ -122,42 +119,43 @@
             setTimeout(renderTimeline, 800);
         };
 
+        // Función Haversine para calcular distancia real entre dos puntos
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return (R * c).toFixed(1);
+        }
+
         function calculateCycle(hitos) {
             if (hitos.length < 2) return "---";
-            
             const parseDate = (dateStr) => {
                 const months = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
                 const parts = dateStr.split(' ');
-                // Si la fecha tiene el formato "30 Ene 2026"
-                if (parts.length === 3) {
-                    return new Date(parts[2], months[parts[1]], parts[0]);
-                }
-                return new Date();
+                return parts.length === 3 ? new Date(parts[2], months[parts[1]], parts[0]) : new Date();
             };
-
             try {
-                // Ordenar por fecha antes de calcular
                 const sortedHitos = [...hitos].sort((a, b) => parseDate(a.fecha) - parseDate(b.fecha));
                 const start = parseDate(sortedHitos[0].fecha);
                 const end = parseDate(sortedHitos[sortedHitos.length - 1].fecha);
-                const diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24));
-                return diff;
+                return Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24));
             } catch (e) { return "---"; }
         }
 
         function initTimelineMap(lat, lon) {
             const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false }).setView([lat, lon], 16);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
-            
             const customIcon = L.divIcon({
                 className: 'custom-div-icon',
                 html: `<div style="background-color: #10B981; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>`,
                 iconSize: [12, 12], iconAnchor: [6, 6]
             });
-
             L.marker([lat, lon], { icon: customIcon }).addTo(tMap);
-            
-            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${lat},${lon}`;
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
             document.getElementById('geo-coords').innerText = `LAT: ${lat} | LON: ${lon}`;
         }
 
@@ -178,18 +176,26 @@
             document.getElementById('p-producer').innerText = p.productor;
             document.getElementById('p-location').innerText = p.ubicacion;
 
-            // Inicializar Mapa y KPIs
             initTimelineMap(p.lat, p.lon);
             document.getElementById('kpi-days').innerText = calculateCycle(p.hitos);
 
+            // CÁLCULO DE HUELLA DE ORIGEN DINÁMICA
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, parseFloat(p.lat), parseFloat(p.lon));
+                    const kpi = document.getElementById('kpi-km');
+                    kpi.innerText = dist;
+                    kpi.classList.add('text-white', 'animate-pulse');
+                    setTimeout(() => kpi.classList.remove('animate-pulse'), 2000);
+                }, () => console.log("Ubicación denegada"));
+            }
+
             const container = document.getElementById('timeline-list');
             const hitosInvertidos = [...p.hitos].reverse();
-
             hitosInvertidos.forEach((h, index) => {
                 const item = document.createElement('div');
                 item.className = "relative pl-10 pb-12 group";
                 const imgSource = h.img || `https://loremflickr.com/800/500/agriculture,farm?lock=${index}`;
-                
                 item.innerHTML = `
                     <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] z-10"></div>
                     <div class="timeline-card p-6">
