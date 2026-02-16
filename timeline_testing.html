@@ -34,7 +34,6 @@
         #location-modal { backdrop-filter: blur(12px); display: none; }
         .fade-up { animation: fadeUp 0.6s ease-out forwards; opacity: 0; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        img { max-width: 100%; height: auto; display: block; }
     </style>
 </head>
 <body class="pb-10 antialiased overflow-x-hidden selection:bg-corp-500/30">
@@ -46,7 +45,7 @@
             </div>
             <div class="space-y-2">
                 <h3 class="font-display font-bold text-2xl text-slate-900 leading-tight">Activa tu conciencia territorial</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Calcularemos la distancia real y el <b>ahorro de CO2</b> que generas al preferir producción local.</p>
+                <p class="text-slate-500 text-sm leading-relaxed px-2">Calcularemos la distancia real y el <b>ahorro de CO2</b> que generas al preferir producción local.</p>
             </div>
             <button onclick="requestGPS()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-100">
                 Verificar Cercanía
@@ -58,7 +57,7 @@
     <nav class="fixed w-full glass-header py-4 px-5 z-50 flex justify-between items-center">
         <div class="flex items-center gap-2">
             <img src="assets/favicon.png" class="h-6">
-            <span class="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-white leading-none">AndesChain Ledger</span>
+            <span class="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-white">AndesChain Ledger</span>
         </div>
         <button onclick="window.history.back()" class="bg-white/5 px-4 py-2 rounded-full text-[9px] font-bold text-slate-300 uppercase tracking-widest">
             <i class="fas fa-arrow-left mr-2"></i>Atrás
@@ -97,7 +96,7 @@
             <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 border-b border-white/5 pb-4 italic">Evidencia de Proceso</h3>
             <div class="timeline-container" id="timeline-list">
                 <div class="timeline-line"></div>
-                </div>
+            </div>
         </section>
 
         <section class="mb-10 space-y-4">
@@ -125,7 +124,7 @@
 
     <div id="loader" class="fixed inset-0 bg-slate-900 z-[60] flex flex-col items-center justify-center">
         <div class="w-10 h-10 border-2 border-corp-500/20 border-t-corp-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Decodificando Bloques</p>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Sincronizando Ledger</p>
     </div>
 
     <script src="js/simulador.js"></script>
@@ -149,7 +148,7 @@
                     const ahorro = Math.max(0, ((800 - dist) / 800) * 100).toFixed(0);
                     document.getElementById('kpi-co2').innerText = ahorro + "%";
                     closeModal();
-                }, () => closeModal());
+                }, () => closeModal(), { enableHighAccuracy: true });
             }
         }
 
@@ -169,7 +168,6 @@
             document.getElementById('p-location').innerText = p.ubicacion;
             document.getElementById('geo-coords').innerText = `${p.lat}, ${p.lon}`;
 
-            // Cálculo días ciclo
             const parseD = (d) => {
                 const m = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
                 const s = d.split(' '); return s.length === 3 ? new Date(s[2], m[s[1]], s[0]) : new Date();
@@ -177,21 +175,20 @@
             const sorted = [...p.hitos].sort((a,b) => parseD(a.fecha) - parseD(b.fecha));
             document.getElementById('kpi-days').innerText = Math.ceil(Math.abs(parseD(sorted[sorted.length-1].fecha) - parseD(sorted[0].fecha)) / 86400000);
 
-            // Mapa
             const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([pLat, pLon], 15);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
             L.marker([pLat, pLon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white' }) }).addTo(tMap);
-            document.getElementById('btn-google-maps').href = `https://www.google.com/maps/search/?api=1&query=${pLat},${pLon}`;
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${pLat},${pLon}`;
 
-            // Render Hitos con Lógica Reforzada para Imágenes
             const list = document.getElementById('timeline-list');
             [...p.hitos].reverse().forEach((h, i) => {
                 const card = document.createElement('div');
                 card.className = "relative pl-8 pb-10 fade-up";
                 card.style.animationDelay = `${i * 0.15}s`;
                 
-                // Aseguramos que la ruta sea limpia y manejamos errores de carga
-                const imagePath = h.img ? h.img.trim() : `https://loremflickr.com/640/480/agriculture?lock=${i}`;
+                // LÓGICA DE IMAGEN ESTRICTA: 
+                // Si la imagen existe, la limpia. Si falla o no existe, usa un placeholder con temática de papa.
+                const imagePath = h.img ? h.img.trim() : 'https://loremflickr.com/640/480/potato';
 
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-lg z-10"></div>
@@ -207,7 +204,7 @@
                              <img src="${imagePath}" 
                                   class="w-full h-auto rounded-xl shadow-lg border border-white/5" 
                                   loading="lazy"
-                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/640x480?text=Evidencia+AndesChain';">
+                                  onerror="this.onerror=null; this.src='https://loremflickr.com/640/480/potato?lock=${i}';">
                         </div>
                     </div>`;
                 list.appendChild(card);
