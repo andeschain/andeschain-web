@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pasaporte de Origen | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -37,19 +38,19 @@
 </head>
 <body class="pb-10 antialiased overflow-x-hidden">
 
-    <div id="location-modal" class="fixed inset-0 z-[1000] flex items-end lg:items-center justify-center p-4 bg-slate-900/95">
+    <div id="location-modal" class="fixed inset-0 z-[1000] flex items-end lg:items-center justify-center p-4 lg:p-6 bg-slate-900/95">
         <div class="bg-white p-8 rounded-[2rem] shadow-2xl max-w-sm w-full text-center space-y-6">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl animate-bounce">
                 <i class="fas fa-leaf"></i>
             </div>
             <div class="space-y-2">
-                <h3 class="font-display font-bold text-2xl text-slate-900 leading-tight">Verificar Huella</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Calcularemos la distancia y el ahorro de CO2 de este producto.</p>
+                <h3 class="font-display font-bold text-2xl text-slate-900 leading-tight">Activa tu conciencia territorial</h3>
+                <p class="text-slate-500 text-sm leading-relaxed px-2">Calcularemos la distancia real y el <b>ahorro de CO2</b> que generas al preferir producción local.</p>
             </div>
             <button onclick="requestGPS()" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-100">
-                ACTIVAR GPS
+                Verificar Cercanía
             </button>
-            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-widest">Omitir</button>
+            <button onclick="closeModal()" class="block w-full text-[10px] text-slate-400 font-bold uppercase tracking-widest py-2">Omitir</button>
         </div>
     </div>
 
@@ -59,14 +60,14 @@
             <span class="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-white">AndesChain Ledger</span>
         </div>
         <button onclick="window.history.back()" class="bg-white/5 px-4 py-2 rounded-full text-[9px] font-bold text-slate-300 uppercase tracking-widest">
-            ATRÁS
+            Atrás
         </button>
     </nav>
 
-    <main id="timeline-app" class="pt-24 px-5 max-w-2xl mx-auto hidden">
+    <main id="timeline-app" class="pt-24 lg:pt-32 px-5 max-w-2xl mx-auto hidden">
         <header class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 bg-corp-500/10 border border-corp-500/30 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-corp-500 mb-6 italic">
-                <i class="fas fa-check-circle"></i> DATOS SINCRONIZADOS
+                <i class="fas fa-check-circle"></i> Sincronización Exitosa
             </div>
             <h1 id="p-name" class="font-display text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] mb-4 italic">...</h1>
             <p id="p-location" class="text-slate-400 text-xs font-medium uppercase tracking-widest">...</p>
@@ -98,8 +99,15 @@
         </section>
 
         <section class="mb-10 space-y-4">
-            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Georeferencia</h3>
-            <div id="timeline-map" style="height: 250px; width: 100%;"></div>
+            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Georeferencia Predial</h3>
+            <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 relative">
+                <div id="timeline-map" style="height: 250px; width: 100%;"></div>
+                <div class="p-5 bg-slate-900/90 border-t border-white/5">
+                    <p class="text-[7px] text-slate-500 uppercase font-black tracking-widest mb-1 italic">Coordenadas</p>
+                    <p id="geo-coords" class="font-mono text-[9px] text-emerald-500 mb-3 italic">...</p>
+                    <a id="btn-google-maps" href="#" target="_blank" class="inline-block bg-corp-500 text-dark-900 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest">Ver en Maps</a>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -111,12 +119,17 @@
     <script src="js/simulador.js"></script>
     <script>
         let pLat, pLon;
-        const bustCache = new Date().getTime();
+        const cacheVersion = new Date().getTime();
 
         window.onload = () => {
-            // FORZAR LIMPIEZA DE LOCALSTORAGE PARA ACTUALIZAR DATOS DE SIMULADOR
-            localStorage.clear(); 
-            setTimeout(renderTimeline, 1000);
+            // SOLUCIÓN AL LOOP: Limpia solo una vez por sesión
+            if (!sessionStorage.getItem('reloaded')) {
+                localStorage.clear();
+                sessionStorage.setItem('reloaded', 'true');
+                window.location.reload();
+            } else {
+                renderTimeline();
+            }
         };
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -144,44 +157,44 @@
         function renderTimeline() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id') || "1001";
-            
-            // Re-ejecutar la carga de simulador.js tras el clear
-            if(typeof initAndesChain === "function") initAndesChain();
-            
             const db = window.getProductos();
             const p = db.find(item => item.id == id);
-            if (!p) return;
+
+            if (!p) {
+                // Si tras limpiar no hay datos, algo falló en simulador.js
+                document.getElementById('loader').innerHTML = '<p class="text-white">Error de conexión con el Ledger.</p>';
+                return;
+            }
 
             pLat = parseFloat(p.lat); pLon = parseFloat(p.lon);
             document.getElementById('loader').style.display = 'none';
             document.getElementById('timeline-app').classList.remove('hidden');
             document.getElementById('p-name').innerText = p.nombre;
             document.getElementById('p-location').innerText = p.ubicacion;
+            document.getElementById('geo-coords').innerText = `${p.lat}, ${p.lon}`;
 
-            // Días ciclo
             const parseD = (d) => {
                 const m = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
-                const parts = d.split(' '); return new Date(parts[2], m[parts[1]], parts[0]);
+                const s = d.split(' '); return new Date(s[2], m[s[1]], s[0]);
             };
             const sorted = [...p.hitos].sort((a,b) => parseD(a.fecha) - parseD(b.fecha));
             document.getElementById('kpi-days').innerText = Math.ceil(Math.abs(parseD(sorted[sorted.length-1].fecha) - parseD(sorted[0].fecha)) / 86400000);
 
-            // Mapa
             const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([pLat, pLon], 15);
             L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
             L.marker([pLat, pLon], { icon: L.divIcon({ className: 'bg-corp-500 w-3 h-3 rounded-full border-2 border-white' }) }).addTo(tMap);
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${pLat},${pLon}`;
 
-            // Render Hitos
             const list = document.getElementById('timeline-list');
-            const absolutePath = window.location.href.split('?')[0].replace('timeline.html', '');
+            const absoluteBase = window.location.origin + window.location.pathname.replace('timeline.html', '');
 
             [...p.hitos].reverse().forEach((h, i) => {
                 const card = document.createElement('div');
                 card.className = "relative pl-8 pb-10 fade-up";
                 card.style.animationDelay = `${i * 0.15}s`;
                 
-                // Forzamos ruta absoluta + timestamp para engañar a la caché del celular
-                const finalImgPath = absolutePath + h.img + "?v=" + bustCache;
+                // CONSTRUCCIÓN DE RUTA ROBUSTA
+                let finalImg = h.img.startsWith('http') ? h.img : absoluteBase + h.img + '?v=' + cacheVersion;
 
                 card.innerHTML = `
                     <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-lg z-10"></div>
@@ -189,12 +202,14 @@
                         <div class="p-5">
                             <div class="flex justify-between items-start mb-3">
                                 <h4 class="font-bold text-lg text-white leading-tight">${h.titulo}</h4>
-                                <span class="text-[8px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded uppercase tracking-widest">${h.fecha}</span>
+                                <span class="text-[8px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded uppercase">${h.fecha}</span>
                             </div>
-                            <p class="text-slate-400 text-xs leading-relaxed font-light italic mb-4">"${h.desc}"</p>
+                            <p class="text-slate-400 text-xs leading-relaxed italic mb-4">"${h.desc}"</p>
                         </div>
                         <div class="px-5 pb-5">
-                             <img src="${finalImgPath}" class="w-full h-auto rounded-xl shadow-lg border border-white/5">
+                             <img src="${imagePath = finalImg}" 
+                                  class="w-full h-auto rounded-xl shadow-lg" 
+                                  onerror="this.src='https://images.unsplash.com/photo-1518977676601-b53f02ac6d5d?w=600&q=80';">
                         </div>
                     </div>`;
                 list.appendChild(card);
