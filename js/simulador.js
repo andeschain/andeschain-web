@@ -32,7 +32,7 @@ const seedData = [
         estado: "VERIFIED",
         demo: "NO",
         historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
-        img: "assets/papa.jpg", 
+        img: "assets/cosecha.jpg", 
         hitos: [
             { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández" },
             { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos." },
