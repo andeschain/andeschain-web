@@ -4,13 +4,13 @@
  * Descripción: Base de Datos Maestra y Lógica de Sincronización Local.
  * * GUÍA DE ATRIBUTOS (DICCIONARIO DE DATOS):
  * -----------------------------------------
- * @id:         String único (ID correlativo).
- * @tipo:       [Agricultor | Emprendedor | Empresa] -> Define gráfico "Segmentación".
- * @manejo:     [Orgánica | Agroecológica | Tradicional] -> Define gráfico "Sistemas de Producción".
- * @fomento:    [INDAP | PRODESAL | Patrimonial | Vacío] -> Filtra KPI INDAP (Color Azul).
- * @estado:     [VERIFIED | PENDING] -> Estado de validación en Blockchain.
+ * @id:          String único (ID correlativo).
+ * @tipo:        [Agricultor | Emprendedor | Empresa] -> Define gráfico "Segmentación".
+ * @manejo:      [Orgánica | Agroecológica | Tradicional] -> Define gráfico "Sistemas de Producción".
+ * @fomento:     [INDAP | PRODESAL | Patrimonial | Vacío] -> Filtra KPI INDAP (Color Azul).
+ * @estado:      [VERIFIED | PENDING] -> Estado de validación en Blockchain.
  * @lat / @lon: Coordenadas geográficas para el posicionamiento en Mapa Leaflet.
- * @demo:       [SI | NO] -> SI: dato generado aleatoriamente; NO: dato real capturado.
+ * @demo:        [SI | NO] -> SI: dato generado aleatoriamente; NO: dato real capturado.
  */
 
 console.log("✅ Sistema AndesChain: Sincronizando Infraestructura con Soporte Demo y Evidencia Visual...");
@@ -34,9 +34,9 @@ const seedData = [
         historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
         img: "assets/cosecha.jpg", 
         hitos: [
-            { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández",img: "assets/preparacion.jpg" },
-            { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos.",img: "assets/siembra.jpg" },
-            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual a las 8:34 am. Temp: 20°C.",img: "assets/cosecha.jpg" }
+            { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández", img: "assets/preparacion.jpg" },
+            { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos.", img: "assets/siembra.jpg" },
+            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual a las 8:34 am. Temp: 20°C.", img: "assets/cosecha.jpg" }
         ]
     },
     {
@@ -210,11 +210,11 @@ for (let i = 1; i <= 100; i++) {
         fecha: `${1 + (i % 14)} Feb 2026`,
         estado: "VERIFIED",
         demo: "SI",
-        img: prodBase.img, // CADA REGISTRO TIENE AHORA UNA FOTO VINCULADA
+        img: prodBase.img,
         historia: `Registro generado automáticamente para demostración de densidad territorial en ${sector.n}.`,
         hitos: [
-            { titulo: "Validación Satelital", fecha: "Feb 2026", desc: "Punto georeferenciado verificado." },
-            { titulo: "Certificación de Manejo", fecha: "Feb 2026", desc: `Producción bajo estándar ${prodBase.m}.` }
+            { titulo: "Validación Satelital", fecha: "Feb 2026", desc: "Punto georeferenciado verificado.", img: prodBase.img },
+            { titulo: "Certificación de Manejo", fecha: "Feb 2026", desc: `Producción bajo estándar ${prodBase.m}.`, img: prodBase.img }
         ]
     });
 }
