@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         tailwind.config = {
@@ -20,7 +22,7 @@
     </script>
     
     <style>
-        body { background-color: #0f172a; color: #f8fafc; } /* Tema oscuro para resaltar la fotografía */
+        body { background-color: #0f172a; color: #f8fafc; }
         .glass-header { background: rgba(15, 23, 42, 0.8); backdrop-blur: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .timeline-container { position: relative; padding-left: 2rem; }
         .timeline-line { position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #10B981, #1e293b); }
@@ -28,6 +30,8 @@
         .timeline-card:hover { border-color: #10B981; transform: translateX(5px); }
         .img-cert { border-radius: 18px; filter: saturate(1.1); }
         .badge-verified { background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #10B981; }
+        /* Estilo para el mapa satelital */
+        #timeline-map { border-radius: 2rem; filter: grayscale(0.2) contrast(1.1); }
     </style>
 </head>
 <body class="pb-20 antialiased">
@@ -44,7 +48,7 @@
 
     <main id="timeline-app" class="pt-28 px-6 max-w-2xl mx-auto hidden">
         
-        <header class="mb-12">
+        <header class="mb-10">
             <div class="inline-flex items-center gap-2 badge-verified px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">
                 <i class="fas fa-shield-check"></i> Protocolo de Confianza Activo
             </div>
@@ -56,24 +60,54 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <i class="fas fa-map-marker-alt text-corp-500"></i>
-                    <span id="p-location">...</span>
+                    <span id="p-location" class="font-medium">...</span>
                 </div>
             </div>
         </header>
+
+        <section class="grid grid-cols-3 gap-3 mb-10">
+            <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
+                <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Ciclo Cultivo</p>
+                <span id="kpi-days" class="text-xl font-display font-bold text-corp-500">---</span>
+                <p class="text-[9px] text-slate-400">Días</p>
+            </div>
+            <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
+                <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Huella Origen</p>
+                <span class="text-xl font-display font-bold text-corp-500">0.0</span>
+                <p class="text-[9px] text-slate-400">Km</p>
+            </div>
+            <div class="bg-slate-800/40 p-4 rounded-3xl border border-white/5 text-center">
+                <p class="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1">Soberanía</p>
+                <span class="text-xs font-display font-bold text-white block mt-2 tracking-tighter uppercase">Alimentaria</span>
+            </div>
+        </section>
+
+        <section class="mb-12 overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900 relative">
+            <div class="absolute top-4 right-4 z-[400] bg-dark-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                <i class="fas fa-satellite text-red-500 text-[8px] animate-pulse"></i>
+                <span class="text-[8px] font-bold text-white uppercase tracking-widest">Live Sat-Feed</span>
+            </div>
+            <div id="timeline-map" style="height: 220px; width: 100%;"></div>
+            <div class="p-4 bg-slate-900/90 flex justify-between items-center border-t border-white/5">
+                <p id="geo-coords" class="font-mono text-[9px] text-slate-500">COORD: ---</p>
+                <a id="btn-google-maps" href="#" target="_blank" class="text-[9px] font-bold text-corp-500 uppercase tracking-widest">Ver Mapa <i class="fas fa-external-link-alt ml-1"></i></a>
+            </div>
+        </section>
 
         <section class="space-y-12">
             <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8">Cronología Inmutable</h3>
             
             <div class="timeline-container" id="timeline-list">
                 <div class="timeline-line"></div>
-                </div>
+            </div>
         </section>
 
         <footer class="mt-20 pt-10 border-t border-white/10 text-center">
             <img src="assets/favicon.png" class="h-10 mx-auto opacity-20 mb-4 grayscale">
-            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Este pasaporte digital ha sido emitido bajo el <br>Protocolo AndesChain de Confianza Territorial.</p>
-        </div>
-    </footer>
+            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest leading-relaxed">
+                Este pasaporte digital ha sido emitido bajo el <br>Protocolo AndesChain de Confianza Territorial.
+            </p>
+        </footer>
 
     </main>
 
@@ -88,9 +122,48 @@
             setTimeout(renderTimeline, 800);
         };
 
+        function calculateCycle(hitos) {
+            if (hitos.length < 2) return "---";
+            
+            const parseDate = (dateStr) => {
+                const months = { "Ene": 0, "Feb": 1, "Mar": 2, "Abr": 3, "May": 4, "Jun": 5, "Jul": 6, "Ago": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dic": 11 };
+                const parts = dateStr.split(' ');
+                // Si la fecha tiene el formato "30 Ene 2026"
+                if (parts.length === 3) {
+                    return new Date(parts[2], months[parts[1]], parts[0]);
+                }
+                return new Date();
+            };
+
+            try {
+                // Ordenar por fecha antes de calcular
+                const sortedHitos = [...hitos].sort((a, b) => parseDate(a.fecha) - parseDate(b.fecha));
+                const start = parseDate(sortedHitos[0].fecha);
+                const end = parseDate(sortedHitos[sortedHitos.length - 1].fecha);
+                const diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24));
+                return diff;
+            } catch (e) { return "---"; }
+        }
+
+        function initTimelineMap(lat, lon) {
+            const tMap = L.map('timeline-map', { zoomControl: false, attributionControl: false }).setView([lat, lon], 16);
+            L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(tMap);
+            
+            const customIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: #10B981; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>`,
+                iconSize: [12, 12], iconAnchor: [6, 6]
+            });
+
+            L.marker([lat, lon], { icon: customIcon }).addTo(tMap);
+            
+            document.getElementById('btn-google-maps').href = `https://www.google.com/maps?q=${lat},${lon}`;
+            document.getElementById('geo-coords').innerText = `LAT: ${lat} | LON: ${lon}`;
+        }
+
         function renderTimeline() {
             const params = new URLSearchParams(window.location.search);
-            const id = params.get('id') || "1001"; // Por defecto Papa Astrid para la demo
+            const id = params.get('id') || "1001";
             const db = window.getProductos();
             const p = db.find(item => item.id == id);
 
@@ -99,38 +172,37 @@
                 return;
             }
 
-            // Llenar datos cabecera
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('timeline-app').classList.remove('hidden');
             document.getElementById('p-name').innerText = p.nombre;
             document.getElementById('p-producer').innerText = p.productor;
             document.getElementById('p-location').innerText = p.ubicacion;
 
+            // Inicializar Mapa y KPIs
+            initTimelineMap(p.lat, p.lon);
+            document.getElementById('kpi-days').innerText = calculateCycle(p.hitos);
+
             const container = document.getElementById('timeline-list');
-            
-            // Invertimos los hitos para que el más reciente aparezca arriba (UX de Feed)
             const hitosInvertidos = [...p.hitos].reverse();
 
             hitosInvertidos.forEach((h, index) => {
                 const item = document.createElement('div');
                 item.className = "relative pl-10 pb-12 group";
-                
-                // Si el hito no tiene imagen en la DB, usamos una genérica de la agricultura
                 const imgSource = h.img || `https://loremflickr.com/800/500/agriculture,farm?lock=${index}`;
                 
                 item.innerHTML = `
                     <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] z-10"></div>
                     <div class="timeline-card p-6">
                         <div class="flex justify-between items-start mb-4">
-                            <h4 class="font-display font-bold text-xl text-white">${h.titulo}</h4>
+                            <h4 class="font-display font-bold text-xl text-white leading-tight">${h.titulo}</h4>
                             <span class="text-[10px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded-md uppercase">${h.fecha}</span>
                         </div>
                         <p class="text-slate-400 text-sm leading-relaxed mb-6 font-light">${h.desc}</p>
-                        <div class="overflow-hidden rounded-2xl border border-white/5">
+                        <div class="overflow-hidden rounded-2xl border border-white/5 mb-4">
                             <img src="${imgSource}" class="w-full h-auto img-cert hover:scale-105 transition-transform duration-700">
                         </div>
-                        <div class="mt-4 flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-                            <i class="fas fa-fingerprint"></i> Hash Verificado: 0x${Math.random().toString(16).slice(2, 10)}...
+                        <div class="flex items-center gap-2 text-[8px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                            <i class="fas fa-fingerprint"></i> Hash: 0x${Math.random().toString(16).slice(2, 10).toUpperCase()}
                         </div>
                     </div>
                 `;
