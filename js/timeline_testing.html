@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasaporte de Origen | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                colors: { 'corp': { 500: '#10B981', 600: '#059669', 900: '#022C22' } },
+                fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] }
+            } }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; } /* Tema oscuro para resaltar la fotografía */
+        .glass-header { background: rgba(15, 23, 42, 0.8); backdrop-blur: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .timeline-container { position: relative; padding-left: 2rem; }
+        .timeline-line { position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #10B981, #1e293b); }
+        .timeline-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; transition: all 0.3s ease; }
+        .timeline-card:hover { border-color: #10B981; transform: translateX(5px); }
+        .img-cert { border-radius: 18px; filter: saturate(1.1); }
+        .badge-verified { background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; color: #10B981; }
+    </style>
+</head>
+<body class="pb-20 antialiased">
+
+    <nav class="fixed w-full glass-header py-4 px-6 z-50 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="assets/favicon.png" class="h-6">
+            <span class="font-display font-bold text-xs uppercase tracking-widest text-white">AndesChain Ledger</span>
+        </div>
+        <button onclick="window.history.back()" class="text-xs font-bold text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-times mr-2"></i>CERRAR
+        </button>
+    </nav>
+
+    <main id="timeline-app" class="pt-28 px-6 max-w-2xl mx-auto hidden">
+        
+        <header class="mb-12">
+            <div class="inline-flex items-center gap-2 badge-verified px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">
+                <i class="fas fa-shield-check"></i> Protocolo de Confianza Activo
+            </div>
+            <h1 id="p-name" class="font-display text-5xl font-extrabold text-white leading-tight mb-4 italic">...</h1>
+            <div class="flex flex-wrap items-center gap-6 text-slate-400 text-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-user-circle text-corp-500"></i>
+                    <span id="p-producer" class="font-medium">...</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-corp-500"></i>
+                    <span id="p-location">...</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="space-y-12">
+            <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8">Cronología Inmutable</h3>
+            
+            <div class="timeline-container" id="timeline-list">
+                <div class="timeline-line"></div>
+                </div>
+        </section>
+
+        <footer class="mt-20 pt-10 border-t border-white/10 text-center">
+            <img src="assets/favicon.png" class="h-10 mx-auto opacity-20 mb-4 grayscale">
+            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Este pasaporte digital ha sido emitido bajo el <br>Protocolo AndesChain de Confianza Territorial.</p>
+        </div>
+    </footer>
+
+    </main>
+
+    <div id="loader" class="fixed inset-0 bg-slate-900 z-[60] flex flex-col items-center justify-center">
+        <div class="w-10 h-10 border-2 border-corp-500/20 border-t-corp-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Decodificando Bloques</p>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        window.onload = function() {
+            setTimeout(renderTimeline, 800);
+        };
+
+        function renderTimeline() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id') || "1001"; // Por defecto Papa Astrid para la demo
+            const db = window.getProductos();
+            const p = db.find(item => item.id == id);
+
+            if (!p) {
+                alert("Expediente no encontrado.");
+                return;
+            }
+
+            // Llenar datos cabecera
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('timeline-app').classList.remove('hidden');
+            document.getElementById('p-name').innerText = p.nombre;
+            document.getElementById('p-producer').innerText = p.productor;
+            document.getElementById('p-location').innerText = p.ubicacion;
+
+            const container = document.getElementById('timeline-list');
+            
+            // Invertimos los hitos para que el más reciente aparezca arriba (UX de Feed)
+            const hitosInvertidos = [...p.hitos].reverse();
+
+            hitosInvertidos.forEach((h, index) => {
+                const item = document.createElement('div');
+                item.className = "relative pl-10 pb-12 group";
+                
+                // Si el hito no tiene imagen en la DB, usamos una genérica de la agricultura
+                const imgSource = h.img || `https://loremflickr.com/800/500/agriculture,farm?lock=${index}`;
+                
+                item.innerHTML = `
+                    <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-corp-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] z-10"></div>
+                    <div class="timeline-card p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="font-display font-bold text-xl text-white">${h.titulo}</h4>
+                            <span class="text-[10px] font-black text-corp-500 bg-corp-500/10 px-2 py-1 rounded-md uppercase">${h.fecha}</span>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6 font-light">${h.desc}</p>
+                        <div class="overflow-hidden rounded-2xl border border-white/5">
+                            <img src="${imgSource}" class="w-full h-auto img-cert hover:scale-105 transition-transform duration-700">
+                        </div>
+                        <div class="mt-4 flex items-center gap-2 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                            <i class="fas fa-fingerprint"></i> Hash Verificado: 0x${Math.random().toString(16).slice(2, 10)}...
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
