@@ -34,9 +34,9 @@ const seedData = [
         historia: "Papas agroecologicas con prácticas iniciales de agricultura biodinámica. Producción y cosecha familiar utilizada con fines educativos.",
         img: "assets/cosecha.jpg", 
         hitos: [
-            { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández" },
-            { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos." },
-            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual a las 8:34 am. Temp: 20°C." }
+            { titulo: "Preparación terreno", fecha: "1 Oct 2025", desc: "Realizado por Francisco Toto Hernández",img: "assets/preparacion.jpg" },
+            { titulo: "Siembra", fecha: "16 Oct 2025", desc: "Instancia familiar en donde todos sembramos.",img: "assets/siembra.jpg" },
+            { titulo: "Cosecha", fecha: "30 Ene 2026", desc: "Cosecha y recolección manual a las 8:34 am. Temp: 20°C.",img: "cosecha.jpg" }
         ]
     },
     {
