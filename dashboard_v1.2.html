@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Dashboard Territorial</title>
+    <title>AndesChain | Command Center BI</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,30 +32,27 @@
         #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #0f172a; }
         #map { height: 100%; width: 100%; z-index: 1; }
         
-        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
-        .btn-fullscreen { position: absolute; top: 20px; right: 20px; z-index: 1001; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; }
-
         .floating-hud { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
         
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        .leaflet-bottom.leaflet-right { z-index: 1005; bottom: 20px; right: 20px; }
+        /* Control de Capas Custom */
         .leaflet-control-layers { border: none !important; border-radius: 1rem !important; padding: 12px !important; font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; }
 
-        .chart-container { height: 100px; position: relative; }
-        .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 10px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-        .legend-item { display: flex; items-center; gap: 3px; }
-        .dot { width: 5px; height: 5px; border-radius: 50%; }
+        /* Popup AndesChain v2.0 */
+        .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.2) !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
+        .popup-img-frame { height: 160px; width: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #f1f5f9; }
+        .popup-img-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Leyenda de Niveles CIREN */
+        .map-legend { position: absolute; bottom: 120px; right: 20px; z-index: 1000; width: 180px; }
 
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 5000; }
         .blur-content { filter: blur(25px); pointer-events: none; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
-
-        /* Estilos Popup AndesChain */
-        .leaflet-popup-content-wrapper { border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; }
-        .leaflet-popup-content { margin: 0 !important; width: 220px !important; }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -64,16 +61,13 @@
         <div class="max-w-sm w-full text-center space-y-10">
             <div class="flex flex-col items-center gap-3">
                 <img src="assets/favicon.png" class="h-12">
-                <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain Dashboard</h2>
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">
-                    Acceso restringido a unidades de fomento productivo y planificación territorial municipal.
-                </p>
+                <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain BI</h2>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest px-8 leading-relaxed">Acceso restringido a unidades municipales de fomento productivo.</p>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all placeholder:text-slate-200">
-                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear Territorio</button>
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear</button>
             </div>
-            <p class="text-[8px] text-fintual-mute font-medium uppercase tracking-widest">Infraestructura Digital de Trazabilidad 2026</p>
         </div>
     </div>
 
@@ -98,13 +92,13 @@
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros</p>
                     <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
                 </div>
-                <div class="text-center border-l border-fintual-gray pl-8">
+                <div class="text-center border-l border-fintual-gray pl-8 text-indigo-600">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">INDAP</p>
-                    <h4 id="count-indap" class="text-lg font-display font-bold text-indigo-600 leading-none">0</h4>
+                    <h4 id="count-indap" class="text-lg font-display font-bold leading-none">0</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia</p>
-                    <h4 id="kpi-resiliencia" class="text-lg font-display font-bold text-brand-500 leading-none">0%</h4>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-brand-600">Resiliencia</p>
+                    <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">CO2 Ahorrado</p>
@@ -119,44 +113,33 @@
             <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col gap-4 pointer-events-none">
                 <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
                     <h2 class="font-display font-bold text-sm mb-4">Actores Locales</h2>
-                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
-                    <div class="mt-4 pt-4 border-t border-black/5">
-                        <p class="text-[7px] text-fintual-mute font-bold uppercase">Fuente: CIREN · DGA 2026</p>
-                    </div>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[400px]"></div>
                 </div>
             </div>
 
-            <div class="absolute top-6 right-6 z-[1000] w-52 flex flex-col gap-4 pointer-events-none">
+            <div class="absolute top-6 right-6 z-[1000] w-48 flex flex-col gap-4 pointer-events-none">
                 <div class="floating-hud p-5 space-y-8 text-center pointer-events-auto">
-                    <div>
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Segmentación Actores</p>
-                        <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
-                        <div class="chart-legend">
-                            <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
-                            <div class="legend-item"><span class="dot bg-[#4E5AF0]"></span> EMP</div>
-                            <div class="legend-item"><span class="dot bg-[#111111]"></span> CIA</div>
-                        </div>
-                    </div>
-                    <div class="pt-4 border-t border-black/5">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Sostenibilidad Manejo</p>
-                        <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
-                        <div class="chart-legend">
-                            <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
-                            <div class="legend-item"><span class="dot bg-[#10B981]"></span> AGRO</div>
-                            <div class="legend-item"><span class="dot bg-[#F2F2F2]"></span> TRAD</div>
-                        </div>
-                    </div>
+                    <div><p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Segmentación</p><canvas id="chartSegmentacion"></canvas></div>
+                    <div class="pt-4 border-t border-black/5"><p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Sostenibilidad</p><canvas id="chartProduccion"></canvas></div>
+                </div>
+            </div>
+
+            <div id="soil-legend" class="map-legend floating-hud p-4 space-y-3 hidden">
+                <p class="text-[7px] font-extrabold uppercase text-brand-900 tracking-widest">Capacidad de Suelo (CIREN)</p>
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#059669]"></div><span class="text-[8px] font-bold">Clase I (Excelente)</span></div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[#A3E635]"></div><span class="text-[8px] font-bold">Clase III (Limitaciones)</span></div>
+                </div>
+                <div class="pt-2 border-t border-black/5">
+                    <p class="text-[7px] font-extrabold uppercase text-fintual-blue">Estado Hídrico (DGA)</p>
+                    <p class="text-[7px] text-fintual-mute italic">Áreas con decreto de escasez y restricción de riego.</p>
                 </div>
             </div>
 
             <div id="map-wrapper">
-                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt"></i></div>
                 <div id="map"></div>
-                <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md flex items-center justify-center hidden">
-                    <div class="flex flex-col items-center gap-3">
-                        <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sincronizando Territorio</span>
-                    </div>
+                <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
+                    <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
         </div>
@@ -176,7 +159,6 @@
         }
 
         window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
-        function toggleFullscreen() { document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); setTimeout(() => map.invalidateSize(), 500); }
 
         function initMap() {
             if (map) return;
@@ -188,20 +170,23 @@
             waterLayer = L.layerGroup(); 
             soilLayer = L.layerGroup();
 
-            const baseMaps = { "Visualización Mapa": baseLight, "Visualización Satelital": baseSat };
+            const baseMaps = { "Esquema": baseLight, "Satelital": baseSat };
             const overlays = { 
-                "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica (DGA)</span>": waterLayer, 
-                "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo (CIREN)</span>": soilLayer 
+                "<span class='text-[9px] font-extrabold text-fintual-blue uppercase'>💧 Estrés Hídrico (DGA)</span>": waterLayer, 
+                "<span class='text-[9px] font-extrabold text-brand-600 uppercase'>🌱 Calidad de Suelo (CIREN)</span>": soilLayer 
             };
+            
             L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
+            
+            // Detectar cambios en las capas para mostrar leyenda
+            map.on('overlayadd', e => { if (e.name.includes('CIREN')) document.getElementById('soil-legend').classList.remove('hidden'); });
+            map.on('overlayremove', e => { if (e.name.includes('CIREN')) document.getElementById('soil-legend').classList.add('hidden'); });
+
             updateTerritory("Paine");
         }
 
         async function updateTerritory(comuna) {
-            const loader = document.getElementById('loader');
-            loader.classList.remove('hidden');
-            const timeoutId = setTimeout(() => loader.classList.add('hidden'), 2500);
-
+            document.getElementById('loader').classList.remove('hidden');
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             waterLayer.clearLayers(); soilLayer.clearLayers();
@@ -216,7 +201,6 @@
                     maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2, fillOpacity: 0 } }).addTo(map);
 
-                    // --- ZONIFICACIÓN CIREN REALISTA ---
                     const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
                     if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
 
@@ -231,7 +215,7 @@
                 }
             } catch (e) {}
 
-            const raw = window.getProductos();
+            const raw = window.getProductos ? window.getProductos() : [];
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
@@ -241,7 +225,7 @@
 
             renderList(filtered);
             renderMarkers(filtered);
-            setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); clearTimeout(timeoutId); }, 300);
+            setTimeout(() => { initCharts(filtered); document.getElementById('loader').classList.add('hidden'); }, 300);
         }
 
         function renderMarkers(data) {
@@ -251,12 +235,14 @@
                 const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
                 m.options.productId = p.id;
                 m.bindPopup(`
-                    <div class="w-52 overflow-hidden rounded-xl bg-white font-sans shadow-xl border border-black/5">
-                        <img src="${p.img}" class="h-28 w-full object-cover">
-                        <div class="p-3">
-                            <p class="font-display font-bold text-[13px] leading-tight text-brand-900 mb-0.5">${p.nombre}</p>
-                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-3 italic">Productor: ${p.productor}</p>
-                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[9px] font-extrabold py-2.5 rounded-lg uppercase tracking-[0.1em] hover:bg-brand-500 transition-all shadow-lg shadow-brand-900/10">Ver Pasaporte</a>
+                    <div class="overflow-hidden bg-white font-sans">
+                        <div class="popup-img-frame">
+                            <img src="${p.img}">
+                        </div>
+                        <div class="p-4 text-center">
+                            <p class="font-display font-bold text-[14px] leading-tight text-brand-900 mb-0.5">${p.nombre}</p>
+                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest italic mb-4">Productor: ${p.productor}</p>
+                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[10px] font-extrabold py-2.5 rounded-xl uppercase tracking-[0.1em] hover:bg-brand-500 transition-all shadow-lg shadow-brand-900/10">Ver Pasaporte</a>
                         </div>
                     </div>`, { padding: 0 });
                 markers.push(m);
@@ -267,7 +253,7 @@
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
                     <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shadow-sm bg-slate-100">
-                    <div class="min-w-0">
+                    <div class="min-w-0 text-left">
                         <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
                     </div>
@@ -277,10 +263,14 @@
         function focusMarker(id) { const target = markers.find(m => m.options.productId === id); if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); } }
 
         function initCharts(data) {
-            const ctx1 = document.getElementById('chartSegmentacion'); if (chart1) chart1.destroy();
-            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-            const ctx2 = document.getElementById('chartProduccion'); if (chart2) chart2.destroy();
-            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length, data.filter(p=>p.manejo==='Tradicional').length], backgroundColor: ['#059669', '#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            const ctx1 = document.getElementById('chartSegmentacion');
+            const ctx2 = document.getElementById('chartProduccion');
+            if (!ctx1 || !ctx2) return;
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            const cfg = { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
+            
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length, data.filter(p=>p.manejo==='Tradicional').length], backgroundColor: ['#059669', '#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: cfg });
         }
 
         function toggleDemoData() { showDemo = !showDemo; document.getElementById('demo-btn').innerText = showDemo ? "Demos: On" : "Demos: Off"; updateTerritory(document.getElementById('comuna-selector').value); }
