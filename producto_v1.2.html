@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de Origen v1.2 | AndesChain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .product-card { border-radius: 3rem; overflow: hidden; }
+        .qr-overlay { backdrop-filter: blur(4px); background: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-6">
+    <div class="max-w-sm w-full bg-white product-card shadow-2xl shadow-slate-200 border border-slate-100">
+        <div class="relative h-80">
+            <img src="https://images.unsplash.com/photo-1595433707802-68267d83760a?w=600" class="w-full h-full object-cover">
+            <div class="absolute top-6 left-6 bg-white/90 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">
+                <i class="fas fa-check-circle text-emerald-500 mr-1"></i> Origen Verificado
+            </div>
+        </div>
+
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 leading-none mb-2">Sandía Primor</h1>
+                    <p class="text-emerald-600 font-bold text-sm uppercase">Sector Aculeo, Paine</p>
+                </div>
+                <div class="h-14 w-14 qr-overlay border border-slate-200 rounded-2xl flex items-center justify-center text-xs">
+                    QR
+                </div>
+            </div>
+            
+            <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                Cultivada bajo protocolos de agricultura familiar campesina con riego eficiente. Cosechada el 15 de Octubre de 2025.
+            </p>
+
+            <hr class="mb-6">
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">Productor</p>
+                    <p class="font-bold text-slate-800">Juan González</p>
+                </div>
+                <a href="timeline_v1.2.html" class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-emerald-600 hover:text-white transition-all">
+                    Ver Historia
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
