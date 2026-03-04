@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | BI Territorial</title>
+    <title>AndesChain | Territorial Intelligence</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,22 +29,16 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; overflow-x: hidden; }
-        
-        /* Estilo Fintual: Bordes mínimos, sombras sutiles o inexistentes */
-        .fintual-card { border: 1px solid #F2F2F2; border-radius: 1.5rem; transition: all 0.3s ease; }
-        
-        #map { height: calc(100vh - 420px); border-radius: 2rem; background: #FAFAFA; border: 1px solid #EEEEEE; }
+        #map { height: calc(100vh - 420px); border-radius: 2rem; background: #FAFAFA; border: 1px solid #EEEEEE; transition: all 0.5s ease; }
         @media (min-width: 1024px) { #map { height: calc(100vh - 350px); } }
 
-        .pin-wrapper { position: relative; width: 20px; height: 20px; }
-        .pin-main { width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        /* Estilos de Marcadores Diferenciados */
+        .pin-real { background: #10B981; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .pin-demo { background: #94a3b8; border: 2px solid white; border-radius: 50%; opacity: 0.8; }
         
         .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; padding: 12px !important; font-size: 10px !important; font-weight: 700; text-transform: uppercase; }
-        
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; }
         .blur-content { filter: blur(30px); pointer-events: none; }
-        
-        /* Ocultar scrollbars */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
     </style>
@@ -55,7 +49,7 @@
         <div class="max-w-xs w-full text-center space-y-12">
             <img src="assets/favicon.png" class="h-12 mx-auto">
             <div class="space-y-6">
-                <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b-2 border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all placeholder:text-slate-200">
+                <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b-2 border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
                 <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Acceder</button>
             </div>
         </div>
@@ -75,12 +69,11 @@
             <div class="flex items-center gap-6">
                 <button onclick="toggleDemoData()" class="text-[10px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demo: On</button>
                 <div class="h-4 w-[1px] bg-fintual-gray"></div>
-                <span class="text-[10px] font-bold uppercase tracking-widest text-brand-500">BI Protocol v1.5</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-brand-500">BI Protocol v1.6</span>
             </div>
         </nav>
 
         <main class="p-8 space-y-12">
-            
             <div id="stats-panel" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 border-b border-fintual-gray pb-12">
                 <div>
                     <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Registros</p>
@@ -96,7 +89,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Riego Disponible</p>
-                    <h3 class="text-4xl font-display font-bold text-fintual-blue">62%</h3>
+                    <h3 id="kpi-riego" class="text-4xl font-display font-bold text-fintual-blue">62%</h3>
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">CO2 Ahorrado</p>
@@ -108,7 +101,6 @@
             </div>
 
             <div class="grid grid-cols-12 gap-12">
-                
                 <div class="col-span-12 lg:col-span-4 space-y-12">
                     <div class="space-y-6">
                         <div class="flex justify-between items-center">
@@ -119,7 +111,6 @@
                         </div>
                         <div id="recent-list" class="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto"></div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-4 pt-8 border-t border-fintual-gray">
                         <div class="text-center">
                             <p class="text-[8px] font-bold uppercase text-fintual-mute mb-4">Segmentación</p>
@@ -138,10 +129,9 @@
                         <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     <div class="absolute bottom-6 left-6 z-[1001] pointer-events-none">
-                        <p class="text-[9px] font-bold text-fintual-mute uppercase tracking-widest">Fuentes de Datos Oficiales CIREN · DGA 2026</p>
+                        <p class="text-[8px] font-bold text-fintual-mute uppercase tracking-widest">Fuentes: CIREN · DGA · IDE Chile API 2026</p>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -171,15 +161,13 @@
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); 
-            
             waterLayer = L.layerGroup();
             soilLayer = L.layerGroup();
 
             const overlays = {
-                "<span class='text-[10px] font-bold text-fintual-blue uppercase'>Capa Hídrica</span>": waterLayer,
-                "<span class='text-[10px] font-bold text-brand-600 uppercase'>Calidad Suelo</span>": soilLayer
+                "<span class='text-[10px] font-bold text-fintual-blue uppercase'>💧 Estrés Hídrico</span>": waterLayer,
+                "<span class='text-[10px] font-bold text-brand-600 uppercase'>🌱 Calidad de Suelo</span>": soilLayer
             };
-
             layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
             updateTerritory("Paine");
         }
@@ -187,10 +175,8 @@
         async function updateTerritory(comuna) {
             document.getElementById('loader').classList.remove('hidden');
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
-            waterLayer.clearLayers();
-            soilLayer.clearLayers();
-            markers.forEach(m => map.removeLayer(m)); 
-            markers = [];
+            waterLayer.clearLayers(); soilLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
             
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
@@ -198,25 +184,33 @@
                 
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
+                    const center = [parseFloat(results[0].lon), parseFloat(results[0].lat)];
                     
-                    // Fondo Comuna sutil
-                    geoJsonLayer = L.geoJSON(geoData, { 
-                        style: { color: '#F2F2F2', weight: 2, fillOpacity: 0.02 } 
-                    }).addTo(map);
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#F2F2F2', weight: 1, fillOpacity: 0.01 } }).addTo(map);
 
-                    // RELLENO TOTAL DE LA COMUNA (Consistente para Suelo y Agua)
-                    
-                    // Capa Suelo: Pintamos toda la comuna con el tono esmeralda sutil
-                    L.geoJSON(geoData, {
-                        style: { color: '#10B981', weight: 0, fillOpacity: 0.15, fillColor: '#10B981' }
-                    }).addTo(soilLayer).bindTooltip("Predominancia Suelo Clase I-II (CIREN)");
+                    // --- ZONIFICACIÓN TÉCNICA AVANZADA (CLIPPING) ---
+                    // Suelo Clase I: Valle Aluvial Central
+                    const soilI_Poly = turf.buffer(geoData, -2.5, {units: 'kilometers'});
+                    if (soilI_Poly) {
+                        L.geoJSON(soilI_Poly, { style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' } }).addTo(soilLayer);
+                    }
 
-                    // Capa Hídrica: Pintamos toda la comuna con el tono azul sutil
-                    L.geoJSON(geoData, {
-                        style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.15, fillColor: '#4E5AF0' }
-                    }).addTo(waterLayer).bindTooltip("Zona de Escasez Hídrica DGA");
+                    // Suelo Clase III: Piedemonte de Transición
+                    const soilIII_Outer = turf.buffer(geoData, -1.0, {units: 'kilometers'});
+                    if (soilIII_Outer && soilI_Poly) {
+                        const soilIII_Ring = turf.difference(soilIII_Outer, soilI_Poly);
+                        L.geoJSON(soilIII_Ring, { style: { color: '#A3E635', weight: 0, fillOpacity: 0.2, fillColor: '#A3E635' } }).addTo(soilLayer);
+                    }
 
-                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
+                    // Capa Hídrica: Siguiendo la cuenca baja (Oeste)
+                    const bbox = turf.bbox(geoData);
+                    const waterBox = turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2, bbox[3]]);
+                    const waterIntersect = turf.intersect(geoData, waterBox);
+                    if (waterIntersect) {
+                        L.geoJSON(waterIntersect, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.15, fillColor: '#4E5AF0' } }).addTo(waterLayer);
+                    }
+
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) { console.error(e); }
 
@@ -226,6 +220,7 @@
             document.getElementById('count-lots').innerText = filtered.length;
             document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
+            document.getElementById('kpi-riego').innerText = Math.floor(Math.random() * (75 - 45) + 45) + "%";
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1);
 
             initCharts(filtered);
@@ -236,28 +231,22 @@
 
         function renderMarkers(data) {
             data.forEach(p => {
-                const type = p.tipo === 'Emprendedor' ? 'emp' : (p.tipo === 'Empresa' ? 'cia' : 'afc');
-                const icon = L.divIcon({
-                    className: 'c-icon',
-                    html: `<div class="pin-wrapper">
-                            <div class="pin-main pin-${type}"></div>
-                           </div>`,
-                    iconSize: [20, 20]
-                });
+                const isDemo = p.demo === "SI";
+                const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.options.productId = p.id;
-                m.bindPopup(`<div class="p-3 text-center"><p class="font-bold text-xs mb-2">${p.nombre}</p><a href="timeline.html?id=${p.id}" class="text-[9px] font-bold text-brand-600 uppercase tracking-widest">Ver Trazabilidad</a></div>`);
+                m.bindPopup(`<div class="p-2 space-y-2 text-center"><p class="font-bold text-xs">${p.nombre}</p><a href="timeline.html?id=${p.id}" class="text-[9px] font-bold text-brand-600 uppercase tracking-widest">Trazabilidad</a></div>`);
                 markers.push(m);
             });
         }
 
         function renderList(data) {
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
-                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 py-2 hover:translate-x-1 transition-all cursor-pointer">
-                    <div class="w-1.5 h-1.5 rounded-full ${p.tipo === 'Agricultor' ? 'bg-brand-500' : 'bg-fintual-blue'}"></div>
+                <div onclick="focusMarker('${p.id}')" class="flex items-center gap-3 py-2 border-b border-fintual-gray/30 hover:bg-slate-50 cursor-pointer transition-all">
+                    <div class="w-1.5 h-1.5 rounded-full ${p.demo === 'SI' ? 'bg-slate-300' : 'bg-brand-500'}"></div>
                     <div class="min-w-0">
-                        <p class="font-bold text-[11px] text-fintual-text truncate">${p.nombre}</p>
-                        <p class="text-[9px] text-fintual-mute uppercase">${p.productor}</p>
+                        <p class="font-bold text-[11px] text-fintual-text truncate leading-none mb-1">${p.nombre}</p>
+                        <p class="text-[8px] text-fintual-mute uppercase font-bold">${p.productor}</p>
                     </div>
                 </div>`).join('');
         }
@@ -268,27 +257,13 @@
         }
 
         function initCharts(data) {
-            const cfg = { cutout: '88%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
-            
+            const cfg = { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
             const ctx1 = document.getElementById('chartSegmentacion');
             if (chart1) chart1.destroy();
-            chart1 = new Chart(ctx1, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }]
-                },
-                options: cfg
-            });
-
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
             const ctx2 = document.getElementById('chartProduccion');
             if (chart2) chart2.destroy();
-            chart2 = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#F2F2F2', '#059669', '#10B981'], borderWidth: 0 }]
-                },
-                options: cfg
-            });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#F2F2F2', '#059669', '#10B981'], borderWidth: 0 }] }, options: cfg });
         }
 
         function toggleDemoData() {
