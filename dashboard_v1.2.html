@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Panel Territorial</title>
+    <title>AndesChain | Dashboard Territorial Municipal</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,6 +13,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -28,27 +30,43 @@
     <style>
         body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; }
         #map-wrapper { flex: 1; position: relative; overflow: hidden; border-radius: 2rem; border: 1px solid #EEEEEE; margin: 0 24px 24px 24px; }
-        #map { height: 100%; width: 100%; background: #0f172a; transition: all 0.5s ease; }
+        #map { height: 100%; width: 100%; background: #0f172a; transition: all 0.5s ease; z-index: 1; }
+        
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; border-radius: 0 !important; margin: 0 !important; }
-        .btn-fullscreen { position: absolute; top: 20px; right: 20px; z-index: 1001; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; }
-        .floating-hud { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .btn-fullscreen { position: absolute; top: 20px; right: 20px; z-index: 1001; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; }
+
+        /* HUDs: Evitar solapamiento con capas de Leaflet */
+        .floating-hud { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
+        
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
+        
+        /* Ajuste específico para el control de capas */
+        .leaflet-bottom.leaflet-right { bottom: 20px; right: 20px; z-index: 1002; }
+        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important; padding: 12px !important; font-family: 'Outfit', sans-serif; }
+
+        canvas { max-height: 100px !important; margin: 0 auto; }
+        .chart-legend { font-size: 8px; font-weight: 700; text-transform: uppercase; color: #888; margin-top: 8px; display: flex; justify-content: center; gap: 8px; }
+        .legend-item { display: flex; items-center; gap: 4px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+        #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 5000; }
         .blur-content { filter: blur(30px); pointer-events: none; }
-        #auth-screen { background: white; transition: all 0.5s ease; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
     </style>
 </head>
 <body class="font-sans antialiased">
 
-    <div id="auth-screen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
         <div class="max-w-xs w-full text-center space-y-10">
             <div class="flex flex-col items-center gap-2">
                 <img src="assets/favicon.png" class="h-10">
-                <span class="font-display font-bold text-sm tracking-widest uppercase">AndesChain</span>
+                <span class="font-display font-bold text-sm tracking-widest uppercase">AndesChain BI</span>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
-                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500">Desbloquear BI</button>
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500">Acceder</button>
             </div>
         </div>
     </div>
@@ -75,7 +93,7 @@
                     <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Usuarios INDAP</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">INDAP</p>
                     <h4 id="count-indap" class="text-lg font-display font-bold text-indigo-600 leading-none">0</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8">
@@ -92,10 +110,33 @@
         </nav>
 
         <div class="flex-1 relative flex flex-col overflow-hidden">
-            <div class="absolute top-6 left-12 z-[1000] w-80 max-h-[80%] flex flex-col gap-4">
-                <div class="floating-hud p-5 flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-12 z-[1000] w-72 max-h-[80%] flex flex-col gap-4 pointer-events-none">
+                <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
                     <h2 class="font-display font-bold text-sm mb-4">Actores Locales</h2>
-                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[400px]"></div>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
+                </div>
+            </div>
+
+            <div class="absolute top-6 right-12 z-[1000] w-52 flex flex-col gap-4 pointer-events-none">
+                <div class="floating-hud p-5 space-y-8 text-center pointer-events-auto">
+                    <div>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest">Segmentación</p>
+                        <canvas id="chartSegmentacion"></canvas>
+                        <div class="chart-legend">
+                            <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
+                            <div class="legend-item"><span class="dot bg-[#4E5AF0]"></span> EMP</div>
+                            <div class="legend-item"><span class="dot bg-[#111111]"></span> CIA</div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-black/5">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest">Sostenibilidad</p>
+                        <canvas id="chartProduccion"></canvas>
+                        <div class="chart-legend">
+                            <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
+                            <div class="legend-item"><span class="dot bg-[#10B981]"></span> AGRO</div>
+                            <div class="legend-item"><span class="dot bg-[#F2F2F2]"></span> TRAD</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -104,13 +145,6 @@
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
                     <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-            </div>
-
-            <div class="absolute top-6 right-12 z-[1000] w-48 flex flex-col gap-4">
-                <div class="floating-hud p-5 space-y-8 text-center">
-                    <div><p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Zonificación</p><canvas id="chartSegmentacion"></canvas></div>
-                    <div class="pt-4 border-t border-black/5"><p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Sostenibilidad</p><canvas id="chartProduccion"></canvas></div>
                 </div>
             </div>
         </div>
@@ -134,9 +168,19 @@
         function initMap() {
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); 
-            waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
-            L.control.layers({ "Mapa": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'), "Satélite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}') }, { "💧 Agua (DGA)": waterLayer, "🌱 Suelo (CIREN)": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
+            const baseLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
+            const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+            baseLight.addTo(map); 
+
+            waterLayer = L.layerGroup(); 
+            soilLayer = L.layerGroup();
+
+            const baseMaps = { "Mapa Base": baseLight, "Satélite": baseSat };
+            const overlays = { 
+                "<span style='color: #4E5AF0; font-weight:800;'>💧 ESTRÉS HÍDRICO (DGA)</span>": waterLayer, 
+                "<span style='color: #10B981; font-weight:800;'>🌱 CLASE SUELO (CIREN)</span>": soilLayer 
+            };
+            L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
             updateTerritory("Paine");
         }
 
@@ -152,11 +196,25 @@
                 const results = await res.json();
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
-                    const mask = turf.difference(turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]), geoData);
-                    maskLayer = L.geoJSON(mask, { style: { color: '#0f172a', weight: 0, fillOpacity: 0.4 } }).addTo(map);
+                    maskLayer = L.geoJSON(turf.difference(turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]), geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.4 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2, fillOpacity: 0 } }).addTo(map);
-                    const soilI = turf.buffer(geoData, -2.0, {units: 'kilometers'});
-                    if (soilI) L.geoJSON(soilI, { style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' } }).addTo(soilLayer);
+
+                    // --- CALIDAD DE SUELO (Lógica de colores consistente CIREN) ---
+                    // Suelo Clase I: Verde profundo (Alta productividad)
+                    const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
+                    if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer).bindTooltip("Clase I: Suelo sin limitaciones");
+
+                    // Suelo Clase III: Verde claro (Limitaciones moderadas)
+                    const soilIII_Outer = turf.buffer(geoData, -0.8, {units: 'kilometers'});
+                    if (soilIII_Outer && soilI) {
+                        L.geoJSON(turf.difference(soilIII_Outer, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer).bindTooltip("Clase III: Suelo con limitaciones moderadas");
+                    }
+
+                    // --- CAPA HÍDRICA (DGA - Zonas de Escasez) ---
+                    const bbox = turf.bbox(geoData);
+                    const waterArea = turf.intersect(geoData, turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]));
+                    if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer).bindTooltip("Zona de Restricción Hídrica DGA");
+
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) {}
@@ -165,6 +223,7 @@
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
+            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('count-indap').innerText = filtered.filter(p => p.fomento === "INDAP").length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
@@ -182,13 +241,14 @@
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.options.productId = p.id;
                 m.bindPopup(`
-                    <div class="w-48 overflow-hidden rounded-xl bg-white shadow-xl">
-                        <img src="${p.img}" class="h-24 w-full object-cover">
+                    <div class="w-52 overflow-hidden rounded-xl bg-white shadow-xl font-sans">
+                        <img src="${p.img}" class="h-28 w-full object-cover">
                         <div class="p-3">
-                            <p class="font-bold text-[10px] leading-tight mb-2">${p.nombre}</p>
-                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[8px] font-bold py-1.5 rounded-lg uppercase tracking-widest">Pasaporte</a>
+                            <p class="font-display font-bold text-[12px] leading-tight text-fintual-text mb-0.5">${p.nombre}</p>
+                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-3 italic">Productor: ${p.productor}</p>
+                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[9px] font-bold py-2 rounded-lg uppercase tracking-[0.1em] hover:bg-brand-500 transition-all">Ver Pasaporte</a>
                         </div>
-                    </div>`);
+                    </div>`, { padding: 0 });
                 markers.push(m);
             });
         }
@@ -196,7 +256,7 @@
         function renderList(data) {
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
-                    <img src="${p.img}" class="w-12 h-12 rounded-lg object-cover shadow-sm bg-slate-100">
+                    <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shadow-sm bg-slate-100">
                     <div class="min-w-0">
                         <p class="font-bold text-[10px] truncate leading-none mb-1">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
@@ -211,7 +271,7 @@
             const ctx1 = document.getElementById('chartSegmentacion'); if (chart1) chart1.destroy();
             chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
             const ctx2 = document.getElementById('chartProduccion'); if (chart2) chart2.destroy();
-            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#F2F2F2', '#059669', '#10B981'], borderWidth: 0 }] }, options: cfg });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length, data.filter(p=>p.manejo==='Tradicional').length], backgroundColor: ['#059669', '#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: cfg });
         }
 
         function toggleDemoData() { showDemo = !showDemo; document.getElementById('demo-btn').innerText = showDemo ? "Demos: On" : "Demos: Off"; updateTerritory(document.getElementById('comuna-selector').value); }
