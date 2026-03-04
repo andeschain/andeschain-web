@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Territorial Intelligence Dashboard</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10B981', // Verde Esmeralda Principal
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        'fintual': {
+                            'blue': '#4E5AF0',
+                            'cyan': '#00D1FF',
+                            'purple': '#8B5CF6',
+                            'pink': '#FF4E8E',
+                            'gray': '#F1F5F9'
+                        },
+                        'dark': { 800: '#1e293b', 900: '#0f172a' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilo Fintual: Limpio, bordes suaves, sombras leves */
+        #map { height: calc(100vh - 400px); border-radius: 2rem; z-index: 10; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.5s ease; }
+        @media (min-width: 1024px) { #map { height: calc(100vh - 320px); } }
+        
+        .pin-wrapper { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .pin-main { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); z-index: 2; }
+        
+        /* Colores de PIN Estilo Fintual */
+        .pin-afc { background: #10B981; } 
+        .pin-emp { background: #4E5AF0; } 
+        .pin-cia { background: #8B5CF6; }
+        .pin-demo { background: #94A3B8; }
+
+        .pin-pulse { position: absolute; width: 30px; height: 30px; border-radius: 50%; opacity: 0.2; animation: pulse 2.5s infinite; z-index: 1; }
+        .pulse-afc { background: #10B981; } .pulse-emp { background: #4E5AF0; } .pulse-cia { background: #8B5CF6; }
+        .pulse-demo { background: #94A3B8; }
+
+        @keyframes pulse { 0% { transform: scale(0.6); opacity: 0.4; } 100% { transform: scale(2); opacity: 0; } }
+        
+        .leaflet-popup-content-wrapper { border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1) !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
+        
+        .leaflet-control-layers {
+            border: none !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            padding: 10px !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 11px !important;
+        }
+
+        #auth-screen { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .blur-content { filter: blur(20px); pointer-events: none; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] font-sans text-slate-900 antialiased overflow-x-hidden">
+
+    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-brand-900 flex items-center justify-center p-4">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-8">
+            <img src="assets/favicon.png" class="h-12 mx-auto grayscale opacity-80">
+            <div class="space-y-2">
+                <h3 class="font-display font-bold text-2xl text-slate-900">Acceso Privado</h3>
+                <p class="text-slate-400 text-sm">Dashboard de Inteligencia Territorial</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="pass-input" placeholder="Ingresa la clave" 
+                       class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <button onclick="validatePass()" 
+                        class="w-full py-4 bg-brand-500 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-brand-600 transition-all shadow-lg shadow-brand-100">
+                    Entrar al Sistema
+                </button>
+                <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Clave incorrecta</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="blur-content">
+        <nav class="bg-white/70 backdrop-blur-md border-b border-slate-100 px-4 lg:px-10 py-4 sticky top-0 z-[1000]">
+            <div class="max-w-[1600px] mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-8">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="assets/favicon.png" class="h-7">
+                        <div class="h-6 w-[1px] bg-slate-200 hidden lg:block"></div>
+                        <h1 class="hidden lg:block font-display font-bold text-lg text-slate-900 tracking-tight">GeoDashboard</h1>
+                    </a>
+                    <div class="flex items-center bg-slate-100 p-1 rounded-full border border-slate-200">
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-transparent text-slate-600 font-bold text-[10px] px-4 py-1.5 outline-none cursor-pointer">
+                            <option value="Paine">Paine, RM</option>
+                            <option value="Buin">Buin, RM</option>
+                            <option value="Melipilla">Melipilla, RM</option>
+                            <option value="Valdivia">Valdivia, CL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="filter-demo-btn" onclick="toggleDemoData()" class="text-slate-400 text-[10px] font-bold px-4 py-2 rounded-full hover:bg-slate-100 transition-all border border-transparent hover:border-slate-200 uppercase tracking-tighter">
+                        <span id="demo-status-text">Ocultar Demos</span>
+                    </button>
+                    <button onclick="toggleUIMode()" class="bg-slate-900 text-white text-[10px] font-bold px-5 py-2.5 rounded-full hover:bg-brand-600 transition-all shadow-sm uppercase tracking-wider">Modo Mapa</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-[1600px] mx-auto p-4 lg:p-10 space-y-6">
+            
+            <div id="stats-panel" class="grid grid-cols-12 gap-4 lg:gap-8 transition-all">
+                <div class="col-span-12 lg:col-span-4 grid grid-cols-3 lg:grid-cols-1 gap-4">
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Registros</p>
+                        <h3 id="count-lots" class="text-2xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Productores</p>
+                        <h3 id="count-producers" class="text-2xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
+                    </div>
+                    <div class="bg-brand-50 p-5 rounded-3xl border border-brand-100">
+                        <p class="text-[9px] font-bold text-brand-600 uppercase tracking-widest mb-1">Fomento INDAP</p>
+                        <h3 id="count-indap" class="text-2xl lg:text-4xl font-display font-bold text-brand-600">0</h3>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex col-span-12 lg:col-span-8 bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 items-center justify-around gap-12">
+                    <div class="w-1/2 flex flex-col items-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Tipología de Productores</p>
+                        <div class="h-32 w-full"><canvas id="chartSegmentacion"></canvas></div>
+                    </div>
+                    <div class="w-1/2 flex flex-col items-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-widest text-center">Manejo de Suelos</p>
+                        <div class="h-32 w-full"><canvas id="chartProduccion"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6 lg:gap-10">
+                <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                    <div class="relative">
+                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar en el territorio..." 
+                               class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-xs font-medium outline-none focus:ring-2 ring-brand-500/10 transition-all shadow-sm">
+                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 text-sm"></i>
+                    </div>
+                    <div id="recent-list" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[500px] pr-2"></div>
+                </div>
+
+                <div id="map-panel" class="col-span-12 lg:col-span-8 relative">
+                    <div id="map"></div>
+                    <div id="loader" class="absolute inset-0 bg-white/80 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2rem] hidden">
+                        <div class="text-center">
+                            <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Actualizando Mapa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2, isFullMode = false, showDemo = true;
+
+        // Capas Técnicas
+        const zonaSueloClase1 = L.polygon([
+            [-33.830, -70.840], [-33.830, -70.780], [-33.870, -70.780], [-33.870, -70.840]
+        ], { color: '#10B981', fillOpacity: 0.1, weight: 1.5, dashArray: '5,5' });
+
+        const zonaEscasezHidrica = L.polygon([
+            [-33.800, -70.900], [-33.800, -70.650], [-33.950, -70.650], [-33.950, -70.900]
+        ], { color: '#4E5AF0', fillOpacity: 0.1, weight: 1 });
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('blur-content');
+                    initMap();
+                }, 500);
+            } else {
+                document.getElementById('pass-error').classList.remove('hidden');
+            }
+        }
+
+        window.onload = () => {
+            if (sessionStorage.getItem('auth_andes') === 'true') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('blur-content');
+                initMap();
+            }
+        };
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); // Mapa gris claro profesional
+            
+            const overlayMaps = {
+                "<span class='text-[10px] uppercase font-bold text-brand-600'>Suelos Clase I</span>": zonaSueloClase1,
+                "<span class='text-[10px] uppercase font-bold text-fintual-blue'>Déficit Hídrico</span>": zonaEscasezHidrica
+            };
+            L.control.layers(null, overlayMaps, { collapsed: false, position: 'topright' }).addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            if (maskLayer) map.removeLayer(maskLayer);
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+            
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                if (results[0] && results[0].geojson) {
+                    geoJsonLayer = L.geoJSON(results[0].geojson, { style: { color: '#10B981', weight: 1, fillOpacity: 0.02 } }).addTo(map);
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
+                }
+            } catch (e) {}
+
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna) && (showDemo || p.demo === "NO"));
+            
+            document.getElementById('count-lots').innerText = data.length;
+            document.getElementById('count-producers').innerText = [...new Set(data.map(p => p.productor))].length;
+            document.getElementById('count-indap').innerText = data.filter(p => p.fomento === "INDAP").length;
+            
+            initCharts(data);
+            renderList(data);
+            renderMarkers(data);
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const type = p.tipo === 'Emprendedor' ? 'emp' : (p.tipo === 'Empresa' ? 'cia' : 'afc');
+                const icon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div class="pin-wrapper"><div class="pin-pulse pulse-${p.demo==='SI'?'demo':type}"></div><div class="pin-main pin-${p.demo==='SI'?'demo':type}"></div></div>`,
+                    iconSize: [40, 40], iconAnchor: [20, 20]
+                });
+                const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
+                m.options.productId = p.id;
+                m.bindPopup(`
+                    <div class="overflow-hidden bg-white">
+                        <img src="${p.img}?v=${new Date().getTime()}" class="w-full h-32 object-cover">
+                        <div class="p-4">
+                            <p class="text-[8px] font-bold text-brand-500 uppercase mb-1">${p.manejo}</p>
+                            <p class="font-bold text-slate-900 mb-4">${p.nombre}</p>
+                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[10px] font-bold py-3 rounded-xl uppercase tracking-widest">Ver Pasaporte</a>
+                        </div>
+                    </div>`);
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
+                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 hover:border-brand-500 cursor-pointer shadow-sm transition-all">
+                    <img src="${p.img}?v=${new Date().getTime()}" class="w-12 h-12 rounded-xl object-cover">
+                    <div class="min-w-0">
+                        <p class="font-bold text-[11px] text-slate-900 truncate">${p.nombre}</p>
+                        <p class="text-[9px] text-slate-400 truncate uppercase">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function focusMarker(id) {
+            const target = markers.find(m => m.options.productId === id);
+            if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); }
+        }
+
+        function toggleUIMode() {
+            isFullMode = !isFullMode;
+            document.getElementById('stats-panel').classList.toggle('hidden');
+            document.getElementById('list-panel').classList.toggle('hidden');
+            document.getElementById('map-panel').classList.toggle('lg:col-span-8');
+            document.getElementById('map-panel').classList.toggle('lg:col-span-12');
+            setTimeout(() => map.invalidateSize(), 400);
+        }
+
+        function initCharts(data) {
+            const ctx1 = document.getElementById('chartSegmentacion');
+            const ctx2 = document.getElementById('chartProduccion');
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            
+            const commonOptions = { 
+                cutout: '78%', 
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 6, font: { size: 9, family: 'Plus Jakarta Sans' } } } },
+                maintainAspectRatio: false 
+            };
+
+            chart1 = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['AFC', 'Emprendedor', 'Empresa'],
+                    datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#8B5CF6'], borderWidth: 0 }]
+                },
+                options: commonOptions
+            });
+
+            chart2 = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tradicional', 'Orgánico', 'Agroeco.'],
+                    datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#94A3B8', '#00D1FF', '#FF4E8E'], borderWidth: 0 }]
+                },
+                options: commonOptions
+            });
+        }
+        
+        function filterList() {
+            const val = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('#recent-list > div').forEach(item => {
+                item.style.display = item.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
+            });
+        }
+
+        function toggleDemoData() {
+            showDemo = !showDemo;
+            document.getElementById('demo-status-text').innerText = showDemo ? "Ocultar Demos" : "Mostrar Demos";
+            updateTerritory(document.getElementById('comuna-selector').value);
+        }
+    </script>
+</body>
+</html>
