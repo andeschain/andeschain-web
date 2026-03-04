@@ -22,70 +22,78 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
-        .hero-img { height: 50vh; object-fit: cover; width: 100%; border-radius: 0 0 3rem 3rem; }
+        .hero-img { height: 60vh; object-fit: cover; width: 100%; border-radius: 0 0 3rem 3rem; }
         .data-grid { border-top: 1px solid #F2F2F2; padding-top: 2rem; }
         .tag { padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .history-text { column-count: 1; line-height: 1.8; }
+        @media (min-width: 768px) { .history-text { column-count: 2; column-gap: 4rem; } }
     </style>
 </head>
 <body class="font-sans antialiased">
 
     <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <a href="dashboard.html" class="flex items-center gap-2 group text-fintual-mute hover:text-fintual-text transition-all">
+        <a href="dashboard_v1.2.html" class="flex items-center gap-2 group text-fintual-mute hover:text-fintual-text transition-all">
             <i class="fas fa-arrow-left text-sm"></i>
             <span class="text-xs font-bold uppercase tracking-widest">Volver al mapa</span>
         </a>
         <img src="assets/favicon.png" class="h-6">
     </nav>
 
-    <div id="product-content" class="max-w-4xl mx-auto px-6 pb-24 space-y-12">
-        <div class="space-y-6">
+    <div id="product-content" class="max-w-5xl mx-auto px-6 pb-24 space-y-16">
+        <div class="space-y-6 pt-12">
             <div class="flex gap-3">
                 <span id="badge-tipo" class="tag bg-brand-500/10 text-brand-500">Origen Verificado</span>
                 <span id="badge-manejo" class="tag bg-indigo-50 text-indigo-600">Orgánico</span>
             </div>
-            <h1 id="p-nombre" class="text-5xl md:text-7xl font-display font-bold leading-[0.9] tracking-tighter">Cargando...</h1>
+            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter text-fintual-text">Cargando...</h1>
             <div class="flex items-center gap-4">
-                <div id="p-productor-img" class="w-12 h-12 rounded-full bg-fintual-gray overflow-hidden"></div>
+                <div id="p-productor-img" class="w-14 h-14 rounded-full bg-fintual-gray overflow-hidden border border-fintual-gray"></div>
                 <div>
                     <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest leading-none mb-1">Productor territorial</p>
-                    <p id="p-productor" class="font-display font-semibold text-lg">---</p>
+                    <p id="p-productor" class="font-display font-semibold text-xl">---</p>
                 </div>
             </div>
         </div>
 
         <img id="p-img" src="" class="hero-img shadow-2xl shadow-black/5 bg-fintual-gray">
 
+        <div class="space-y-8">
+            <h2 class="font-display font-bold text-3xl tracking-tight">Nuestra Historia</h2>
+            <div id="p-historia" class="history-text text-lg text-fintual-mute font-light">
+                </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 data-grid">
-            <div class="space-y-2">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Ubicación exacta</p>
-                <p id="p-ubicacion" class="font-semibold text-fintual-text">---</p>
+            <div class="space-y-2 text-center md:text-left">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Ubicación</p>
+                <p id="p-ubicacion" class="font-semibold text-fintual-text text-lg">---</p>
                 <p id="p-coordenadas" class="text-xs text-fintual-mute font-mono">---</p>
             </div>
-            <div class="space-y-2">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Atributos del Suelo</p>
-                <p id="p-suelo" class="font-semibold text-fintual-text text-brand-500">Suelo Clase I (CIREN)</p>
-                <p class="text-xs text-fintual-mute">Alta capacidad productiva, sin limitaciones técnicas.</p>
+            <div class="space-y-2 text-center md:text-left">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Suelo</p>
+                <p id="p-suelo" class="font-semibold text-brand-500 text-lg">Clase I (CIREN)</p>
+                <p class="text-xs text-fintual-mute">Suelo profundo, alta capacidad de retención y drenaje.</p>
             </div>
-            <div class="space-y-2">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Fuente de Agua</p>
-                <p id="p-agua" class="font-semibold text-fintual-text">Derechos Consuntivos DGA</p>
-                <p class="text-xs text-fintual-mute">Zona protegida bajo protocolo de eficiencia hídrica.</p>
+            <div class="space-y-2 text-center md:text-left">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Recurso Hídrico</p>
+                <p id="p-agua" class="font-semibold text-indigo-600 text-lg">Cuenca Maipo (DGA)</p>
+                <p class="text-xs text-fintual-mute">Derechos de agua inscritos y trazabilidad hídrica.</p>
             </div>
         </div>
 
-        <div class="bg-fintual-gray/30 p-8 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div class="space-y-4">
-                <h3 class="font-display font-bold text-2xl tracking-tight">Impacto Territorial</h3>
-                <p class="text-sm text-fintual-mute leading-relaxed">Este producto contribuye a la economía local de la comuna, reduciendo la huella de carbono logística al estar a menos de 100km de los centros de consumo masivo.</p>
+        <div class="bg-fintual-gray/40 p-12 rounded-[3rem] flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="max-w-md">
+                <h3 class="font-display font-bold text-2xl mb-2">Comercio de Proximidad</h3>
+                <p class="text-sm text-fintual-mute">Al elegir este producto, apoyas directamente a un agricultor de la zona y reduces un 15% las emisiones de transporte comparado con el retail tradicional.</p>
             </div>
-            <div class="flex justify-around border-l border-white py-4">
+            <div class="flex gap-12">
                 <div class="text-center">
-                    <p class="text-[8px] font-bold uppercase text-fintual-mute mb-2">Huella CO2</p>
-                    <span class="text-2xl font-display font-bold text-brand-500">-12%</span>
+                    <p class="text-[9px] font-bold uppercase text-fintual-mute mb-2">Huella CO2</p>
+                    <span class="text-3xl font-display font-bold text-brand-500">-12%</span>
                 </div>
                 <div class="text-center">
-                    <p class="text-[8px] font-bold uppercase text-fintual-mute mb-2">Localidad</p>
-                    <span id="p-localidad-val" class="text-2xl font-display font-bold uppercase">PAINE</span>
+                    <p class="text-[9px] font-bold uppercase text-fintual-mute mb-2">Distancia</p>
+                    <span class="text-3xl font-display font-bold text-fintual-text">42km</span>
                 </div>
             </div>
         </div>
@@ -96,7 +104,7 @@
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
-            const data = window.getProductos();
+            const data = window.getProductos ? window.getProductos() : [];
             const p = data.find(item => item.id == productId);
 
             if (p) {
@@ -104,19 +112,21 @@
                 document.getElementById('p-productor').innerText = p.productor;
                 document.getElementById('p-ubicacion').innerText = p.ubicacion;
                 document.getElementById('p-coordenadas').innerText = `${p.lat}, ${p.lon}`;
-                document.getElementById('p-img').src = p.img + "?v=1";
-                document.getElementById('p-productor-img').innerHTML = `<img src="${p.img}" class="w-full h-full object-cover grayscale">`;
+                document.getElementById('p-img').src = p.img;
+                document.getElementById('p-productor-img').innerHTML = `<img src="${p.img}" class="w-full h-full object-cover">`;
                 document.getElementById('badge-manejo').innerText = p.manejo;
-                document.getElementById('p-localidad-val').innerText = p.ubicacion.split(',')[0];
                 
-                // Si es INDAP cambiar color de badge
+                // Generar Historia Humana dinámica
+                document.getElementById('p-historia').innerHTML = `
+                    <p class="mb-4">Desde los campos de ${p.ubicacion.split(',')[0]}, ${p.productor} ha mantenido una tradición de respeto por la tierra que trasciende generaciones. Este producto no es solo el resultado de una cosecha, sino el testimonio de un manejo ${p.manejo.toLowerCase()} que protege la biodiversidad local.</p>
+                    <p>Cada unidad producida en este lote de Suelo Clase I ha sido monitoreada para asegurar que el uso del agua sea eficiente y responsable, cumpliendo con los estándares más exigentes de trazabilidad digital en la red AndesChain.</p>
+                `;
+
                 if(p.fomento === "INDAP") {
                     const badge = document.getElementById('badge-tipo');
-                    badge.innerText = "Usuario INDAP";
-                    badge.className = "tag bg-indigo-50 text-indigo-600";
+                    badge.innerText = "Socio INDAP";
+                    badge.className = "tag bg-indigo-600 text-white";
                 }
-            } else {
-                document.getElementById('p-nombre').innerText = "Producto no encontrado";
             }
         };
     </script>
