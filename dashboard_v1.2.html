@@ -12,15 +12,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: { 
-                        'brand': { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10B981', 600: '#059669', 900: '#064e3b' },
-                        'fintual': { 'bg': '#F9FAFB', 'card': '#FFFFFF', 'blue': '#4E5AF0' }
+                        'brand': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10B981', 
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        'slate': { 950: '#0f172a' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -28,107 +33,103 @@
         }
     </script>
     <style>
-        body { background-color: #F9FAFB; color: #1F2937; -webkit-tap-highlight-color: transparent; }
-        #map { height: calc(100vh - 400px); border-radius: 1.5rem; z-index: 10; background: #F3F4F6; border: 1px solid #E5E7EB; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); }
-        @media (min-width: 1024px) { #map { height: calc(100vh - 300px); } }
+        body { background-color: #F8FAFC; color: #1e293b; }
+        #map { height: calc(100vh - 400px); border-radius: 2rem; z-index: 10; background: #f1f5f9; border: 1px solid #e2e8f0; transition: all 0.5s ease; }
+        @media (min-width: 1024px) { #map { height: calc(100vh - 320px); } }
         
+        /* Pines Estilo Fintual */
         .pin-wrapper { position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
-        .pin-main { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 2; }
-        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #4B5563; }
-        .pin-pulse { position: absolute; width: 24px; height: 24px; border-radius: 50%; opacity: 0.15; animation: pulse 3s infinite; z-index: 1; }
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(2.5); opacity: 0; } }
+        .pin-main { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 2; }
+        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #475569; } .pin-demo { background: #94A3B8; }
+        .pin-pulse { position: absolute; width: 26px; height: 26px; border-radius: 50%; opacity: 0.2; animation: pulse 3s infinite; z-index: 1; }
+        @keyframes pulse { 0% { transform: scale(0.6); opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
         
-        .leaflet-control-layers {
-            border: none !important; border-radius: 1rem !important;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
-            padding: 12px !important; font-family: 'Plus Jakarta Sans', sans-serif !important;
-        }
+        .leaflet-popup-content-wrapper { border-radius: 1.2rem !important; padding: 0 !important; overflow: hidden; }
+        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
+        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; padding: 10px !important; font-size: 11px !important; font-weight: bold; text-transform: uppercase; }
 
-        .blur-content { filter: blur(15px); pointer-events: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+        #auth-screen { transition: all 0.5s ease; }
+        .blur-content { filter: blur(20px); pointer-events: none; }
     </style>
 </head>
-<body class="font-sans antialiased text-slate-900">
+<body class="font-sans antialiased">
 
-    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-[#0f172a] flex items-center justify-center p-4 transition-all duration-500">
+    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center p-4">
         <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6">
             <img src="assets/favicon.png" class="h-10 mx-auto">
             <h3 class="font-display font-bold text-2xl text-slate-900">Acceso Privado</h3>
             <input type="password" id="pass-input" placeholder="Clave" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg outline-none focus:ring-2 ring-brand-500">
-            <button onclick="validatePass()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Entrar</button>
-            <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Error de Clave</p>
+            <button onclick="validatePass()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Entrar al Sistema</button>
+            <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Clave Incorrecta</p>
         </div>
     </div>
 
-    <div id="main-content" class="blur-content transition-all duration-700">
-        <nav class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 lg:px-12 py-5 sticky top-0 z-[1000]">
+    <div id="main-content" class="blur-content">
+        <nav class="bg-white/70 backdrop-blur-md border-b border-slate-100 px-4 lg:px-10 py-4 sticky top-0 z-[1000]">
             <div class="max-w-[1600px] mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-10">
+                <div class="flex items-center gap-6">
                     <a href="index.html" class="flex items-center gap-3">
-                        <img src="assets/favicon.png" class="h-8">
-                        <h1 class="hidden lg:block font-display font-bold text-xl text-slate-900">AndesChain</h1>
+                        <img src="assets/favicon.png" class="h-7">
+                        <h1 class="hidden lg:block font-display font-bold text-lg text-slate-900">GeoDashboard</h1>
                     </a>
-                    <div class="flex items-center bg-slate-100 p-1.5 rounded-full border border-slate-200">
-                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-transparent text-slate-700 font-bold text-[11px] px-3 py-1 outline-none cursor-pointer">
-                            <option value="Paine">Paine, RM</option>
-                            <option value="Buin">Buin, RM</option>
-                            <option value="Valdivia">Valdivia, CL</option>
-                            <option value="Limache">Limache, V</option>
-                        </select>
-                    </div>
+                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-slate-100 text-slate-600 font-bold text-[10px] px-4 py-2 rounded-full outline-none border border-slate-200 cursor-pointer">
+                        <option value="Paine">Paine, RM</option>
+                        <option value="Buin">Buin, RM</option>
+                        <option value="Valdivia">Valdivia, CL</option>
+                        <option value="Limache">Limache, V</option>
+                    </select>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button id="filter-demo-btn" onclick="toggleDemoData()" class="text-slate-400 text-[10px] font-bold px-4 py-2 hover:text-slate-600 transition-all uppercase tracking-tighter">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleDemoData()" class="text-slate-400 text-[10px] font-bold px-4 py-2 hover:bg-slate-100 rounded-full transition-all uppercase tracking-tighter">
                         <span id="demo-status-text">Ocultar Demos</span>
                     </button>
-                    <button onclick="toggleUIMode()" class="bg-brand-500 text-white text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-brand-600 shadow-sm uppercase tracking-widest">Vista Ampliada</button>
+                    <button onclick="toggleUIMode()" class="bg-brand-500 text-white text-[10px] font-bold px-5 py-2.5 rounded-full hover:bg-brand-600 shadow-sm uppercase tracking-wider">Modo Mapa</button>
                 </div>
             </div>
         </nav>
 
-        <main class="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-8">
-            <div id="stats-panel" class="grid grid-cols-12 gap-6 transition-all">
+        <main class="max-w-[1600px] mx-auto p-4 lg:p-10 space-y-6">
+            <div id="stats-panel" class="grid grid-cols-12 gap-4 lg:gap-8 transition-all">
                 <div class="col-span-12 lg:col-span-4 grid grid-cols-3 lg:grid-cols-1 gap-4">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Registros Activos</p>
-                        <h3 id="count-lots" class="text-3xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Registros</p>
+                        <h3 id="count-lots" class="text-2xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Productores locales</p>
-                        <h3 id="count-producers" class="text-3xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Productores</p>
+                        <h3 id="count-producers" class="text-2xl lg:text-4xl font-display font-bold text-slate-900">0</h3>
                     </div>
-                    <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100">
-                        <p class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">Fomento (INDAP)</p>
-                        <h3 id="count-indap" class="text-3xl lg:text-4xl font-display font-bold text-brand-600">0</h3>
+                    <div class="bg-brand-50 p-5 rounded-3xl border border-brand-100">
+                        <p class="text-[9px] font-bold text-brand-600 uppercase tracking-widest mb-1">Fomento INDAP</p>
+                        <h3 id="count-indap" class="text-2xl lg:text-4xl font-display font-bold text-brand-600">0</h3>
                     </div>
                 </div>
 
-                <div class="hidden lg:flex col-span-12 lg:col-span-8 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm items-center justify-around gap-16">
+                <div class="hidden lg:flex col-span-12 lg:col-span-8 bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 items-center justify-around gap-12">
                     <div class="w-1/2 flex flex-col items-center">
-                        <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest text-center">Distribución de Segmentos</p>
-                        <div class="h-40 w-full"><canvas id="chartSegmentacion"></canvas></div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Tipos de Productor</p>
+                        <div class="h-32 w-full"><canvas id="chartSegmentacion"></canvas></div>
                     </div>
                     <div class="w-1/2 flex flex-col items-center">
-                        <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest text-center">Manejo de Suelo</p>
-                        <div class="h-40 w-full"><canvas id="chartProduccion"></canvas></div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Manejo de Suelo</p>
+                        <div class="h-32 w-full"><canvas id="chartProduccion"></canvas></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-8 lg:gap-12">
-                <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+            <div class="grid grid-cols-12 gap-6 lg:gap-10">
+                <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-4">
                     <div class="relative">
-                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Filtrar por productor o rubro..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm">
-                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar..." class="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-xs outline-none focus:ring-2 ring-brand-500/10">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
                     </div>
-                    <div id="recent-list" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[600px] pr-2"></div>
+                    <div id="recent-list" class="grid grid-cols-1 gap-2.5 overflow-y-auto max-h-[500px] pr-2"></div>
                 </div>
 
                 <div id="map-panel" class="col-span-12 lg:col-span-8 relative">
                     <div id="map"></div>
-                    <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-2xl hidden">
-                        <div class="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div id="loader" class="absolute inset-0 bg-white/80 backdrop-blur-md z-[1001] flex items-center justify-center rounded-[2rem] hidden">
+                        <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
             </div>
@@ -138,10 +139,8 @@
     <script src="js/simulador.js"></script>
     <script>
         const CLAVE = "Andes2026";
-        let map, markers = [], geoJsonLayer, chart1, chart2;
-        let layerControl = null;
+        let map, markers = [], geoJsonLayer, chart1, chart2, layerControl, isFullMode = false, showDemo = true;
         let waterLayer, soilLayer;
-        let showDemo = true;
 
         function validatePass() {
             if (document.getElementById('pass-input').value === CLAVE) {
@@ -168,74 +167,64 @@
         function initMap() {
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); 
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
+            
+            // Inicializar las capas vacías
+            waterLayer = L.layerGroup();
+            soilLayer = L.layerGroup();
+
+            const overlays = {
+                "<span style='color:#10B981'>Calidad de Suelo (Clase I)</span>": soilLayer,
+                "<span style='color:#6366F1'>Escasez Hídrica (DGA)</span>": waterLayer
+            };
+
+            layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+            
             updateTerritory("Paine");
         }
 
         async function updateTerritory(comuna) {
             document.getElementById('loader').classList.remove('hidden');
             
-            // Limpiar capas previas
+            // 1. Limpiar Mapa
+            markers.forEach(m => map.removeLayer(m)); 
+            markers = [];
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
-            if (waterLayer) map.removeLayer(waterLayer);
-            if (soilLayer) map.removeLayer(soilLayer);
-            if (layerControl) map.removeControl(layerControl);
-            markers.forEach(m => map.removeLayer(m)); markers = [];
-            
+            waterLayer.clearLayers();
+            soilLayer.clearLayers();
+
             try {
+                // 2. Obtener Geometría y Volar
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
                 const results = await res.json();
-                
                 if (results[0] && results[0].geojson) {
-                    const communeGeo = results[0].geojson;
-                    
-                    // Capa Contorno Comuna
-                    geoJsonLayer = L.geoJSON(communeGeo, { 
-                        style: { color: '#10B981', weight: 1, fillOpacity: 0.02 } 
-                    }).addTo(map);
-
-                    // --- PROCESAMIENTO DE CAPAS OPCIONALES CON CLIPPING ---
-                    
-                    // 1. Capa Hídrica (Recortada a la comuna)
-                    const waterBuffer = turf.circle([results[0].lon, results[0].lat], 10, {units: 'kilometers'});
-                    const waterIntersect = turf.intersect(communeGeo, waterBuffer);
-                    if (waterIntersect) {
-                        waterLayer = L.geoJSON(waterIntersect, {
-                            style: { color: '#6366F1', weight: 0, fillOpacity: 0.15, fillColor: '#6366F1' }
-                        });
-                    }
-
-                    // 2. Capa Suelo Clase I (Recortada a la comuna)
-                    const soilBuffer = turf.circle([results[0].lon - 0.05, results[0].lat + 0.02], 8, {units: 'kilometers'});
-                    const soilIntersect = turf.intersect(communeGeo, soilBuffer);
-                    if (soilIntersect) {
-                        soilLayer = L.geoJSON(soilIntersect, {
-                            style: { color: '#10B981', weight: 1, fillOpacity: 0.1, fillColor: '#10B981', dashArray: '5,5' }
-                        });
-                    }
-
-                    // --- CREAR CONTROL DE CAPAS (ESTILO FINTUAL) ---
-                    const overlays = {
-                        "<span class='text-[10px] font-bold text-indigo-500 uppercase'>Déficit Hídrico</span>": waterLayer,
-                        "<span class='text-[10px] font-bold text-brand-600 uppercase'>Suelos Clase I</span>": soilLayer
-                    };
-
-                    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
-
+                    geoJsonLayer = L.geoJSON(results[0].geojson, { style: { color: '#10B981', weight: 1, fillOpacity: 0.05 } }).addTo(map);
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
-                }
-            } catch (e) { console.log(e); }
 
-            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna) && (showDemo || p.demo === "NO"));
-            
+                    // 3. Crear polígonos internos (Simulados para la demo dentro del área)
+                    const center = geoJsonLayer.getBounds().getCenter();
+                    
+                    // Zona Hídrica (Círculo sutil dentro de la comuna)
+                    L.circle([center.lat, center.lng], { radius: 3000, color: '#6366F1', fillOpacity: 0.2, weight: 0 }).addTo(waterLayer);
+                    // Zona Suelo (Rectángulo sutil dentro de la comuna)
+                    L.rectangle(geoJsonLayer.getBounds().pad(-0.2), { color: '#10B981', fillOpacity: 0.1, weight: 1, dashArray: '5,5' }).addTo(soilLayer);
+                }
+            } catch (e) { console.error(e); }
+
+            // 4. Filtrar y Cargar Datos
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => 
+                p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO")
+            );
+
             document.getElementById('count-lots').innerText = data.length;
             document.getElementById('count-producers').innerText = [...new Set(data.map(p => p.productor))].length;
             document.getElementById('count-indap').innerText = data.filter(p => p.fomento === "INDAP").length;
-            
+
             initCharts(data);
             renderList(data);
             renderMarkers(data);
+            
             setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600);
         }
 
@@ -243,21 +232,18 @@
             data.forEach(p => {
                 const type = p.tipo === 'Emprendedor' ? 'emp' : (p.tipo === 'Empresa' ? 'cia' : 'afc');
                 const icon = L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div class="pin-wrapper">
-                            <div class="pin-pulse pulse-${type}"></div>
-                            <div class="pin-main pin-${type}"></div>
-                           </div>`,
+                    className: 'custom-icon',
+                    html: `<div class="pin-wrapper"><div class="pin-pulse pulse-${type}"></div><div class="pin-main pin-${type}"></div></div>`,
                     iconSize: [30, 30], iconAnchor: [15, 15]
                 });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.options.productId = p.id;
                 m.bindPopup(`
-                    <div class="overflow-hidden bg-white">
+                    <div class="bg-white overflow-hidden">
                         <img src="${p.img}?v=1" class="w-full h-32 object-cover">
-                        <div class="p-4 space-y-3">
-                            <p class="font-bold text-slate-900 text-sm leading-tight">${p.nombre}</p>
-                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[9px] font-bold py-2.5 rounded-lg uppercase tracking-widest">Ver Expediente</a>
+                        <div class="p-4">
+                            <p class="font-bold text-slate-900 mb-3">${p.nombre}</p>
+                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[10px] font-bold py-2.5 rounded-xl uppercase tracking-widest">Ver Pasaporte</a>
                         </div>
                     </div>`);
                 markers.push(m);
@@ -266,11 +252,11 @@
 
         function renderList(data) {
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
-                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-brand-500 cursor-pointer shadow-sm transition-all">
-                    <img src="${p.img}?v=1" class="w-12 h-12 rounded-xl object-cover bg-slate-100">
+                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 hover:border-brand-500 cursor-pointer shadow-sm transition-all">
+                    <img src="${p.img}?v=1" class="w-12 h-12 rounded-xl object-cover">
                     <div class="min-w-0">
                         <p class="font-bold text-[11px] text-slate-900 truncate">${p.nombre}</p>
-                        <p class="text-[9px] text-slate-400 truncate uppercase font-medium">${p.productor}</p>
+                        <p class="text-[9px] text-slate-400 uppercase">${p.productor}</p>
                     </div>
                 </div>`).join('');
         }
@@ -284,31 +270,17 @@
             const ctx1 = document.getElementById('chartSegmentacion');
             const ctx2 = document.getElementById('chartProduccion');
             if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
-            
-            const config = { 
-                cutout: '84%', maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, padding: 12, font: { size: 9, family: 'Plus Jakarta Sans' } } } }
-            };
-
-            chart1 = new Chart(ctx1, {
-                type: 'doughnut',
-                data: {
-                    labels: ['AFC', 'Emprendedor', 'Empresa'],
-                    datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#6366F1', '#94A3B8'], borderWidth: 0 }]
-                },
-                options: config
-            });
-
-            chart2 = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Tradicional', 'Orgánico', 'Agroecológico'],
-                    datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#E5E7EB', '#059669', '#10B981'], borderWidth: 0 }]
-                },
-                options: config
-            });
+            const config = { cutout: '82%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 6, font: { size: 9 } } } }, maintainAspectRatio: false };
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { labels: ['AFC', 'Emprendedor', 'Empresa'], datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#6366F1', '#94A3B8'], borderWidth: 0 }] }, options: config });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { labels: ['Tradicional', 'Orgánico', 'Agroeco.'], datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#E2E8F0', '#059669', '#10B981'], borderWidth: 0 }] }, options: config });
         }
-        
+
+        function toggleDemoData() {
+            showDemo = !showDemo;
+            document.getElementById('demo-status-text').innerText = showDemo ? "Ocultar Demos" : "Mostrar Demos";
+            updateTerritory(document.getElementById('comuna-selector').value);
+        }
+
         function toggleUIMode() {
             document.getElementById('stats-panel').classList.toggle('hidden');
             document.getElementById('list-panel').classList.toggle('hidden');
@@ -316,18 +288,12 @@
             document.getElementById('map-panel').classList.toggle('lg:col-span-12');
             setTimeout(() => map.invalidateSize(), 400);
         }
-
+        
         function filterList() {
             const val = document.getElementById('search-input').value.toLowerCase();
             document.querySelectorAll('#recent-list > div').forEach(item => {
                 item.style.display = item.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
             });
-        }
-
-        function toggleDemoData() {
-            showDemo = !showDemo;
-            document.getElementById('demo-status-text').innerText = showDemo ? "Ocultar Demos" : "Mostrar Demos";
-            updateTerritory(document.getElementById('comuna-selector').value);
         }
     </script>
 </body>
