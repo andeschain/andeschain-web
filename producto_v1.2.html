@@ -2,51 +2,123 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ficha de Origen v1.2 | AndesChain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Origen Digital | AndesChain</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 500: '#10B981', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .product-card { border-radius: 3rem; overflow: hidden; }
-        .qr-overlay { backdrop-filter: blur(4px); background: rgba(255,255,255,0.8); }
+        body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
+        .hero-img { height: 50vh; object-fit: cover; width: 100%; border-radius: 0 0 3rem 3rem; }
+        .data-grid { border-top: 1px solid #F2F2F2; padding-top: 2rem; }
+        .tag { padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
     </style>
 </head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen p-6">
-    <div class="max-w-sm w-full bg-white product-card shadow-2xl shadow-slate-200 border border-slate-100">
-        <div class="relative h-80">
-            <img src="https://images.unsplash.com/photo-1595433707802-68267d83760a?w=600" class="w-full h-full object-cover">
-            <div class="absolute top-6 left-6 bg-white/90 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">
-                <i class="fas fa-check-circle text-emerald-500 mr-1"></i> Origen Verificado
+<body class="font-sans antialiased">
+
+    <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <a href="dashboard.html" class="flex items-center gap-2 group text-fintual-mute hover:text-fintual-text transition-all">
+            <i class="fas fa-arrow-left text-sm"></i>
+            <span class="text-xs font-bold uppercase tracking-widest">Volver al mapa</span>
+        </a>
+        <img src="assets/favicon.png" class="h-6">
+    </nav>
+
+    <div id="product-content" class="max-w-4xl mx-auto px-6 pb-24 space-y-12">
+        <div class="space-y-6">
+            <div class="flex gap-3">
+                <span id="badge-tipo" class="tag bg-brand-500/10 text-brand-500">Origen Verificado</span>
+                <span id="badge-manejo" class="tag bg-indigo-50 text-indigo-600">Orgánico</span>
+            </div>
+            <h1 id="p-nombre" class="text-5xl md:text-7xl font-display font-bold leading-[0.9] tracking-tighter">Cargando...</h1>
+            <div class="flex items-center gap-4">
+                <div id="p-productor-img" class="w-12 h-12 rounded-full bg-fintual-gray overflow-hidden"></div>
+                <div>
+                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest leading-none mb-1">Productor territorial</p>
+                    <p id="p-productor" class="font-display font-semibold text-lg">---</p>
+                </div>
             </div>
         </div>
 
-        <div class="p-8">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <h1 class="text-3xl font-black text-slate-900 leading-none mb-2">Sandía Primor</h1>
-                    <p class="text-emerald-600 font-bold text-sm uppercase">Sector Aculeo, Paine</p>
-                </div>
-                <div class="h-14 w-14 qr-overlay border border-slate-200 rounded-2xl flex items-center justify-center text-xs">
-                    QR
-                </div>
+        <img id="p-img" src="" class="hero-img shadow-2xl shadow-black/5 bg-fintual-gray">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 data-grid">
+            <div class="space-y-2">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Ubicación exacta</p>
+                <p id="p-ubicacion" class="font-semibold text-fintual-text">---</p>
+                <p id="p-coordenadas" class="text-xs text-fintual-mute font-mono">---</p>
             </div>
-            
-            <p class="text-slate-500 text-sm leading-relaxed mb-6">
-                Cultivada bajo protocolos de agricultura familiar campesina con riego eficiente. Cosechada el 15 de Octubre de 2025.
-            </p>
+            <div class="space-y-2">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Atributos del Suelo</p>
+                <p id="p-suelo" class="font-semibold text-fintual-text text-brand-500">Suelo Clase I (CIREN)</p>
+                <p class="text-xs text-fintual-mute">Alta capacidad productiva, sin limitaciones técnicas.</p>
+            </div>
+            <div class="space-y-2">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Fuente de Agua</p>
+                <p id="p-agua" class="font-semibold text-fintual-text">Derechos Consuntivos DGA</p>
+                <p class="text-xs text-fintual-mute">Zona protegida bajo protocolo de eficiencia hídrica.</p>
+            </div>
+        </div>
 
-            <hr class="mb-6">
-
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase">Productor</p>
-                    <p class="font-bold text-slate-800">Juan González</p>
+        <div class="bg-fintual-gray/30 p-8 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-4">
+                <h3 class="font-display font-bold text-2xl tracking-tight">Impacto Territorial</h3>
+                <p class="text-sm text-fintual-mute leading-relaxed">Este producto contribuye a la economía local de la comuna, reduciendo la huella de carbono logística al estar a menos de 100km de los centros de consumo masivo.</p>
+            </div>
+            <div class="flex justify-around border-l border-white py-4">
+                <div class="text-center">
+                    <p class="text-[8px] font-bold uppercase text-fintual-mute mb-2">Huella CO2</p>
+                    <span class="text-2xl font-display font-bold text-brand-500">-12%</span>
                 </div>
-                <a href="timeline_v1.2.html" class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-emerald-600 hover:text-white transition-all">
-                    Ver Historia
-                </a>
+                <div class="text-center">
+                    <p class="text-[8px] font-bold uppercase text-fintual-mute mb-2">Localidad</p>
+                    <span id="p-localidad-val" class="text-2xl font-display font-bold uppercase">PAINE</span>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            const data = window.getProductos();
+            const p = data.find(item => item.id == productId);
+
+            if (p) {
+                document.getElementById('p-nombre').innerText = p.nombre;
+                document.getElementById('p-productor').innerText = p.productor;
+                document.getElementById('p-ubicacion').innerText = p.ubicacion;
+                document.getElementById('p-coordenadas').innerText = `${p.lat}, ${p.lon}`;
+                document.getElementById('p-img').src = p.img + "?v=1";
+                document.getElementById('p-productor-img').innerHTML = `<img src="${p.img}" class="w-full h-full object-cover grayscale">`;
+                document.getElementById('badge-manejo').innerText = p.manejo;
+                document.getElementById('p-localidad-val').innerText = p.ubicacion.split(',')[0];
+                
+                // Si es INDAP cambiar color de badge
+                if(p.fomento === "INDAP") {
+                    const badge = document.getElementById('badge-tipo');
+                    badge.innerText = "Usuario INDAP";
+                    badge.className = "tag bg-indigo-50 text-indigo-600";
+                }
+            } else {
+                document.getElementById('p-nombre').innerText = "Producto no encontrado";
+            }
+        };
+    </script>
 </body>
 </html>
