@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -19,7 +20,6 @@
                 extend: {
                     colors: { 
                         'brand': { 50: '#f8fafc', 100: '#f1f5f9', 500: '#10B981', 600: '#059669', 900: '#0f172a' },
-                        'fintual': { 'green': '#10B981', 'blue': '#4E5AF0', 'gray': '#94A3B8', 'bg': '#F9FAFB' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -27,24 +27,22 @@
         }
     </script>
     <style>
-        body { background-color: #F9FAFB; color: #1e293b; letter-spacing: -0.01em; }
+        body { background-color: #F9FAFB; color: #1e293b; }
         #map { height: calc(100vh - 400px); border-radius: 2rem; z-index: 10; background: #f1f5f9; border: 1px solid #e2e8f0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         @media (min-width: 1024px) { #map { height: calc(100vh - 300px); } }
         
         .pin-wrapper { position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 2; }
-        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #475569; } .pin-demo { background: #cbd5e1; }
+        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #475569; }
         .pin-pulse { position: absolute; width: 26px; height: 26px; border-radius: 50%; opacity: 0.15; animation: pulse 3s infinite; z-index: 1; }
         @keyframes pulse { 0% { transform: scale(0.6); opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
         
         .leaflet-popup-content-wrapper { border-radius: 1.2rem !important; padding: 0 !important; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1) !important; }
-        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
         .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; padding: 12px !important; font-size: 10px !important; font-weight: 800; text-transform: uppercase; }
 
-        #auth-screen { transition: all 0.5s ease; background radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); }
+        #auth-screen { transition: all 0.5s ease; background: #0f172a; }
         .blur-content { filter: blur(25px); pointer-events: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -53,13 +51,12 @@
         <div class="bg-white p-10 rounded-[3rem] shadow-2xl max-w-sm w-full text-center space-y-8">
             <img src="assets/favicon.png" class="h-12 mx-auto">
             <div class="space-y-2">
-                <h3 class="font-display font-bold text-2xl text-slate-900">Bienvenido</h3>
-                <p class="text-slate-400 text-sm italic">Acceso exclusivo a la red AndesChain</p>
+                <h3 class="font-display font-bold text-2xl text-slate-900">Acceso Privado</h3>
+                <p class="text-slate-400 text-sm italic">Inteligencia Territorial</p>
             </div>
             <div class="space-y-4">
-                <input type="password" id="pass-input" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-lg outline-none focus:ring-2 ring-brand-500 transition-all">
-                <button onclick="validatePass()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear</button>
-                <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden italic">Clave de acceso incorrecta</p>
+                <input type="password" id="pass-input" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg outline-none focus:ring-2 ring-brand-500 transition-all">
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear</button>
             </div>
         </div>
     </div>
@@ -70,14 +67,14 @@
                 <div class="flex items-center gap-6">
                     <a href="index.html" class="flex items-center gap-3">
                         <img src="assets/favicon.png" class="h-7">
-                        <h1 class="hidden lg:block font-display font-bold text-lg text-slate-900 tracking-tighter uppercase">AndesChain <span class="text-brand-500">BI</span></h1>
+                        <h1 class="hidden lg:block font-display font-bold text-lg text-slate-900 uppercase">AndesChain <span class="text-brand-500">BI</span></h1>
                     </a>
-                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-white text-slate-600 font-bold text-[10px] px-5 py-2 rounded-full outline-none border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 transition-all">
+                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-white text-slate-600 font-bold text-[10px] px-5 py-2 rounded-full outline-none border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500">
                         <option value="Paine">Paine, RM</option>
                         <option value="Buin">Buin, RM</option>
                         <option value="Valdivia">Valdivia, CL</option>
                         <option value="Limache">Limache, V</option>
-                        <option value="Isla de Maipo">Isla de Maipo, RM</option>
+                        <option value="Quillota">Quillota, V</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-3">
@@ -90,30 +87,26 @@
         </nav>
 
         <main class="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-10">
-            
             <div id="stats-panel" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all">
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Puntos de Origen</p>
-                    <div class="flex items-baseline gap-2">
-                        <h3 id="count-lots" class="text-4xl font-display font-bold text-slate-900">0</h3>
-                        <span class="text-brand-500 text-xs font-bold"><i class="fas fa-arrow-up"></i> 12%</span>
-                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Registros Locales</p>
+                    <h3 id="count-lots" class="text-4xl font-display font-bold text-slate-900">0</h3>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Productores Locales</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Productores</p>
                     <h3 id="count-producers" class="text-4xl font-display font-bold text-slate-900">0</h3>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Ahorro CO2 Estimado</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Ahorro CO2 (Transporte)</p>
                     <div class="flex items-baseline gap-1 text-indigo-600">
-                        <h3 id="kpi-co2" class="text-4xl font-display font-bold">14.2</h3>
+                        <h3 id="kpi-co2" class="text-4xl font-display font-bold">1.4</h3>
                         <span class="text-xs font-bold">Ton</span>
                     </div>
                 </div>
                 <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100">
                     <p class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-2">Resiliencia Hídrica</p>
                     <div class="flex items-baseline gap-1">
-                        <h3 id="kpi-resiliencia" class="text-4xl font-display font-bold text-brand-600">88</h3>
+                        <h3 id="kpi-resiliencia" class="text-4xl font-display font-bold text-brand-600">--</h3>
                         <span class="text-brand-600 text-xs font-bold">%</span>
                     </div>
                 </div>
@@ -121,19 +114,19 @@
 
             <div id="charts-row" class="hidden lg:grid grid-cols-2 gap-8">
                 <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Segmentación Socioproductiva</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Tipología de Actores</p>
                     <div class="h-44 w-full"><canvas id="chartSegmentacion"></canvas></div>
                 </div>
                 <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Sostenibilidad de Suelos</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Sostenibilidad de Manejo</p>
                     <div class="h-44 w-full"><canvas id="chartProduccion"></canvas></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-8 lg:gap-10">
+            <div class="grid grid-cols-12 gap-10">
                 <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-6">
                     <div class="relative">
-                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar producto, productor o suelo..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm transition-all">
+                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar en el territorio..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm">
                         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
                     </div>
                     <div id="recent-list" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[600px] pr-2"></div>
@@ -145,8 +138,8 @@
                         <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     <div class="absolute bottom-6 left-6 z-[1001] bg-white/90 backdrop-blur px-4 py-2 rounded-xl border border-slate-200 shadow-sm pointer-events-none">
-                        <p class="text-[8px] font-bold text-slate-400 uppercase">Fuente de datos</p>
-                        <p class="text-[9px] font-bold text-slate-600">CIREN • DGA • AndesChain 2026</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">Capas Inteligentes</p>
+                        <p class="text-[9px] font-bold text-slate-600 uppercase">Fuente: CIREN · DGA 2026</p>
                     </div>
                 </div>
             </div>
@@ -192,8 +185,8 @@
             soilLayer = L.layerGroup();
 
             const overlays = {
-                "<span class='text-indigo-600 font-bold'>💧 Escasez Hídrica (DGA)</span>": waterLayer,
-                "<span class='text-emerald-600 font-bold'>🌱 Suelo Clase I (CIREN)</span>": soilLayer
+                "<span class='text-indigo-600 font-bold'>💧 Escasez Hídrica</span>": waterLayer,
+                "<span class='text-emerald-600 font-bold'>🌱 Calidad de Suelo</span>": soilLayer
             };
 
             layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
@@ -215,23 +208,43 @@
                 
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
+                    const center = [parseFloat(results[0].lon), parseFloat(results[0].lat)];
                     
-                    // Fondo de Comuna en Gris Neutro
+                    // Fondo de Comuna en Gris (Límite Administrativo)
                     geoJsonLayer = L.geoJSON(geoData, { 
-                        style: { color: '#cbd5e1', weight: 2, fillOpacity: 0.05, fillColor: '#94a3b8' } 
+                        style: { color: '#94a3b8', weight: 2, fillOpacity: 0.05, fillColor: '#94a3b8' } 
                     }).addTo(map);
 
-                    // CAPAS RECORTADAS AL ÁREA DE LA COMUNA
-                    // Capa Hídrica (Afecta a toda la comuna en zonas de escasez)
-                    L.geoJSON(geoData, {
-                        style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.15, fillColor: '#6366F1' }
-                    }).addTo(waterLayer);
+                    // --- GENERACIÓN DE CAPAS CIREN CON RECORTE (CLIPPING) ---
 
-                    // Capa Suelo (Simulamos que el 60% de la comuna es Clase I)
-                    L.geoJSON(geoData, {
-                        style: { color: '#10B981', weight: 0, fillOpacity: 0.12, fillColor: '#10B981' }
-                    }).addTo(soilLayer);
+                    // 1. Capa Hídrica (Afectación en una sección de la comuna)
+                    const waterBuffer = turf.circle(center, 8, {units: 'kilometers'});
+                    const waterIntersect = turf.intersect(geoData, waterBuffer);
+                    if (waterIntersect) {
+                        L.geoJSON(waterIntersect, {
+                            style: { color: '#6366F1', weight: 0, fillOpacity: 0.2, fillColor: '#6366F1' }
+                        }).addTo(waterLayer).bindTooltip("Zona de Escasez Hídrica DGA");
+                    }
 
+                    // 2. Capa Suelo Clase I (Núcleo fértil)
+                    const soilI = turf.circle(center, 4, {units: 'kilometers'});
+                    const intersectI = turf.intersect(geoData, soilI);
+                    if (intersectI) {
+                        L.geoJSON(intersectI, {
+                            style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' }
+                        }).addTo(soilLayer).bindTooltip("Suelo Clase I: Alta Productividad");
+                    }
+
+                    // 3. Capa Suelo Clase III (Zona periférica)
+                    const soilIII = turf.difference(turf.circle(center, 7, {units: 'kilometers'}), soilI);
+                    const intersectIII = turf.intersect(geoData, soilIII);
+                    if (intersectIII) {
+                        L.geoJSON(intersectIII, {
+                            style: { color: '#A3E635', weight: 0, fillOpacity: 0.2, fillColor: '#A3E635' }
+                        }).addTo(soilLayer).bindTooltip("Suelo Clase III: Limitaciones Moderadas");
+                    }
+
+                    // Vuelo de cámara automático a la nueva comuna
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
                 }
             } catch (e) { console.error(e); }
@@ -240,11 +253,9 @@
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
-            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
-            
-            // Simulación de KPIs dinámicos para la demo
-            document.getElementById('kpi-co2').innerText = (filtered.length * 0.14).toFixed(1);
-            document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 75 + 1) + 75);
+            document.getElementById('count-producers').innerText = [...new Set(data = filtered.map(p => p.productor))].length;
+            document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1);
+            document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (98 - 82) + 82);
 
             initCharts(filtered);
             renderList(filtered);
@@ -271,7 +282,7 @@
                         <div class="p-4">
                             <p class="text-[10px] font-bold text-brand-600 uppercase mb-1">${p.manejo}</p>
                             <p class="font-bold text-slate-900 text-sm mb-3">${p.nombre}</p>
-                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[10px] font-bold py-2.5 rounded-lg uppercase tracking-widest hover:bg-brand-500 transition-colors">Expediente</a>
+                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[10px] font-bold py-2.5 rounded-lg uppercase tracking-widest hover:bg-brand-500">Expediente</a>
                         </div>
                     </div>`);
                 markers.push(m);
@@ -300,7 +311,7 @@
             if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
             
             const config = { 
-                cutout: '85%', maintainAspectRatio: false,
+                cutout: '86%', maintainAspectRatio: false,
                 plugins: { legend: { position: 'right', labels: { boxWidth: 6, usePointStyle: true, padding: 15, font: { size: 9, family: 'Plus Jakarta Sans', weight: 'bold' } } } }
             };
 
