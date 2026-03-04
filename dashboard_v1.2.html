@@ -27,22 +27,24 @@
         }
     </script>
     <style>
-        body { background-color: #F9FAFB; color: #1e293b; }
+        body { background-color: #F9FAFB; color: #1e293b; letter-spacing: -0.01em; }
         #map { height: calc(100vh - 400px); border-radius: 2rem; z-index: 10; background: #f1f5f9; border: 1px solid #e2e8f0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         @media (min-width: 1024px) { #map { height: calc(100vh - 300px); } }
         
         .pin-wrapper { position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 2; }
-        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #475569; }
+        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #475569; } .pin-demo { background: #cbd5e1; }
         .pin-pulse { position: absolute; width: 26px; height: 26px; border-radius: 50%; opacity: 0.15; animation: pulse 3s infinite; z-index: 1; }
         @keyframes pulse { 0% { transform: scale(0.6); opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
         
         .leaflet-popup-content-wrapper { border-radius: 1.2rem !important; padding: 0 !important; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1) !important; }
-        .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
         .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; padding: 12px !important; font-size: 10px !important; font-weight: 800; text-transform: uppercase; }
 
         #auth-screen { transition: all 0.5s ease; background: #0f172a; }
         .blur-content { filter: blur(25px); pointer-events: none; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -51,12 +53,13 @@
         <div class="bg-white p-10 rounded-[3rem] shadow-2xl max-w-sm w-full text-center space-y-8">
             <img src="assets/favicon.png" class="h-12 mx-auto">
             <div class="space-y-2">
-                <h3 class="font-display font-bold text-2xl text-slate-900">Acceso Privado</h3>
-                <p class="text-slate-400 text-sm italic">Inteligencia Territorial</p>
+                <h3 class="font-display font-bold text-2xl text-slate-900">Bienvenido</h3>
+                <p class="text-slate-400 text-sm italic">Acceso exclusivo a la red AndesChain</p>
             </div>
             <div class="space-y-4">
                 <input type="password" id="pass-input" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg outline-none focus:ring-2 ring-brand-500 transition-all">
                 <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear</button>
+                <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden italic">Clave de acceso incorrecta</p>
             </div>
         </div>
     </div>
@@ -69,11 +72,12 @@
                         <img src="assets/favicon.png" class="h-7">
                         <h1 class="hidden lg:block font-display font-bold text-lg text-slate-900 uppercase">AndesChain <span class="text-brand-500">BI</span></h1>
                     </a>
-                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-white text-slate-600 font-bold text-[10px] px-5 py-2 rounded-full outline-none border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500">
+                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-white text-slate-600 font-bold text-[10px] px-5 py-2 rounded-full outline-none border border-slate-200 shadow-sm cursor-pointer hover:border-brand-500 transition-all">
                         <option value="Paine">Paine, RM</option>
                         <option value="Buin">Buin, RM</option>
                         <option value="Valdivia">Valdivia, CL</option>
                         <option value="Limache">Limache, V</option>
+                        <option value="Isla de Maipo">Isla de Maipo, RM</option>
                         <option value="Quillota">Quillota, V</option>
                     </select>
                 </div>
@@ -97,16 +101,16 @@
                     <h3 id="count-producers" class="text-4xl font-display font-bold text-slate-900">0</h3>
                 </div>
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Ahorro CO2 (Transporte)</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Ahorro CO2 Estimado</p>
                     <div class="flex items-baseline gap-1 text-indigo-600">
-                        <h3 id="kpi-co2" class="text-4xl font-display font-bold">1.4</h3>
+                        <h3 id="kpi-co2" class="text-4xl font-display font-bold">14.2</h3>
                         <span class="text-xs font-bold">Ton</span>
                     </div>
                 </div>
                 <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100">
                     <p class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-2">Resiliencia Hídrica</p>
                     <div class="flex items-baseline gap-1">
-                        <h3 id="kpi-resiliencia" class="text-4xl font-display font-bold text-brand-600">--</h3>
+                        <h3 id="kpi-resiliencia" class="text-4xl font-display font-bold text-brand-600">88</h3>
                         <span class="text-brand-600 text-xs font-bold">%</span>
                     </div>
                 </div>
@@ -114,19 +118,19 @@
 
             <div id="charts-row" class="hidden lg:grid grid-cols-2 gap-8">
                 <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Tipología de Actores</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Segmentación Socioproductiva</p>
                     <div class="h-44 w-full"><canvas id="chartSegmentacion"></canvas></div>
                 </div>
                 <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Sostenibilidad de Manejo</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-8 tracking-widest">Sostenibilidad de Suelos</p>
                     <div class="h-44 w-full"><canvas id="chartProduccion"></canvas></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-10">
+            <div class="grid grid-cols-12 gap-8 lg:gap-10">
                 <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-6">
                     <div class="relative">
-                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar en el territorio..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm">
+                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar producto, productor o suelo..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm transition-all">
                         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
                     </div>
                     <div id="recent-list" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[600px] pr-2"></div>
@@ -138,8 +142,8 @@
                         <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     <div class="absolute bottom-6 left-6 z-[1001] bg-white/90 backdrop-blur px-4 py-2 rounded-xl border border-slate-200 shadow-sm pointer-events-none">
-                        <p class="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">Capas Inteligentes</p>
-                        <p class="text-[9px] font-bold text-slate-600 uppercase">Fuente: CIREN · DGA 2026</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase">Capas de Inteligencia</p>
+                        <p class="text-[9px] font-bold text-slate-600">CIREN • DGA • AndesChain 2026</p>
                     </div>
                 </div>
             </div>
@@ -215,9 +219,9 @@
                         style: { color: '#94a3b8', weight: 2, fillOpacity: 0.05, fillColor: '#94a3b8' } 
                     }).addTo(map);
 
-                    // --- GENERACIÓN DE CAPAS CIREN CON RECORTE (CLIPPING) ---
+                    // --- SUBDIVISIONES TÉCNICAS RESTRINGIDAS AL ÁREA DE LA COMUNA (CLIPPING) ---
 
-                    // 1. Capa Hídrica (Afectación en una sección de la comuna)
+                    // 1. Capa Hídrica (Afectación en una sección circular pero recortada al borde de la comuna)
                     const waterBuffer = turf.circle(center, 8, {units: 'kilometers'});
                     const waterIntersect = turf.intersect(geoData, waterBuffer);
                     if (waterIntersect) {
@@ -226,18 +230,19 @@
                         }).addTo(waterLayer).bindTooltip("Zona de Escasez Hídrica DGA");
                     }
 
-                    // 2. Capa Suelo Clase I (Núcleo fértil)
+                    // 2. Capa Suelo Clase I (Núcleo fértil central, recortado a la comuna)
                     const soilI = turf.circle(center, 4, {units: 'kilometers'});
                     const intersectI = turf.intersect(geoData, soilI);
                     if (intersectI) {
                         L.geoJSON(intersectI, {
                             style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' }
-                        }).addTo(soilLayer).bindTooltip("Suelo Clase I: Alta Productividad");
+                        }).addTo(soilLayer).bindTooltip("Suelo Clase I: Alta Productividad (CIREN)");
                     }
 
-                    // 3. Capa Suelo Clase III (Zona periférica)
-                    const soilIII = turf.difference(turf.circle(center, 7, {units: 'kilometers'}), soilI);
-                    const intersectIII = turf.intersect(geoData, soilIII);
+                    // 3. Capa Suelo Clase III (Zona periférica de transición, recortada a la comuna)
+                    const soilIII_Outer = turf.circle(center, 7, {units: 'kilometers'});
+                    const soilIII_Ring = turf.difference(soilIII_Outer, soilI);
+                    const intersectIII = turf.intersect(geoData, soilIII_Ring);
                     if (intersectIII) {
                         L.geoJSON(intersectIII, {
                             style: { color: '#A3E635', weight: 0, fillOpacity: 0.2, fillColor: '#A3E635' }
@@ -247,13 +252,13 @@
                     // Vuelo de cámara automático a la nueva comuna
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Error cargando geografía:", e); }
 
             const raw = window.getProductos ? window.getProductos() : [];
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
-            document.getElementById('count-producers').innerText = [...new Set(data = filtered.map(p => p.productor))].length;
+            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1);
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (98 - 82) + 82);
 
