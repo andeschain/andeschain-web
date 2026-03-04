@@ -28,18 +28,23 @@
         }
     </script>
     <style>
-        body { background-color: #FFFFFF; color: #111111; overflow-x: hidden; }
-        #map { height: calc(100vh - 420px); border-radius: 2rem; background: #FAFAFA; border: 1px solid #EEEEEE; z-index: 1; }
-        @media (min-width: 1024px) { #map { height: calc(100vh - 350px); } }
-
-        .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-        .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.8; }
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; }
         
-        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; padding: 12px !important; font-size: 10px !important; font-weight: 700; text-transform: uppercase; }
+        /* Layout Full Map */
+        #map { height: calc(100vh - 140px); width: 100%; background: #0f172a; transition: all 0.5s ease; z-index: 1; }
+        
+        /* Estilo de Paneles Flotantes */
+        .floating-hud { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+        .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
+        .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
+        
+        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; padding: 12px !important; font-size: 9px !important; font-weight: 800; text-transform: uppercase; }
+        
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; }
         .blur-content { filter: blur(30px); pointer-events: none; }
         
-        canvas { max-height: 120px !important; width: 100% !important; }
+        canvas { max-height: 110px !important; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
     </style>
@@ -47,19 +52,26 @@
 <body class="font-sans antialiased">
 
     <div id="auth-screen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-        <div class="max-w-xs w-full text-center space-y-12">
-            <img src="assets/favicon.png" class="h-12 mx-auto">
+        <div class="max-w-xs w-full text-center space-y-10">
+            <div class="flex flex-col items-center gap-2">
+                <img src="assets/favicon.png" class="h-10">
+                <span class="font-display font-bold text-sm tracking-widest uppercase">AndesChain</span>
+            </div>
             <div class="space-y-6">
-                <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b-2 border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
-                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-brand-500">Acceder</button>
+                <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear BI</button>
             </div>
         </div>
     </div>
 
-    <div id="main-content" class="blur-content transition-all duration-1000">
-        <nav class="px-8 py-6 flex justify-between items-center border-b border-fintual-gray">
-            <div class="flex items-center gap-8">
-                <img src="assets/favicon.png" class="h-6">
+    <div id="main-content" class="blur-content h-screen flex flex-col">
+        <nav class="px-8 py-4 flex justify-between items-center border-b border-fintual-gray bg-white">
+            <div class="flex items-center gap-6">
+                <div class="flex flex-col items-center leading-none">
+                    <img src="assets/favicon.png" class="h-6 mb-1">
+                    <span class="text-[8px] font-bold uppercase tracking-tighter text-fintual-text">AndesChain</span>
+                </div>
+                <div class="h-8 w-[1px] bg-fintual-gray"></div>
                 <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-lg outline-none cursor-pointer text-fintual-text bg-transparent">
                     <option value="Paine">Paine</option>
                     <option value="Buin">Buin</option>
@@ -67,78 +79,67 @@
                     <option value="Limache">Limache</option>
                 </select>
             </div>
-            <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest">
-                <button onclick="toggleDemoData()" class="text-fintual-mute" id="demo-btn">Demo: On</button>
-                <div class="h-4 w-[1px] bg-fintual-gray"></div>
-                <span class="text-brand-500">BI Protocol v1.8</span>
+            
+            <div id="top-stats" class="hidden lg:flex items-center gap-12">
+                <div class="text-center">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros</p>
+                    <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
+                </div>
+                <div class="text-center border-x border-fintual-gray px-12">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia</p>
+                    <h4 id="kpi-resiliencia" class="text-lg font-display font-bold text-brand-500 leading-none">0%</h4>
+                </div>
+                <div class="text-center">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">CO2 Ahorrado</p>
+                    <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none">0.0 t</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demos: On</button>
             </div>
         </nav>
 
-        <main class="p-8 space-y-12">
-            <div id="stats-panel" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 border-b border-fintual-gray pb-12">
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Registros</p>
-                    <h3 id="count-lots" class="text-4xl font-display font-bold">0</h3>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Productores</p>
-                    <h3 id="count-producers" class="text-4xl font-display font-bold">0</h3>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Resiliencia</p>
-                    <h3 id="kpi-resiliencia" class="text-4xl font-display font-bold text-brand-500">0%</h3>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">Riego Disponible</p>
-                    <h3 id="kpi-riego" class="text-4xl font-display font-bold text-fintual-blue">0%</h3>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest mb-2">CO2 Ahorrado</p>
-                    <h3 id="kpi-co2" class="text-4xl font-display font-bold">0.0</h3>
+        <div class="flex-1 relative overflow-hidden">
+            <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col gap-4">
+                <div class="floating-hud p-5 flex flex-col overflow-hidden">
+                    <h2 class="font-display font-bold text-sm mb-4 flex justify-between">
+                        Actores Locales
+                        <span id="count-producers" class="text-brand-500">0</span>
+                    </h2>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-1 max-h-[400px]"></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-12">
-                <div class="col-span-12 lg:col-span-4 space-y-12">
-                    <div>
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="font-display font-bold text-xl text-fintual-text">Actores en zona</h2>
-                            <input type="text" id="search-input" onkeyup="filterList()" placeholder="Buscar..." class="bg-fintual-gray/50 rounded-full px-4 py-1 text-[10px] outline-none">
-                        </div>
-                        <div id="recent-list" class="grid grid-cols-1 gap-2 max-h-[250px] overflow-y-auto pr-2 border-b border-fintual-gray pb-6"></div>
+            <div class="absolute top-6 right-6 z-[1000] w-48 flex flex-col gap-4">
+                <div class="floating-hud p-5 space-y-8">
+                    <div class="text-center">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Zonificación Territorial</p>
+                        <canvas id="chartSegmentacion"></canvas>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-8 pt-4">
-                        <div>
-                            <p class="text-[8px] font-bold uppercase text-fintual-mute mb-4 text-center">Segmentación</p>
-                            <canvas id="chartSegmentacion"></canvas>
-                        </div>
-                        <div>
-                            <p class="text-[8px] font-bold uppercase text-fintual-mute mb-4 text-center">Manejo Suelo</p>
-                            <canvas id="chartProduccion"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="pt-4 border-t border-fintual-gray">
-                        <p class="text-[9px] text-fintual-mute font-bold uppercase tracking-tighter">Fuentes de datos:</p>
-                        <p class="text-[9px] text-fintual-mute opacity-70 italic">CIREN (Capacidad de Uso) · DGA (Cuencas 2026)</p>
+                    <div class="text-center pt-4 border-t border-black/5">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3">Sostenibilidad Manejo</p>
+                        <canvas id="chartProduccion"></canvas>
                     </div>
                 </div>
-
-                <div class="col-span-12 lg:col-span-8 relative">
-                    <div id="map"></div>
-                    <div id="loader" class="absolute inset-0 bg-white/80 backdrop-blur-md z-[1001] flex items-center justify-center hidden">
-                        <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                    </div>
+                <div class="floating-hud p-4 text-[7px] text-fintual-mute font-bold uppercase tracking-tighter text-center">
+                    Data Source: CIREN · DGA 2026
                 </div>
             </div>
-        </main>
+
+            <div id="map"></div>
+            
+            <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
+                <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        </div>
     </div>
 
     <script src="js/simulador.js"></script>
     <script>
         const CLAVE = "Andes2026";
-        let map, markers = [], geoJsonLayer, chart1, chart2, waterLayer, soilLayer;
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2;
+        let waterLayer, soilLayer;
         let showDemo = true;
 
         function validatePass() {
@@ -164,19 +165,19 @@
             soilLayer = L.layerGroup();
 
             const overlays = {
-                "<span style='color: #4E5AF0; font-weight:bold'>💧 CAPA HÍDRICA (DGA)</span>": waterLayer,
-                "<span style='color: #10B981; font-weight:bold'>🌱 CALIDAD SUELO (CIREN)</span>": soilLayer
+                "<span class='text-[10px] font-extrabold text-fintual-blue'>💧 Capa Hídrica (DGA)</span>": waterLayer,
+                "<span class='text-[10px] font-extrabold text-brand-600'>🌱 Capacidad Suelo (CIREN)</span>": soilLayer
             };
 
-            L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
             updateTerritory("Paine");
         }
 
         async function updateTerritory(comuna) {
             document.getElementById('loader').classList.remove('hidden');
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
-            waterLayer.clearLayers();
-            soilLayer.clearLayers();
+            if (maskLayer) map.removeLayer(maskLayer);
+            waterLayer.clearLayers(); soilLayer.clearLayers();
             markers.forEach(m => map.removeLayer(m)); markers = [];
             
             try {
@@ -185,38 +186,27 @@
                 
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
+
+                    // 1. EFECTO OSCURECER AFUERA (MASKING)
+                    const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
+                    const mask = turf.difference(world, geoData);
+                    maskLayer = L.geoJSON(mask, { style: { color: '#0f172a', weight: 0, fillOpacity: 0.35 } }).addTo(map);
+
+                    // 2. PERÍMETRO COMUNA (BLANCO BRILLANTE)
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
+
+                    // 3. CAPAS TÉCNICAS (CON CLIPPING)
+                    const soilI = turf.buffer(geoData, -2.2, {units: 'kilometers'});
+                    if (soilI) L.geoJSON(soilI, { style: { color: '#10B981', weight: 0, fillOpacity: 0.4, fillColor: '#10B981' } }).addTo(soilLayer);
+
                     const bbox = turf.bbox(geoData);
-
-                    // PERÍMETRO ADMINISTRATIVO (Borde sólido estilo institucional)
-                    geoJsonLayer = L.geoJSON(geoData, { 
-                        style: { color: '#334155', weight: 1.5, fillOpacity: 0.02, fillColor: '#000' } 
-                    }).addTo(map);
-
-                    // --- GENERACIÓN DE CAPAS TÉCNICAS SEGMENTADAS ---
-
-                    // 1. Capa de Suelos (Segmentada)
-                    // Suelo Clase I: Valle Central (Buffer negativo interno)
-                    const soilI_Poly = turf.buffer(geoData, -2.5, {units: 'kilometers'});
-                    if (soilI_Poly) {
-                        L.geoJSON(soilI_Poly, { style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' } }).addTo(soilLayer);
-                    }
-                    // Suelo Clase III: Transición (Diferencia entre buffer menor y mayor)
-                    const soilIII_Outer = turf.buffer(geoData, -0.8, {units: 'kilometers'});
-                    if (soilIII_Outer && soilI_Poly) {
-                        const soilIII_Ring = turf.difference(soilIII_Outer, soilI_Poly);
-                        L.geoJSON(soilIII_Ring, { style: { color: '#A3E635', weight: 0, fillOpacity: 0.2, fillColor: '#A3E635' } }).addTo(soilLayer);
-                    }
-
-                    // 2. Capa Hídrica (Basada en Cuenca Baja - Sector Oeste)
-                    const waterBox = turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]);
+                    const waterBox = turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2, bbox[3]]);
                     const waterIntersect = turf.intersect(geoData, waterBox);
-                    if (waterIntersect) {
-                        L.geoJSON(waterIntersect, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.18, fillColor: '#4E5AF0' } }).addTo(waterLayer);
-                    }
+                    if (waterIntersect) L.geoJSON(waterIntersect, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
 
-                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [100, 100], duration: 1.5 });
                 }
-            } catch (e) { console.error("Error en geoprocesamiento:", e); }
+            } catch (e) { console.error(e); }
 
             const raw = window.getProductos ? window.getProductos() : [];
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
@@ -224,33 +214,32 @@
             document.getElementById('count-lots').innerText = filtered.length;
             document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
-            document.getElementById('kpi-riego').innerText = Math.floor(Math.random() * (75 - 55) + 55) + "%";
-            document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1);
+            document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
 
             renderList(filtered);
             renderMarkers(filtered);
             initCharts(filtered);
-            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 400);
         }
 
         function renderMarkers(data) {
             data.forEach(p => {
                 const isDemo = p.demo === "SI";
-                const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [8, 8], iconAnchor: [4, 4] });
+                const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
                 const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
                 m.options.productId = p.id;
-                m.bindPopup(`<div class="p-2 text-center font-bold text-xs">${p.nombre}</div>`);
+                m.bindPopup(`<div class="p-2 text-center font-bold text-[10px]">${p.nombre}</div>`);
                 markers.push(m);
             });
         }
 
         function renderList(data) {
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
-                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 py-2 cursor-pointer border-b border-fintual-gray/20 hover:bg-slate-50 transition-all">
-                    <div class="w-1.5 h-1.5 rounded-full ${p.demo === 'SI' ? 'bg-slate-300' : 'bg-brand-500'}"></div>
+                <div onclick="focusMarker('${p.id}')" class="flex items-center gap-3 py-2 border-b border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
+                    <div class="w-1 h-1 rounded-full ${p.demo === 'SI' ? 'bg-slate-300' : 'bg-brand-500'}"></div>
                     <div class="min-w-0">
-                        <p class="font-bold text-[11px] truncate leading-none mb-1">${p.nombre}</p>
-                        <p class="text-[8px] text-fintual-mute uppercase font-bold">${p.productor}</p>
+                        <p class="font-bold text-[10px] truncate leading-none mb-0.5">${p.nombre}</p>
+                        <p class="text-[7px] text-fintual-mute uppercase font-bold">${p.productor}</p>
                     </div>
                 </div>`).join('');
         }
@@ -261,25 +250,18 @@
         }
 
         function initCharts(data) {
+            const cfg = { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
             const ctx1 = document.getElementById('chartSegmentacion');
+            if (chart1) chart1.destroy();
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
             const ctx2 = document.getElementById('chartProduccion');
-            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
-            const cfg = { cutout: '78%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
-            
-            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ 
-                data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], 
-                backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 
-            }] }, options: cfg });
-
-            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ 
-                data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], 
-                backgroundColor: ['#F2F2F2', '#059669', '#10B981'], borderWidth: 0 
-            }] }, options: cfg });
+            if (chart2) chart2.destroy();
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#F2F2F2', '#059669', '#10B981'], borderWidth: 0 }] }, options: cfg });
         }
 
         function toggleDemoData() {
             showDemo = !showDemo;
-            document.getElementById('demo-btn').innerText = showDemo ? "Demo: On" : "Demo: Off";
+            document.getElementById('demo-btn').innerText = showDemo ? "Demos: On" : "Demos: Off";
             updateTerritory(document.getElementById('comuna-selector').value);
         }
 
