@@ -19,24 +19,8 @@
             theme: {
                 extend: {
                     colors: { 
-                        'brand': {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#10B981', // Verde Esmeralda AndesChain
-                            600: '#059669',
-                            900: '#064e3b',
-                        },
-                        'fintual': {
-                            'bg': '#F9FAFB',
-                            'card': '#FFFFFF',
-                            'text-main': '#1F2937',
-                            'text-mute': '#6B7280',
-                            'accent-gray': '#E5E7EB',
-                            'chart-1': '#10B981', // Verde
-                            'chart-2': '#6366F1', // Indigo suave
-                            'chart-3': '#94A3B8', // Gris azulado
-                            'chart-4': '#F59E0B'  // Ambar
-                        }
+                        'brand': { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10B981', 600: '#059669', 900: '#064e3b' },
+                        'fintual': { 'bg': '#F9FAFB', 'card': '#FFFFFF', 'blue': '#4E5AF0' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -45,63 +29,39 @@
     </script>
     <style>
         body { background-color: #F9FAFB; color: #1F2937; -webkit-tap-highlight-color: transparent; }
-        
-        /* Contenedor de Mapa Estilo Granola.ia */
-        #map { 
-            height: calc(100vh - 400px); 
-            border-radius: 1.5rem; 
-            z-index: 10; 
-            background: #F3F4F6; 
-            border: 1px solid #E5E7EB; 
-            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05);
-            transition: all 0.5s ease; 
-        }
+        #map { height: calc(100vh - 400px); border-radius: 1.5rem; z-index: 10; background: #F3F4F6; border: 1px solid #E5E7EB; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); }
         @media (min-width: 1024px) { #map { height: calc(100vh - 300px); } }
         
-        /* Pines Minimalistas */
         .pin-wrapper { position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
         .pin-main { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 2; }
-        
-        .pin-afc { background: #10B981; } 
-        .pin-emp { background: #6366F1; } 
-        .pin-cia { background: #4B5563; }
-        .pin-demo { background: #94A3B8; }
-
+        .pin-afc { background: #10B981; } .pin-emp { background: #6366F1; } .pin-cia { background: #4B5563; }
         .pin-pulse { position: absolute; width: 24px; height: 24px; border-radius: 50%; opacity: 0.15; animation: pulse 3s infinite; z-index: 1; }
-        .pulse-afc { background: #10B981; } .pulse-emp { background: #6366F1; } .pulse-cia { background: #4B5563; }
-
         @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(2.5); opacity: 0; } }
         
-        /* Popups Estilo Fintual */
-        .leaflet-popup-content-wrapper { border-radius: 1rem !important; padding: 0 !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; border: 1px solid #F3F4F6; }
-        .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
-        
-        /* Custom scrollbar */
+        .leaflet-control-layers {
+            border: none !important; border-radius: 1rem !important;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+            padding: 12px !important; font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        .blur-content { filter: blur(15px); pointer-events: none; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
-
-        #auth-screen { transition: all 0.6s ease; }
-        .blur-content { filter: blur(15px); pointer-events: none; }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased text-slate-900">
 
-    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-[#0f172a] flex items-center justify-center p-4">
+    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-[#0f172a] flex items-center justify-center p-4 transition-all duration-500">
         <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center space-y-6">
-            <img src="assets/favicon.png" class="h-10 mx-auto opacity-90">
-            <div>
-                <h3 class="font-display font-bold text-2xl text-slate-900 tracking-tight">Acceso Privado</h3>
-                <p class="text-slate-400 text-sm mt-1">Inteligencia Territorial AndesChain</p>
-            </div>
-            <div class="space-y-4">
-                <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                <button onclick="validatePass()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all shadow-lg">Entrar</button>
-                <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Credencial incorrecta</p>
-            </div>
+            <img src="assets/favicon.png" class="h-10 mx-auto">
+            <h3 class="font-display font-bold text-2xl text-slate-900">Acceso Privado</h3>
+            <input type="password" id="pass-input" placeholder="Clave" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-lg outline-none focus:ring-2 ring-brand-500">
+            <button onclick="validatePass()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Entrar</button>
+            <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Error de Clave</p>
         </div>
     </div>
 
-    <div id="main-content" class="blur-content">
+    <div id="main-content" class="blur-content transition-all duration-700">
         <nav class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 lg:px-12 py-5 sticky top-0 z-[1000]">
             <div class="max-w-[1600px] mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-10">
@@ -110,7 +70,6 @@
                         <h1 class="hidden lg:block font-display font-bold text-xl text-slate-900">AndesChain</h1>
                     </a>
                     <div class="flex items-center bg-slate-100 p-1.5 rounded-full border border-slate-200">
-                        <i class="fas fa-map-marked-alt ml-3 text-slate-400 text-xs"></i>
                         <select id="comuna-selector" onchange="updateTerritory(this.value)" class="bg-transparent text-slate-700 font-bold text-[11px] px-3 py-1 outline-none cursor-pointer">
                             <option value="Paine">Paine, RM</option>
                             <option value="Buin">Buin, RM</option>
@@ -119,18 +78,16 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="flex items-center gap-4">
                     <button id="filter-demo-btn" onclick="toggleDemoData()" class="text-slate-400 text-[10px] font-bold px-4 py-2 hover:text-slate-600 transition-all uppercase tracking-tighter">
                         <span id="demo-status-text">Ocultar Demos</span>
                     </button>
-                    <button onclick="toggleUIMode()" class="bg-brand-500 text-white text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-brand-600 transition-all shadow-sm uppercase tracking-widest">Vista Ampliada</button>
+                    <button onclick="toggleUIMode()" class="bg-brand-500 text-white text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-brand-600 shadow-sm uppercase tracking-widest">Vista Ampliada</button>
                 </div>
             </div>
         </nav>
 
         <main class="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-8">
-            
             <div id="stats-panel" class="grid grid-cols-12 gap-6 transition-all">
                 <div class="col-span-12 lg:col-span-4 grid grid-cols-3 lg:grid-cols-1 gap-4">
                     <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
@@ -162,7 +119,7 @@
             <div class="grid grid-cols-12 gap-8 lg:gap-12">
                 <div id="list-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-6">
                     <div class="relative">
-                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Filtrar por productor o rubro..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 transition-all">
+                        <input type="text" id="search-input" onkeyup="filterList()" placeholder="Filtrar por productor o rubro..." class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none focus:ring-2 ring-brand-500/10 shadow-sm">
                         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
                     </div>
                     <div id="recent-list" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[600px] pr-2"></div>
@@ -182,9 +139,9 @@
     <script>
         const CLAVE = "Andes2026";
         let map, markers = [], geoJsonLayer, chart1, chart2;
+        let layerControl = null;
+        let waterLayer, soilLayer;
         let showDemo = true;
-        let currentCommunePolygon = null;
-        let waterLayer = null;
 
         function validatePass() {
             if (document.getElementById('pass-input').value === CLAVE) {
@@ -218,37 +175,57 @@
 
         async function updateTerritory(comuna) {
             document.getElementById('loader').classList.remove('hidden');
+            
+            // Limpiar capas previas
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (waterLayer) map.removeLayer(waterLayer);
+            if (soilLayer) map.removeLayer(soilLayer);
+            if (layerControl) map.removeControl(layerControl);
             markers.forEach(m => map.removeLayer(m)); markers = [];
             
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
                 const results = await res.json();
+                
                 if (results[0] && results[0].geojson) {
-                    currentCommunePolygon = results[0].geojson;
+                    const communeGeo = results[0].geojson;
                     
                     // Capa Contorno Comuna
-                    geoJsonLayer = L.geoJSON(currentCommunePolygon, { 
-                        style: { color: '#E5E7EB', weight: 2, fillOpacity: 0.01 } 
+                    geoJsonLayer = L.geoJSON(communeGeo, { 
+                        style: { color: '#10B981', weight: 1, fillOpacity: 0.02 } 
                     }).addTo(map);
+
+                    // --- PROCESAMIENTO DE CAPAS OPCIONALES CON CLIPPING ---
                     
-                    // CAPA HÍDRICA RECORTADA (INTERSECCIÓN)
-                    // Simulamos una zona de escasez que abarca gran parte de la región
-                    const droughtZone = turf.circle([results[0].lon, results[0].lat], 15, {steps: 64, units: 'kilometers'});
-                    
-                    // Recortamos la zona de escasez para que solo se vea DENTRO de la comuna
-                    const intersection = turf.intersect(currentCommunePolygon, droughtZone);
-                    
-                    if (intersection) {
-                        waterLayer = L.geoJSON(intersection, {
+                    // 1. Capa Hídrica (Recortada a la comuna)
+                    const waterBuffer = turf.circle([results[0].lon, results[0].lat], 10, {units: 'kilometers'});
+                    const waterIntersect = turf.intersect(communeGeo, waterBuffer);
+                    if (waterIntersect) {
+                        waterLayer = L.geoJSON(waterIntersect, {
                             style: { color: '#6366F1', weight: 0, fillOpacity: 0.15, fillColor: '#6366F1' }
-                        }).addTo(map).bindTooltip("Zona con Restricción Hídrica Activa");
+                        });
                     }
+
+                    // 2. Capa Suelo Clase I (Recortada a la comuna)
+                    const soilBuffer = turf.circle([results[0].lon - 0.05, results[0].lat + 0.02], 8, {units: 'kilometers'});
+                    const soilIntersect = turf.intersect(communeGeo, soilBuffer);
+                    if (soilIntersect) {
+                        soilLayer = L.geoJSON(soilIntersect, {
+                            style: { color: '#10B981', weight: 1, fillOpacity: 0.1, fillColor: '#10B981', dashArray: '5,5' }
+                        });
+                    }
+
+                    // --- CREAR CONTROL DE CAPAS (ESTILO FINTUAL) ---
+                    const overlays = {
+                        "<span class='text-[10px] font-bold text-indigo-500 uppercase'>Déficit Hídrico</span>": waterLayer,
+                        "<span class='text-[10px] font-bold text-brand-600 uppercase'>Suelos Clase I</span>": soilLayer
+                    };
+
+                    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
 
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
                 }
-            } catch (e) { console.error("Error cargando geografía:", e); }
+            } catch (e) { console.log(e); }
 
             const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna) && (showDemo || p.demo === "NO"));
             
@@ -279,11 +256,8 @@
                     <div class="overflow-hidden bg-white">
                         <img src="${p.img}?v=1" class="w-full h-32 object-cover">
                         <div class="p-4 space-y-3">
-                            <div>
-                                <p class="text-[7px] font-bold text-brand-600 uppercase tracking-widest">${p.manejo}</p>
-                                <p class="font-bold text-slate-900 text-sm">${p.nombre}</p>
-                            </div>
-                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[9px] font-bold py-2.5 rounded-lg uppercase tracking-widest">Expediente</a>
+                            <p class="font-bold text-slate-900 text-sm leading-tight">${p.nombre}</p>
+                            <a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[9px] font-bold py-2.5 rounded-lg uppercase tracking-widest">Ver Expediente</a>
                         </div>
                     </div>`);
                 markers.push(m);
@@ -312,24 +286,15 @@
             if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
             
             const config = { 
-                cutout: '82%', 
-                responsive: true,
-                plugins: { 
-                    legend: { position: 'bottom', labels: { boxWidth: 5, usePointStyle: true, padding: 15, font: { size: 9, family: 'Plus Jakarta Sans', weight: '500' } } } 
-                },
-                maintainAspectRatio: false 
+                cutout: '84%', maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 6, usePointStyle: true, padding: 12, font: { size: 9, family: 'Plus Jakarta Sans' } } } }
             };
 
             chart1 = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
                     labels: ['AFC', 'Emprendedor', 'Empresa'],
-                    datasets: [{ 
-                        data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], 
-                        backgroundColor: ['#10B981', '#6366F1', '#94A3B8'], 
-                        hoverOffset: 4,
-                        borderWidth: 0 
-                    }]
+                    datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#6366F1', '#94A3B8'], borderWidth: 0 }]
                 },
                 options: config
             });
@@ -338,12 +303,7 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Tradicional', 'Orgánico', 'Agroecológico'],
-                    datasets: [{ 
-                        data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], 
-                        backgroundColor: ['#CBD5E1', '#059669', '#10B981'], 
-                        hoverOffset: 4,
-                        borderWidth: 0 
-                    }]
+                    datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#E5E7EB', '#059669', '#10B981'], borderWidth: 0 }]
                 },
                 options: config
             });
