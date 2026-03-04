@@ -29,21 +29,13 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; }
-        
-        /* Layout Full Map */
         #map { height: calc(100vh - 140px); width: 100%; background: #0f172a; transition: all 0.5s ease; z-index: 1; }
-        
-        /* Estilo de Paneles Flotantes */
         .floating-hud { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
-        
         .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; padding: 12px !important; font-size: 9px !important; font-weight: 800; text-transform: uppercase; }
-        
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; }
         .blur-content { filter: blur(30px); pointer-events: none; }
-        
         canvas { max-height: 110px !important; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
@@ -159,17 +151,27 @@
         function initMap() {
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); 
             
+            // Mapas Base
+            const baseLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
+            const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+            
+            baseLight.addTo(map); 
+
             waterLayer = L.layerGroup();
             soilLayer = L.layerGroup();
 
-            const overlays = {
-                "<span class='text-[10px] font-extrabold text-fintual-blue'>💧 Capa Hídrica (DGA)</span>": waterLayer,
-                "<span class='text-[10px] font-extrabold text-brand-600'>🌱 Capacidad Suelo (CIREN)</span>": soilLayer
+            const baseMaps = {
+                "<span class='text-[9px] font-bold uppercase'>Vista Mapa</span>": baseLight,
+                "<span class='text-[9px] font-bold uppercase'>Vista Satelital</span>": baseSat
             };
 
-            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
+            const overlays = {
+                "<span class='text-[9px] font-extrabold text-fintual-blue'>💧 Capa Hídrica (DGA)</span>": waterLayer,
+                "<span class='text-[9px] font-extrabold text-brand-600'>🌱 Capacidad Suelo (CIREN)</span>": soilLayer
+            };
+
+            L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
             updateTerritory("Paine");
         }
 
@@ -187,24 +189,25 @@
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
 
-                    // 1. EFECTO OSCURECER AFUERA (MASKING)
+                    // Masking (Oscurecer afuera)
                     const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
                     const mask = turf.difference(world, geoData);
-                    maskLayer = L.geoJSON(mask, { style: { color: '#0f172a', weight: 0, fillOpacity: 0.35 } }).addTo(map);
+                    maskLayer = L.geoJSON(mask, { style: { color: '#0f172a', weight: 0, fillOpacity: 0.4 } }).addTo(map);
 
-                    // 2. PERÍMETRO COMUNA (BLANCO BRILLANTE)
-                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
+                    // Perímetro Comuna
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2, fillOpacity: 0 } }).addTo(map);
 
-                    // 3. CAPAS TÉCNICAS (CON CLIPPING)
-                    const soilI = turf.buffer(geoData, -2.2, {units: 'kilometers'});
-                    if (soilI) L.geoJSON(soilI, { style: { color: '#10B981', weight: 0, fillOpacity: 0.4, fillColor: '#10B981' } }).addTo(soilLayer);
+                    // Capas Técnicas
+                    const soilI = turf.buffer(geoData, -2.0, {units: 'kilometers'});
+                    if (soilI) L.geoJSON(soilI, { style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' } }).addTo(soilLayer);
 
                     const bbox = turf.bbox(geoData);
                     const waterBox = turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2, bbox[3]]);
                     const waterIntersect = turf.intersect(geoData, waterBox);
                     if (waterIntersect) L.geoJSON(waterIntersect, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
 
-                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [100, 100], duration: 1.5 });
+                    // ZOOM MÁS CERCANO (Padding reducido de 100 a 40)
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) { console.error(e); }
 
@@ -212,7 +215,6 @@
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
-            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
 
