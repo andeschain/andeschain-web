@@ -33,7 +33,14 @@
         #map { height: 100%; width: 100%; z-index: 1; }
         
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
-        .btn-fullscreen { position: absolute; top: 24px; right: 24px; z-index: 5000; background: white; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
+        
+        /* Botón Fullscreen Desasociado */
+        .btn-fullscreen { 
+            position: absolute; top: 24px; right: 24px; z-index: 1010; 
+            background: white; width: 42px; height: 42px; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;
+        }
         .btn-fullscreen:hover { transform: scale(1.1); color: #10B981; }
 
         .floating-hud { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
@@ -41,16 +48,27 @@
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        /* Control de Capas Leaflet - Alineación Perfecta */
-        .leaflet-bottom.leaflet-right { bottom: 24px; right: 84px; z-index: 1005; }
-        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; padding: 12px !important; font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; }
+        /* Alineación Ventana de Capas con Segmentación */
+        .leaflet-bottom.leaflet-right { bottom: 24px; right: 24px; z-index: 1005; }
+        .leaflet-control-layers { 
+            border: none !important; border-radius: 1.5rem !important; padding: 16px !important; 
+            font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+            background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(12px) !important;
+            width: 208px !important; /* Mismo ancho que HUD segmentación (52 * 4) */
+        }
 
-        /* Estilo Popup v2.1 */
+        /* Estilo Popup v2.2 - Corrección de Colores y Botón */
         .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25) !important; }
         .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
-        .popup-img { height: 140px; width: 100%; object-fit: cover; }
-        .popup-btn { background-color: #064E3B; color: white; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; padding: 12px; border-radius: 0.8rem; display: block; transition: all 0.3s ease; }
-        .popup-btn:hover { background-color: #10B981; }
+        .leaflet-popup-close-button { color: #444 !important; font-size: 20px !important; padding: 10px !important; z-index: 5001; }
+        
+        .popup-img { height: 140px; width: 100%; object-fit: cover; display: block; }
+        .popup-btn { 
+            background-color: #064E3B; color: white !important; font-weight: 800; font-size: 10px; 
+            text-transform: uppercase; letter-spacing: 0.1em; text-align: center; 
+            padding: 14px; border-radius: 0.8rem; display: block; transition: all 0.3s ease; 
+        }
+        .popup-btn:hover { background-color: #10B981; transform: translateY(-1px); }
 
         .chart-container { height: 95px; position: relative; width: 100%; display: flex; justify-content: center; }
         .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 8px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -104,8 +122,8 @@
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">INDAP</p>
                     <h4 id="count-indap" class="text-lg font-display font-bold leading-none">0</h4>
                 </div>
-                <div class="text-center border-l border-fintual-gray pl-8">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-brand-600">Resiliencia</p>
+                <div class="text-center border-l border-fintual-gray pl-8 text-brand-600">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia</p>
                     <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8">
@@ -121,7 +139,7 @@
             <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
                     <h2 class="font-display font-bold text-sm mb-4 leading-none">Actores Locales</h2>
-                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[400px]"></div>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
                 </div>
             </div>
 
@@ -149,35 +167,34 @@
             </div>
 
             <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-64 floating-hud p-4 space-y-3 hidden">
-                <p class="text-[8px] font-extrabold uppercase text-brand-900 tracking-wider">Interpretación Territorial</p>
+                <p class="text-[8px] font-extrabold uppercase text-brand-900 tracking-wider leading-none">Interpretación Territorial</p>
                 <div id="legend-soil" class="space-y-1.5 hidden">
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#059669]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase I-II</p><p class="text-[7px] text-fintual-mute">Sin limitaciones. Alta prioridad de protección agrícola.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase I-II</p><p class="text-[7px] text-fintual-mute">Alta prioridad agrícola.</p></div>
                     </div>
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase III</p><p class="text-[7px] text-fintual-mute">Limitaciones moderadas. Requiere manejo de conservación.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase III</p><p class="text-[7px] text-fintual-mute">Requiere manejo conservación.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="pt-2 border-t border-black/5 hidden">
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona de Estrés Hídrico</p><p class="text-[7px] text-fintual-mute">Área bajo decreto DGA. Restricción para nuevos derechos de agua.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute">Bajo decreto DGA 2026.</p></div>
                     </div>
                 </div>
-                <p class="text-[6px] text-fintual-mute italic uppercase tracking-tighter">Fuentes Oficiales: CIREN · DGA 2026</p>
             </div>
 
             <div id="map-wrapper">
                 <div class="btn-fullscreen" onclick="toggleFullscreen()" title="Pantalla Completa">
-                    <i class="fas fa-expand-alt text-slate-600"></i>
+                    <i class="fas fa-expand-alt text-slate-600 text-sm"></i>
                 </div>
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sincronizando Territorio</span>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sincronizando...</span>
                     </div>
                 </div>
             </div>
@@ -196,8 +213,14 @@
                 setTimeout(() => { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); }, 400);
             }
         }
+
         window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
-        function toggleFullscreen() { document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); setTimeout(() => { if(map) map.invalidateSize(); }, 500); }
+        
+        function toggleFullscreen() { 
+            const wrapper = document.getElementById('map-wrapper');
+            wrapper.classList.toggle('fullscreen-mode'); 
+            setTimeout(() => { if(map) map.invalidateSize(); }, 500); 
+        }
 
         function initMap() {
             if (map) return;
@@ -209,14 +232,13 @@
             waterLayer = L.layerGroup(); 
             soilLayer = L.layerGroup();
 
-            const baseMaps = { "Esquema BI": baseLight, "Satelital": baseSat };
+            const baseMaps = { "Visualización Mapa": baseLight, "Satelital": baseSat };
             const overlays = { 
                 "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica (DGA)</span>": waterLayer, 
                 "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo (CIREN)</span>": soilLayer 
             };
             L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
 
-            // Control Dinámico de Leyenda Educativa
             map.on('overlayadd', e => {
                 document.getElementById('tech-legend').classList.remove('hidden');
                 if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.remove('hidden');
@@ -234,8 +256,6 @@
         async function updateTerritory(comuna) {
             const loader = document.getElementById('loader');
             loader.classList.remove('hidden');
-            const timeoutId = setTimeout(() => loader.classList.add('hidden'), 2500);
-
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             waterLayer.clearLayers(); soilLayer.clearLayers();
@@ -248,7 +268,7 @@
                     const geoData = results[0].geojson;
                     const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
                     maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
-                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2, fillOpacity: 0 } }).addTo(map);
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
 
                     const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
                     if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
@@ -274,7 +294,7 @@
 
             renderList(filtered);
             renderMarkers(filtered);
-            setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); clearTimeout(timeoutId); }, 300);
+            setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); }, 300);
         }
 
         function renderMarkers(data) {
