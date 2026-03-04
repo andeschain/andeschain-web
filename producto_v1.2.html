@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasaporte de Origen Digital | AndesChain</title>
+    <title>Ficha de Origen Digital | AndesChain</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
                 extend: {
                     colors: { 
                         'brand': { 500: '#10B981', 900: '#064E3B' },
-                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888' }
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -22,64 +22,94 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
-        .hero-img { height: 55vh; object-fit: cover; width: 100%; border-radius: 0 0 3rem 3rem; }
-        .data-grid { border-top: 1px solid #F2F2F2; padding-top: 2rem; }
+        
+        /* Contenedor de Imagen Pro: Centrado absoluto y visualización completa */
+        .img-container { 
+            height: 65vh; 
+            background: #fcfcfc; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+            border-radius: 0 0 3rem 3rem;
+            border-bottom: 1px solid #f2f2f2;
+        }
+        .img-container img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; /* Asegura que la imagen se vea completa sin recortes */
+            transition: transform 0.5s ease;
+        }
+
+        .data-grid { border-top: 1px solid #F2F2F2; padding-top: 3rem; }
         .tag { padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        .history-columns { column-count: 1; line-height: 1.8; color: #444; }
-        @media (min-width: 768px) { .history-columns { column-count: 2; column-gap: 3rem; } }
+        
+        /* Timeline de Hitos */
+        .milestone-dot { width: 12px; height: 12px; border-radius: 50%; background: #10B981; position: relative; z-index: 10; }
+        .milestone-line { position: absolute; left: 5px; top: 12px; bottom: -24px; width: 2px; background: #f2f2f2; }
     </style>
 </head>
 <body class="font-sans antialiased">
 
-    <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-50">
+    <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-fintual-gray/50">
         <a href="dashboard_v1.2.html" class="flex items-center gap-2 group text-fintual-mute hover:text-fintual-text transition-all">
             <i class="fas fa-arrow-left text-sm"></i>
-            <span class="text-xs font-bold uppercase tracking-widest">Panel Territorial</span>
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.2em]">Panel Territorial</span>
         </a>
-        <img src="assets/favicon.png" class="h-6">
+        <div class="flex items-center gap-2">
+            <img src="assets/favicon.png" class="h-6">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-fintual-mute">AndesChain BI</span>
+        </div>
     </nav>
 
-    <div id="product-content" class="max-w-5xl mx-auto px-6 pb-24 space-y-16">
-        <div class="space-y-6 pt-8">
-            <div class="flex gap-3">
-                <span id="badge-fomento" class="tag bg-brand-500/10 text-brand-500 font-bold">Protocolo Verificado</span>
+    <div id="product-content" class="max-w-5xl mx-auto px-6 pb-32 space-y-20">
+        
+        <div class="space-y-8 pt-12 text-center md:text-left">
+            <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                <span id="badge-fomento" class="tag bg-brand-500/10 text-brand-500">Origen Protegido</span>
                 <span id="badge-manejo" class="tag bg-fintual-gray text-fintual-mute">---</span>
             </div>
-            <h1 id="p-nombre" class="text-5xl md:text-7xl font-display font-bold leading-[0.9] tracking-tighter text-fintual-text">Cargando...</h1>
-            <div class="flex items-center gap-4">
-                <div id="p-productor-img" class="w-12 h-12 rounded-full bg-fintual-gray overflow-hidden border border-fintual-gray"></div>
-                <div>
-                    <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest leading-none mb-1">Productor responsable</p>
-                    <p id="p-productor" class="font-display font-semibold text-lg">---</p>
+            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter text-fintual-text">Cargando...</h1>
+            
+            <div id="proximity-card" class="inline-flex items-center gap-4 p-4 rounded-2xl bg-brand-50 border border-brand-100 hidden">
+                <div class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center animate-pulse">
+                    <i class="fas fa-location-dot"></i>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] font-bold text-brand-900 uppercase">Estás a <span id="distancia-val">--</span> km del origen</p>
+                    <p class="text-[11px] text-brand-600 font-medium leading-tight">Comercio de Proximidad: Menos logística, más sabor y -12% CO₂.</p>
                 </div>
             </div>
         </div>
 
-        <img id="p-img" src="" class="hero-img shadow-2xl shadow-black/5 bg-fintual-gray">
-
-        <div class="space-y-8">
-            <h2 class="font-display font-bold text-3xl tracking-tight border-b border-fintual-gray pb-4">Historia del Origen</h2>
-            <div id="p-historia" class="history-columns text-lg font-light italic">
-                </div>
+        <div class="img-container shadow-2xl shadow-black/[0.02]">
+            <img id="p-img" src="" alt="Producto Territorial">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 data-grid">
-            <div class="space-y-2">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Ubicación predial</p>
-                <p id="p-ubicacion" class="font-semibold text-fintual-text">---</p>
-                <p id="p-coordenadas" class="text-xs text-fintual-mute font-mono">---</p>
+            <div class="space-y-3">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Suelo (CIREN)</p>
+                <p class="font-display font-bold text-2xl text-brand-500 leading-none">Clase I</p>
+                <p class="text-xs text-fintual-mute leading-relaxed">Suelo profundo sin limitaciones. Ideal para el desarrollo radicular óptimo de este cultivo.</p>
             </div>
-            <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Calidad del Suelo</p>
-                <p id="p-suelo" class="font-semibold text-brand-500">Suelo Clase I (CIREN)</p>
-                <p class="text-[11px] text-fintual-mute">Sin limitaciones físicas para el cultivo intensivo.</p>
+            <div class="space-y-3 border-l border-fintual-gray pl-0 md:pl-12">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Agua (DGA)</p>
+                <p class="font-display font-bold text-2xl text-fintual-blue leading-none">Cuenca Alta</p>
+                <p class="text-xs text-fintual-mute leading-relaxed">Uso eficiente bajo protocolo de escasez hídrica 2026. Trazabilidad de riego verificada.</p>
             </div>
-            <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Fuente Hídrica</p>
-                <p id="p-agua" class="font-semibold text-fintual-blue font-bold">Acuífero DGA Protegido</p>
-                <p class="text-[11px] text-fintual-mute">Uso eficiente bajo decreto de escasez vigente.</p>
+            <div class="space-y-3 border-l border-fintual-gray pl-0 md:pl-12">
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Productor</p>
+                <p id="p-productor" class="font-display font-bold text-2xl text-fintual-text leading-none">---</p>
+                <p id="p-ubicacion" class="text-xs text-fintual-mute italic">---</p>
             </div>
         </div>
+
+        <div class="space-y-12">
+            <h3 class="font-display font-bold text-4xl tracking-tight">Línea de Vida del Producto</h3>
+            <div id="milestones-container" class="space-y-12 ml-4">
+                </div>
+        </div>
+
     </div>
 
     <script src="js/simulador.js"></script>
@@ -94,19 +124,52 @@
                 document.getElementById('p-nombre').innerText = p.nombre;
                 document.getElementById('p-productor').innerText = p.productor;
                 document.getElementById('p-ubicacion').innerText = p.ubicacion;
-                document.getElementById('p-coordenadas').innerText = `${p.lat}, ${p.lon}`;
                 document.getElementById('p-img').src = p.img;
-                document.getElementById('p-productor-img').innerHTML = `<img src="${p.img}" class="w-full h-full object-cover">`;
                 document.getElementById('badge-manejo').innerText = p.manejo;
-                document.getElementById('p-historia').innerText = p.historia || "Historia en proceso de certificación por AndesChain.";
                 
+                // Cargar Hitos Dinámicamente
+                if(p.hitos && p.hitos.length > 0) {
+                    const milestonesHTML = p.hitos.map((h, index) => `
+                        <div class="relative flex gap-8 group">
+                            ${index !== p.hitos.length - 1 ? '<div class="milestone-line"></div>' : ''}
+                            <div class="milestone-dot group-hover:scale-125 transition-transform"></div>
+                            <div class="space-y-1 -mt-1 pb-4">
+                                <p class="text-[10px] font-bold text-brand-500 uppercase tracking-widest">${h.fecha}</p>
+                                <p class="text-xl font-display font-bold text-fintual-text">${h.evento}</p>
+                                <p class="text-sm text-fintual-mute max-w-lg">${h.detalle}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('milestones-container').innerHTML = milestonesHTML;
+                }
+
                 if(p.fomento === "INDAP") {
                     const b = document.getElementById('badge-fomento');
                     b.innerText = "Usuario INDAP";
                     b.className = "tag bg-indigo-600 text-white";
                 }
+
+                // Cálculo de Distancia Educativa
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, p.lat, p.lon);
+                        document.getElementById('distancia-val').innerText = dist.toFixed(0);
+                        document.getElementById('proximity-card').classList.remove('hidden');
+                    });
+                }
             }
         };
+
+        // Función Haversine para distancia geográfica
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
     </script>
 </body>
 </html>
