@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Dashboard Territorial Municipal</title>
+    <title>AndesChain | Dashboard Territorial por Comuna</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,37 +28,37 @@
         }
     </script>
     <style>
-        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; }
-        #map-wrapper { flex: 1; position: relative; overflow: hidden; border-radius: 2rem; border: 1px solid #EEEEEE; margin: 0 24px 24px 24px; }
-        #map { height: 100%; width: 100%; background: #0f172a; transition: all 0.5s ease; z-index: 1; }
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #0f172a; }
+        #map { height: 100%; width: 100%; z-index: 1; }
         
-        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; border-radius: 0 !important; margin: 0 !important; }
+        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
         .btn-fullscreen { position: absolute; top: 20px; right: 20px; z-index: 1001; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* HUDs: Evitar solapamiento con capas de Leaflet */
         .floating-hud { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
         
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        /* Ajuste específico para el control de capas */
-        .leaflet-bottom.leaflet-right { bottom: 20px; right: 20px; z-index: 1002; }
-        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important; padding: 12px !important; font-family: 'Outfit', sans-serif; }
+        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; padding: 10px !important; font-family: 'Outfit', sans-serif; z-index: 1005 !important; }
 
-        canvas { max-height: 100px !important; margin: 0 auto; }
-        .chart-legend { font-size: 8px; font-weight: 700; text-transform: uppercase; color: #888; margin-top: 8px; display: flex; justify-content: center; gap: 8px; }
-        .legend-item { display: flex; items-center; gap: 4px; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .chart-container { height: 100px; position: relative; }
+        .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 10px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+        .legend-item { display: flex; items-center; gap: 3px; }
+        .dot { width: 5px; height: 5px; border-radius: 50%; }
 
-        #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 5000; }
-        .blur-content { filter: blur(30px); pointer-events: none; }
+        /* Loader fix: Asegurar que no bloquee los HUDs si falla */
+        #loader { transition: opacity 0.3s ease; z-index: 2000; }
+        
+        #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 5000; display: flex; }
+        .blur-content { filter: blur(25px); pointer-events: none; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #EEEEEE; border-radius: 10px; }
     </style>
 </head>
 <body class="font-sans antialiased">
 
-    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
+    <div id="auth-screen" class="fixed inset-0 items-center justify-center p-4">
         <div class="max-w-xs w-full text-center space-y-10">
             <div class="flex flex-col items-center gap-2">
                 <img src="assets/favicon.png" class="h-10">
@@ -76,7 +76,7 @@
             <div class="flex items-center gap-6">
                 <div class="flex flex-col items-center leading-none">
                     <img src="assets/favicon.png" class="h-6 mb-1">
-                    <span class="text-[8px] font-bold uppercase tracking-tighter text-fintual-text">AndesChain</span>
+                    <span class="text-[8px] font-bold uppercase tracking-tighter text-fintual-text text-center w-full">AndesChain</span>
                 </div>
                 <div class="h-8 w-[1px] bg-fintual-gray"></div>
                 <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-lg outline-none cursor-pointer bg-transparent">
@@ -110,18 +110,21 @@
         </nav>
 
         <div class="flex-1 relative flex flex-col overflow-hidden">
-            <div class="absolute top-6 left-12 z-[1000] w-72 max-h-[80%] flex flex-col gap-4 pointer-events-none">
+            <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col gap-4 pointer-events-none">
                 <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
                     <h2 class="font-display font-bold text-sm mb-4">Actores Locales</h2>
                     <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
+                    <div class="mt-4 pt-4 border-t border-black/5">
+                        <p class="text-[7px] text-fintual-mute font-bold uppercase">Fuente: CIREN · DGA 2026</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="absolute top-6 right-12 z-[1000] w-52 flex flex-col gap-4 pointer-events-none">
+            <div class="absolute top-6 right-6 z-[1000] w-52 flex flex-col gap-4 pointer-events-none">
                 <div class="floating-hud p-5 space-y-8 text-center pointer-events-auto">
                     <div>
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest">Segmentación</p>
-                        <canvas id="chartSegmentacion"></canvas>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Segmentación Actores</p>
+                        <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
                             <div class="legend-item"><span class="dot bg-[#4E5AF0]"></span> EMP</div>
@@ -129,8 +132,8 @@
                         </div>
                     </div>
                     <div class="pt-4 border-t border-black/5">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest">Sostenibilidad</p>
-                        <canvas id="chartProduccion"></canvas>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Sostenibilidad Manejo</p>
+                        <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AGRO</div>
@@ -143,8 +146,11 @@
             <div id="map-wrapper">
                 <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt"></i></div>
                 <div id="map"></div>
-                <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
-                    <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sincronizando Territorio</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -158,16 +164,29 @@
         function validatePass() {
             if (document.getElementById('pass-input').value === CLAVE) {
                 sessionStorage.setItem('auth_andes', 'true');
-                document.getElementById('auth-screen').style.opacity = '0';
-                setTimeout(() => { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); }, 500);
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('blur-content');
+                setTimeout(initMap, 100);
             }
         }
-        window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
-        function toggleFullscreen() { document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); setTimeout(() => map.invalidateSize(), 500); }
+
+        window.onload = () => { 
+            if (sessionStorage.getItem('auth_andes') === 'true') { 
+                document.getElementById('auth-screen').style.display = 'none'; 
+                document.getElementById('main-content').classList.remove('blur-content'); 
+                initMap(); 
+            } 
+        };
+
+        function toggleFullscreen() { 
+            document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); 
+            setTimeout(() => map.invalidateSize(), 500); 
+        }
 
         function initMap() {
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            
             const baseLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
             const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
             baseLight.addTo(map); 
@@ -177,15 +196,20 @@
 
             const baseMaps = { "Mapa Base": baseLight, "Satélite": baseSat };
             const overlays = { 
-                "<span style='color: #4E5AF0; font-weight:800;'>💧 ESTRÉS HÍDRICO (DGA)</span>": waterLayer, 
-                "<span style='color: #10B981; font-weight:800;'>🌱 CLASE SUELO (CIREN)</span>": soilLayer 
+                "<span style='color: #4E5AF0; font-weight:800;'>💧 AGUA (DGA)</span>": waterLayer, 
+                "<span style='color: #10B981; font-weight:800;'>🌱 SUELO (CIREN)</span>": soilLayer 
             };
             L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
             updateTerritory("Paine");
         }
 
         async function updateTerritory(comuna) {
-            document.getElementById('loader').classList.remove('hidden');
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden');
+            
+            // Fail-safe: Si la API de mapas tarda demasiado, quitamos el loader igual
+            const timeoutId = setTimeout(() => loader.classList.add('hidden'), 2500);
+
             if (geoJsonLayer) map.removeLayer(geoJsonLayer);
             if (maskLayer) map.removeLayer(maskLayer);
             waterLayer.clearLayers(); soilLayer.clearLayers();
@@ -194,59 +218,63 @@
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
                 const results = await res.json();
+                
                 if (results[0] && results[0].geojson) {
                     const geoData = results[0].geojson;
-                    maskLayer = L.geoJSON(turf.difference(turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]), geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.4 } }).addTo(map);
+                    
+                    const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
+                    maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2, fillOpacity: 0 } }).addTo(map);
 
-                    // --- CALIDAD DE SUELO (Lógica de colores consistente CIREN) ---
-                    // Suelo Clase I: Verde profundo (Alta productividad)
                     const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
-                    if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer).bindTooltip("Clase I: Suelo sin limitaciones");
+                    if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
 
-                    // Suelo Clase III: Verde claro (Limitaciones moderadas)
                     const soilIII_Outer = turf.buffer(geoData, -0.8, {units: 'kilometers'});
                     if (soilIII_Outer && soilI) {
-                        L.geoJSON(turf.difference(soilIII_Outer, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer).bindTooltip("Clase III: Suelo con limitaciones moderadas");
+                        L.geoJSON(turf.difference(soilIII_Outer, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer);
                     }
 
-                    // --- CAPA HÍDRICA (DGA - Zonas de Escasez) ---
                     const bbox = turf.bbox(geoData);
                     const waterArea = turf.intersect(geoData, turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]));
-                    if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer).bindTooltip("Zona de Restricción Hídrica DGA");
+                    if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
 
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
-            } catch (e) {}
+            } catch (e) { console.error("Error Geoproceso:", e); }
 
-            const raw = window.getProductos();
+            // Procesar datos locales (siempre rápido)
+            const raw = window.getProductos ? window.getProductos() : [];
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
             
             document.getElementById('count-lots').innerText = filtered.length;
-            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
             document.getElementById('count-indap').innerText = filtered.filter(p => p.fomento === "INDAP").length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
 
             renderList(filtered);
             renderMarkers(filtered);
-            initCharts(filtered);
-            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 400);
+            
+            // Render de gráficos con pequeño delay para no bloquear el hilo principal
+            setTimeout(() => {
+                initCharts(filtered);
+                loader.classList.add('hidden');
+                clearTimeout(timeoutId);
+            }, 300);
         }
 
         function renderMarkers(data) {
             data.forEach(p => {
                 const isDemo = p.demo === "SI";
                 const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
-                const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
                 m.options.productId = p.id;
                 m.bindPopup(`
-                    <div class="w-52 overflow-hidden rounded-xl bg-white shadow-xl font-sans">
+                    <div class="w-52 overflow-hidden rounded-xl bg-white font-sans">
                         <img src="${p.img}" class="h-28 w-full object-cover">
                         <div class="p-3">
-                            <p class="font-display font-bold text-[12px] leading-tight text-fintual-text mb-0.5">${p.nombre}</p>
+                            <p class="font-bold text-[12px] leading-tight text-fintual-text mb-0.5">${p.nombre}</p>
                             <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-3 italic">Productor: ${p.productor}</p>
-                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[9px] font-bold py-2 rounded-lg uppercase tracking-[0.1em] hover:bg-brand-500 transition-all">Ver Pasaporte</a>
+                            <a href="producto_v1.2.html?id=${p.id}" class="block bg-brand-900 text-white text-center text-[9px] font-bold py-2 rounded-lg uppercase tracking-widest hover:bg-brand-500 transition-all">Ver Pasaporte</a>
                         </div>
                     </div>`, { padding: 0 });
                 markers.push(m);
@@ -258,7 +286,7 @@
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
                     <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shadow-sm bg-slate-100">
                     <div class="min-w-0">
-                        <p class="font-bold text-[10px] truncate leading-none mb-1">${p.nombre}</p>
+                        <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
                     </div>
                 </div>`).join('');
@@ -267,10 +295,13 @@
         function focusMarker(id) { const target = markers.find(m => m.options.productId === id); if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); } }
 
         function initCharts(data) {
+            const ctx1 = document.getElementById('chartSegmentacion');
+            const ctx2 = document.getElementById('chartProduccion');
+            if (!ctx1 || !ctx2) return;
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
             const cfg = { cutout: '80%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
-            const ctx1 = document.getElementById('chartSegmentacion'); if (chart1) chart1.destroy();
+            
             chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
-            const ctx2 = document.getElementById('chartProduccion'); if (chart2) chart2.destroy();
             chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length, data.filter(p=>p.manejo==='Tradicional').length], backgroundColor: ['#059669', '#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: cfg });
         }
 
