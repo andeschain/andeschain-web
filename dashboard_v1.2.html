@@ -55,7 +55,7 @@
                 <p class="text-slate-400 text-sm italic uppercase tracking-widest font-bold">AndesChain BI</p>
             </div>
             <div class="space-y-4">
-                <input type="password" id="pass-input" placeholder="Andes2026" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-lg outline-none focus:ring-2 ring-brand-500 transition-all">
+                <input type="password" id="pass-input" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-lg outline-none focus:ring-2 ring-brand-500 transition-all">
                 <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-500 transition-all">Desbloquear</button>
                 <p id="pass-error" class="text-red-400 text-[10px] font-bold uppercase hidden">Clave incorrecta</p>
             </div>
@@ -139,4 +139,186 @@
                 <div id="map-panel" class="col-span-12 lg:col-span-8 relative">
                     <div id="map"></div>
                     <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[1001] flex items-center justify-center rounded-3xl hidden">
-                        <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent
+                        <div class="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <div class="absolute bottom-6 left-6 z-[1001] bg-white/90 backdrop-blur px-4 py-2 rounded-xl border border-slate-200 shadow-sm pointer-events-none text-left">
+                        <p class="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1 text-brand-600">Territorial Intelligence Engine</p>
+                        <p class="text-[9px] font-bold text-slate-600 uppercase">CIREN · DGA · IDE Chile API Preview</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, chart1, chart2, layerControl;
+        let waterLayer, soilLayer;
+        let showDemo = true;
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('blur-content');
+                    initMap();
+                }, 500);
+            } else {
+                document.getElementById('pass-error').classList.remove('hidden');
+            }
+        }
+
+        window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); 
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            
+            waterLayer = L.layerGroup();
+            soilLayer = L.layerGroup();
+
+            const overlays = {
+                "<span class='text-indigo-600 font-bold'>💧 Escasez Hídrica</span>": waterLayer,
+                "<span class='text-emerald-600 font-bold'>🌱 Calidad de Suelo</span>": soilLayer
+            };
+
+            layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            waterLayer.clearLayers(); soilLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+            
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    const center = [parseFloat(results[0].lon), parseFloat(results[0].lat)];
+                    const bbox = turf.bbox(geoData);
+                    
+                    geoJsonLayer = L.geoJSON(geoData, { 
+                        style: { color: '#cbd5e1', weight: 2, fillOpacity: 0.05, fillColor: '#94a3b8' } 
+                    }).addTo(map);
+
+                    // --- GENERACIÓN DE CAPAS TÉCNICAS (SIMULACIÓN MORFOLOGÍA REAL) ---
+
+                    // 1. Suelo Clase I: Eje Aluvial Irregular (Franja de Valle)
+                    const lineValle = turf.lineString([[bbox[0], (bbox[1]+bbox[3])/2], [bbox[2], (bbox[1]+bbox[3])/2 + 0.02]]);
+                    const valleyCore = turf.buffer(lineValle, 2.8, {units: 'kilometers'});
+                    const soilI = turf.intersect(geoData, valleyCore);
+                    if (soilI) {
+                        L.geoJSON(soilI, {
+                            style: { color: '#10B981', weight: 0, fillOpacity: 0.35, fillColor: '#10B981' }
+                        }).addTo(soilLayer).bindTooltip("Suelo Clase I: Alta Productividad (Núcleo Aluvial)");
+                    }
+
+                    // 2. Suelo Clase III: Transición Piedemonte
+                    const transitionZone = turf.buffer(lineValle, 5, {units: 'kilometers'});
+                    const soilIII_Intersect = turf.intersect(geoData, transitionZone);
+                    if (soilIII_Intersect && soilI) {
+                        const soilIII = turf.difference(soilIII_Intersect, soilI);
+                        L.geoJSON(soilIII, {
+                            style: { color: '#A3E635', weight: 0, fillOpacity: 0.2, fillColor: '#A3E635' }
+                        }).addTo(soilLayer).bindTooltip("Suelo Clase III: Limitaciones Moderadas");
+                    }
+
+                    // 3. Capa Hídrica: Cuenca Baja / Zona Poniente (Modelo DGA)
+                    const waterBox = turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]);
+                    const waterIntersect = turf.intersect(geoData, waterBox);
+                    if (waterIntersect) {
+                        L.geoJSON(waterIntersect, {
+                            style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#6366F1' }
+                        }).addTo(waterLayer).bindTooltip("Zona Bajo Decreto de Escasez Hídrica DGA");
+                    }
+
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
+                }
+            } catch (e) { console.error(e); }
+
+            const raw = window.getProductos ? window.getProductos() : [];
+            const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
+            
+            document.getElementById('count-lots').innerText = filtered.length;
+            document.getElementById('count-producers').innerText = [...new Set(filtered.map(p => p.productor))].length;
+            document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (98 - 82) + 82);
+            document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1);
+
+            initCharts(filtered);
+            renderList(filtered);
+            renderMarkers(filtered);
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 600);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const type = p.tipo === 'Emprendedor' ? 'emp' : (p.tipo === 'Empresa' ? 'cia' : 'afc');
+                const icon = L.divIcon({
+                    className: 'c-icon',
+                    html: `<div class="pin-wrapper"><div class="pin-main pin-${type}"></div></div>`,
+                    iconSize: [26, 26], iconAnchor: [13, 13]
+                });
+                const m = L.marker([p.lat, p.lon], { icon }).addTo(map);
+                m.options.productId = p.id;
+                m.bindPopup(`<div class="p-4 space-y-3"><p class="font-bold text-slate-900 text-sm leading-tight">${p.nombre}</p><a href="timeline.html?id=${p.id}" class="block bg-slate-900 text-white text-center text-[10px] font-bold py-2.5 rounded-lg uppercase tracking-widest hover:bg-brand-500">Expediente</a></div>`);
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
+                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-brand-500 cursor-pointer shadow-sm transition-all hover:shadow-md">
+                    <img src="${p.img}?v=1" class="w-10 h-10 rounded-xl object-cover bg-slate-50">
+                    <div class="min-w-0">
+                        <p class="font-bold text-[11px] text-slate-900 truncate">${p.nombre}</p>
+                        <p class="text-[9px] text-slate-400 uppercase font-bold tracking-tighter">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function focusMarker(id) {
+            const target = markers.find(m => m.options.productId === id);
+            if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); }
+        }
+
+        function initCharts(data) {
+            const ctx1 = document.getElementById('chartSegmentacion');
+            const ctx2 = document.getElementById('chartProduccion');
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            const config = { cutout: '86%', maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 6, usePointStyle: true, padding: 15, font: { size: 9, family: 'Plus Jakarta Sans', weight: 'bold' } } } } };
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { labels: ['AFC', 'Emprend.', 'Empresa'], datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#6366F1', '#475569'], borderWidth: 0 }] }, options: config });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { labels: ['Trad.', 'Org.', 'Agro.'], datasets: [{ data: [data.filter(p=>p.manejo==='Tradicional').length, data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length], backgroundColor: ['#e2e8f0', '#059669', '#10B981'], borderWidth: 0 }] }, options: config });
+        }
+
+        function toggleUIMode() {
+            document.getElementById('stats-panel').classList.toggle('hidden');
+            document.getElementById('charts-row').classList.toggle('hidden');
+            document.getElementById('list-panel').classList.toggle('lg:col-span-4');
+            document.getElementById('list-panel').classList.toggle('hidden');
+            document.getElementById('map-panel').classList.toggle('lg:col-span-8');
+            document.getElementById('map-panel').classList.toggle('lg:col-span-12');
+            setTimeout(() => map.invalidateSize(), 400);
+        }
+
+        function filterList() {
+            const val = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('#recent-list > div').forEach(item => { item.style.display = item.innerText.toLowerCase().includes(val) ? 'flex' : 'none'; });
+        }
+
+        function toggleDemoData() {
+            showDemo = !showDemo;
+            document.getElementById('demo-status-text').innerText = showDemo ? "Ocultar Demos" : "Mostrar Demos";
+            updateTerritory(document.getElementById('comuna-selector').value);
+        }
+    </script>
+</body>
+</html>
