@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>AndesChain v1.2 | Dashboard Territorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar-item-active { background-color: #ECFDF5; color: #064E3B; border-right: 4px solid #10B981; }
+        canvas { max-height: 200px; }
+    </style>
+</head>
+<body class="bg-slate-50 flex">
+    <aside class="w-64 h-screen bg-white border-r border-slate-200 sticky top-0 hidden md:block">
+        <div class="p-8">
+            <img src="assets/favicon.png" class="h-8 mb-8">
+            <nav class="space-y-2">
+                <a href="#" class="sidebar-item-active flex items-center p-3 rounded-lg font-bold">
+                    <i class="fas fa-chart-line mr-3"></i> Auditoría
+                </a>
+                <a href="#" class="text-slate-400 flex items-center p-3 rounded-lg font-medium hover:bg-slate-50">
+                    <i class="fas fa-map-marked-alt mr-3"></i> Mapa de Cultivos
+                </a>
+                <a href="#" class="text-slate-400 flex items-center p-3 rounded-lg font-medium hover:bg-slate-50">
+                    <i class="fas fa-users mr-3"></i> Catastro
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">GeoDashboard Territorial</h1>
+                <p class="text-slate-500">Piloto: <span class="font-bold text-emerald-600">Municipalidad de Paine</span></p>
+            </div>
+            <div class="flex items-center gap-4">
+                <select id="selector-comuna" class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-sm font-bold outline-none">
+                    <option value="Paine">Paine (Piloto)</option>
+                    <option value="Quillota">Quillota</option>
+                    <option value="San Carlos">San Carlos</option>
+                    <option value="Antofagasta">Antofagasta</option>
+                </select>
+                <div class="h-10 w-10 bg-slate-200 rounded-full"></div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Ejecución de Subsidios</p>
+                <h3 class="text-2xl font-black text-slate-900">84.2%</h3>
+                <p class="text-xs text-emerald-500 mt-1"><i class="fas fa-check-circle"></i> Validado vía EXIF</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Huella CO2 Ahorrada</p>
+                <h3 class="text-2xl font-black text-slate-900">12.5 <span class="text-sm font-normal">Ton</span></h3>
+                <p class="text-xs text-slate-400 mt-1">Impacto Km 0</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Alertas Fenológicas</p>
+                <h3 class="text-2xl font-black text-red-500">03</h3>
+                <p class="text-xs text-slate-400 mt-1">Zonas en riesgo helada</p>
+            </div>
+            <div class="bg-emerald-900 p-6 rounded-3xl shadow-sm text-white">
+                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">Productores FOD</p>
+                <h3 class="text-2xl font-black">152</h3>
+                <p class="text-xs text-emerald-300 mt-1">+12% este mes</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-lg mb-6">Distribución de Cultivos</h3>
+                <canvas id="prodChart"></canvas>
+            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-lg mb-6">Últimas Verificaciones de Campo</h3>
+                <div class="space-y-4" id="log-actividad">
+                    </div>
+            </div>
+        </div>
+    </main>
+    <script src="js/simulador_v1.2.js"></script>
+    <script>
+        // Lógica de carga de datos para Dashboard
+        const ctx = document.getElementById('prodChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sandía', 'Paltas', 'Cereales', 'Otros'],
+                datasets: [{
+                    data: [40, 25, 20, 15],
+                    backgroundColor: ['#064E3B', '#10B981', '#D1FAE5', '#F1F5F9'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '80%', plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
+</body>
+</html>
