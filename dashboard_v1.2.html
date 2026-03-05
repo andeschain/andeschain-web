@@ -38,16 +38,16 @@
 
         .floating-hud { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); pointer-events: auto; }
         
-        /* CORRECCIÓN HINTS DINÁMICOS */
-        .hint-box { position: relative; display: inline-block; cursor: help; }
+        /* CORRECCIÓN FINAL HINTS */
+        .hint-box { position: relative; cursor: help; }
         .hint-content { 
-            visibility: hidden; width: 220px; background-color: #111111; color: #ffffff; 
-            text-align: left; border-radius: 10px; padding: 12px; 
-            position: absolute; z-index: 6000; bottom: 130%; left: 50%; transform: translateX(-50%);
-            opacity: 0; transition: all 0.2s ease; font-size: 10px; line-height: 1.4; pointer-events: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+            display: none; width: 220px; background-color: #111111; color: #ffffff; 
+            border-radius: 12px; padding: 12px; position: absolute; z-index: 9999; 
+            bottom: 125%; left: 50%; transform: translateX(-50%);
+            font-size: 10px; line-height: 1.4; pointer-events: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
         }
-        .hint-box:hover .hint-content { visibility: visible; opacity: 1; bottom: 140%; }
+        .hint-box:hover .hint-content { display: block; }
 
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
@@ -57,13 +57,8 @@
 
         .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; }
         .popup-btn { background-color: #064E3B !important; color: white !important; font-weight: 800; font-size: 10px; text-transform: uppercase; text-align: center; padding: 14px; border-radius: 0.8rem; display: block; text-decoration: none; }
-        .popup-btn:hover { background-color: #10B981; }
-
+        
         .chart-container { height: 95px; position: relative; width: 100%; display: flex; justify-content: center; }
-        .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 8px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-        .legend-item { display: flex; items-center; gap: 3px; }
-        .dot { width: 5px; height: 5px; border-radius: 50%; }
-
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
         .blur-content { filter: blur(25px); pointer-events: none; }
     </style>
@@ -75,7 +70,9 @@
             <div class="flex flex-col items-center gap-3">
                 <img src="assets/favicon.png" class="h-12">
                 <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain Dashboard Territorial</h2>
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">Infraestructura de trazabilidad para fomento productivo y planificación municipal.</p>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">
+                    Demo para unidades de fomento productivo, planificación territorial municipal e INDAP.
+                </p>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
@@ -93,7 +90,7 @@
                 </div>
                 <div class="h-8 w-[1px] bg-fintual-gray"></div>
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest mb-0.5">Seleccionar Comuna:</span>
+                    <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest mb-0.5 text-left">Seleccionar Comuna:</span>
                     <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-lg outline-none cursor-pointer bg-transparent appearance-none text-brand-900">
                         <option value="Paine">Paine</option>
                         <option value="Buin">Buin</option>
@@ -106,24 +103,24 @@
             
             <div id="top-stats" class="hidden lg:flex items-center gap-8">
                 <div class="text-center hint-box">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros Verificados</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Unidades Georeferenciadas</p>
                     <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
-                    <span class="hint-content"><b>Trazabilidad Digital:</b> Número de predios con identidad digital activa verificados mediante el protocolo AndesChain.</span>
+                    <span class="hint-content"><b>Activos Digitales:</b> Volumen total de predios agrícolas incorporados a la infraestructura de trazabilidad digital AndesChain.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 text-indigo-600 hint-box">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Impacto INDAP</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Vinculación Institucional</p>
                     <h4 id="count-indap" class="text-lg font-display font-bold leading-none">0</h4>
-                    <span class="hint-content"><b>Fomento Productivo:</b> Productores de la Agricultura Familiar vinculados a programas de apoyo estatal.</span>
+                    <span class="hint-content"><b>Alcance Estatal:</b> Cuantificación de actores pertenecientes a la Agricultura Familiar Campesina (AFC) validados por INDAP.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 text-brand-600 hint-box">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia Crítica</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Índice de Resiliencia</p>
                     <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
-                    <span class="hint-content"><b>Capacidad Adaptativa:</b> Probabilidad de continuidad productiva ante eventos de sequía o crisis hídrica.</span>
+                    <span class="hint-content"><b>Sostenibilidad Territorial:</b> Estimación de la capacidad predial para mantener la operatividad ante shocks hídricos y climáticos.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 hint-box">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Descarbonización</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Mitigación Logística</p>
                     <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none">0.0 t</h4>
-                    <span class="hint-content"><b>Logística Local:</b> Toneladas de CO2 mitigadas al comercializar productos en radios menores a 30km.</span>
+                    <span class="hint-content"><b>Impacto Ambiental:</b> Reducción de huella de carbono proyectada mediante el fomento de circuitos cortos de comercialización local.</span>
                 </div>
             </div>
             <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demos: On</button>
@@ -137,22 +134,22 @@
                 </div>
             </div>
 
-            <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-72 floating-hud p-5 space-y-4 hidden animate-in slide-in-from-left duration-300">
+            <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-72 floating-hud p-5 space-y-4 hidden">
                 <p class="text-[9px] font-extrabold uppercase text-brand-900 tracking-wider border-b border-black/5 pb-2">Interpretación Territorial BI</p>
                 <div id="legend-soil" class="space-y-2 hidden">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#059669]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight">Clase I-II (Suelo)</p><p class="text-[8px] text-fintual-mute">Alta prioridad de protección. Suelos con mínima limitación de uso.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight">Clase de Capacidad I-II (CIREN)</p><p class="text-[8px] text-fintual-mute text-left">Suelos de máxima aptitud agrícola. Prioridad estratégica para soberanía alimentaria y protección institucional.</p></div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight">Clase III (Suelo)</p><p class="text-[8px] text-fintual-mute">Requiere manejo tecnificado y rotación de cultivos controlada.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight">Clase de Capacidad III (CIREN)</p><p class="text-[8px] text-fintual-mute text-left">Suelos con limitaciones moderadas. Requieren inversión en tecnificación y planes de manejo de conservación.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="hidden">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight text-fintual-blue uppercase">Estrés Hídrico DGA</p><p class="text-[8px] text-fintual-mute">Áreas con restricción de nuevos derechos según disponibilidad acuífera.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight text-fintual-blue uppercase">Zonificación de Estrés Hídrico (DGA)</p><p class="text-[8px] text-fintual-mute text-left">Áreas bajo decretos de escasez. Condicionan la factibilidad técnica para nuevos derechos de aprovechamiento.</p></div>
                     </div>
                 </div>
             </div>
@@ -160,9 +157,8 @@
             <div class="absolute top-6 right-6 z-[1000] w-52 max-h-[65%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 space-y-6 text-center pointer-events-auto overflow-y-auto">
                     <div class="hint-box">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Perfil Actor</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Segmentación según capacidad</p>
-                        <span class="hint-content"><b>Analítica de Actores:</b> Segmenta entre productores familiares (AFC) y corporativos para políticas de fomento diferenciadas.</span>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Matriz de Segmentación</p>
+                        <span class="hint-content"><b>Estratificación Actorial:</b> Permite identificar la concentración de pequeños productores (AFC) vs empresas comerciales para asignación presupuestaria.</span>
                         <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
@@ -171,9 +167,8 @@
                         </div>
                     </div>
                     <div class="pt-4 border-t border-black/5 hint-box">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Matriz de Cultivo</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Sostenibilidad y manejo</p>
-                        <span class="hint-content"><b>Salud del Suelo:</b> Monitorea la transición desde agricultura tradicional hacia agroecología y orgánica.</span>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Matriz de Sostenibilidad</p>
+                        <span class="hint-content"><b>Eficiencia Productiva:</b> Monitoriza la transición desde manejos tradicionales hacia estándares de agroecología y orgánica.</span>
                         <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
@@ -185,12 +180,12 @@
             </div>
 
             <div id="map-wrapper">
-                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt text-slate-600"></i></div>
+                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt text-slate-600 text-sm"></i></div>
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center">Analizando Territorio</span>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Analizando Datos Territoriales</span>
                     </div>
                 </div>
             </div>
@@ -220,16 +215,16 @@
             const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
             waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
             
-            L.control.layers({ "Mapa BI": baseLight, "Satélite": baseSat }, { "💧 Disponibilidad Hídrica": waterLayer, "🌱 Capacidad Suelo": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
+            L.control.layers({ "Mapa de Infraestructura": baseLight, "Vista Satelital (RGB)": baseSat }, { "💧 Análisis de Estrés Hídrico": waterLayer, "🌱 Capacidad de Suelo (CIREN)": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
             
             map.on('overlayadd', e => {
                 document.getElementById('tech-legend').classList.remove('hidden');
                 if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.remove('hidden');
-                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.remove('hidden');
+                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.remove('hidden');
             });
             map.on('overlayremove', e => {
                 if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.add('hidden');
-                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.add('hidden');
+                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.add('hidden');
                 if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
             });
             updateTerritory("Paine");
