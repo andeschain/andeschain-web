@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Dashboard Territorial</title>
+    <title>AndesChain | Dashboard Institucional</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,6 +34,7 @@
         
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
         
+        /* Botón Fullscreen Desasociado */
         .btn-fullscreen { 
             position: absolute; top: 24px; left: 320px; z-index: 1010; 
             background: white; width: 42px; height: 42px; border-radius: 12px; 
@@ -75,13 +76,6 @@
     </style>
 </head>
 <body class="font-sans antialiased">
-
-    <div id="mobile-block" class="fixed inset-0 z-[10000] bg-white flex flex-col items-center justify-center p-12 text-center">
-        <img src="assets/favicon.png" class="h-12 mb-8">
-        <h2 class="font-display font-bold text-2xl text-brand-900 mb-4 tracking-tighter uppercase">Modo Beta</h2>
-        <p class="text-fintual-mute text-sm leading-relaxed mb-8">Acceso exclusivo Desktop para el despliegue de capas de planificación territorial.</p>
-        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest">Requiere Computador</div>
-    </div>
 
     <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
         <div class="max-w-sm w-full text-center space-y-10">
@@ -171,26 +165,6 @@
                 </div>
             </div>
 
-            <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-64 floating-hud p-4 space-y-3 hidden">
-                <p class="text-[8px] font-extrabold uppercase text-brand-900 tracking-wider leading-none">Interpretación Territorial</p>
-                <div id="legend-soil" class="space-y-1.5 hidden">
-                    <div class="flex items-start gap-2">
-                        <div class="w-2 h-2 mt-1 rounded-full bg-[#059669]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase I-II</p><p class="text-[7px] text-fintual-mute font-bold text-left">Suelo agrícola de alta prioridad (CIREN).</p></div>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <div class="w-2 h-2 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight text-left">Suelo Clase III</p><p class="text-[7px] text-fintual-mute font-bold text-left">Suelo con limitaciones de cultivo.</p></div>
-                    </div>
-                </div>
-                <div id="legend-water" class="pt-2 border-t border-black/5 hidden">
-                    <div class="flex items-start gap-2">
-                        <div class="w-2 h-2 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute font-bold text-left">Bajo decreto DGA 2026.</p></div>
-                    </div>
-                </div>
-            </div>
-
             <div id="map-wrapper">
                 <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt text-slate-600"></i></div>
                 <div id="map"></div>
@@ -231,27 +205,8 @@
             if (map) return;
             map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
             const baseLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
-            const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
             baseLight.addTo(map); 
-
             waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
-            const baseMaps = { "Mapa": baseLight, "Satélite": baseSat };
-            const overlays = { 
-                "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica</span>": waterLayer, 
-                "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo</span>": soilLayer 
-            };
-            L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
-
-            map.on('overlayadd', e => {
-                document.getElementById('tech-legend').classList.remove('hidden');
-                if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.remove('hidden');
-                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.remove('hidden');
-            });
-            map.on('overlayremove', e => {
-                if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.add('hidden');
-                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.add('hidden');
-                if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
-            });
             updateTerritory("Paine");
         }
 
@@ -271,13 +226,6 @@
                     const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
                     maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
-                    const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
-                    if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
-                    const soilIII = turf.buffer(geoData, -0.8, {units: 'kilometers'});
-                    if (soilIII && soilI) L.geoJSON(turf.difference(soilIII, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer);
-                    const bbox = turf.bbox(geoData);
-                    const waterArea = turf.intersect(geoData, turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]));
-                    if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) {}
@@ -292,16 +240,24 @@
             setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); }, 300);
         }
 
+        // Función auxiliar para validar y limpiar la ruta de imagen
+        function getValidImg(imgPath) {
+            if (!imgPath || imgPath.trim() === "" || imgPath.includes('undefined')) {
+                return 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'; // Fallback agrícola genérico
+            }
+            return imgPath;
+        }
+
         function renderMarkers(data) {
             data.forEach(p => {
                 const isDemo = p.demo === "SI";
                 const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
                 const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                const validatedImg = getValidImg(p.img);
                 m.options.productId = p.id;
-                // Popup con estilos forzados
                 m.bindPopup(`
                     <div style="overflow:hidden; font-family:'Plus Jakarta Sans';">
-                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover; display:block;">
+                        <img src="${validatedImg}" style="width:100%; height:120px; object-fit:cover; display:block;" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
                         <div style="padding:15px; text-align:left;">
                             <p style="font-weight:800; font-size:13px; margin:0; color:#111;">${p.nombre}</p>
                             <p style="font-size:9px; font-weight:700; color:#888; text-transform:uppercase; margin:4px 0 12px 0;">${p.productor}</p>
@@ -313,14 +269,17 @@
         }
 
         function renderList(data) {
-            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
+            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => {
+                const validatedImg = getValidImg(p.img);
+                return `
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
-                    <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover bg-slate-100">
+                    <img src="${validatedImg}" class="w-10 h-10 rounded-lg object-cover bg-slate-100" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
                     <div class="min-w-0 text-left">
                         <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
 
         function focusMarker(id) { const target = markers.find(m => m.options.productId === id); if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); } }
