@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Dashboard Institucional</title>
+    <title>AndesChain | Dashboard Territorial</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -240,11 +240,14 @@
             setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); }, 300);
         }
 
-        // Función auxiliar para validar y limpiar la ruta de imagen
+        // Función auxiliar para validar la ruta de imagen
         function getValidImg(imgPath) {
+            // Si la ruta está vacía, es nula, o contiene "undefined" (común en errores de simulador)
             if (!imgPath || imgPath.trim() === "" || imgPath.includes('undefined')) {
-                return 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'; // Fallback agrícola genérico
+                // Devolvemos el fallback institucional agrícola
+                return 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
             }
+            // De lo contrario, respetamos la ruta única del producto
             return imgPath;
         }
 
