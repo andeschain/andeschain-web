@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasaporte de Origen Digital | AndesChain</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png"> <script src="https://cdn.tailwindcss.com"></script>
+    <title>Certificado de Origen Digital | AndesChain</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png"> 
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -22,7 +23,6 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
-        /* Función de centrado total para cualquier proporción de imagen */
         .img-viewport { 
             height: 60vh; 
             background: #fcfcfc; 
@@ -72,7 +72,7 @@
         </div>
 
         <div class="img-viewport">
-            <img id="p-img" src="" alt="Producto">
+            <img id="p-img" src="" alt="Producto" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-fintual-gray pt-12">
@@ -95,8 +95,7 @@
 
         <div class="space-y-12">
             <h3 class="font-display font-bold text-4xl tracking-tight">Línea de Vida</h3>
-            <div id="milestones-container" class="space-y-12 ml-4">
-                </div>
+            <div id="milestones-container" class="space-y-12 ml-4"></div>
         </div>
     </div>
 
@@ -112,10 +111,13 @@
                 document.getElementById('p-nombre').innerText = p.nombre;
                 document.getElementById('p-productor').innerText = p.productor;
                 document.getElementById('p-ubicacion').innerText = p.ubicacion;
-                document.getElementById('p-img').src = p.img;
+                
+                // Asignar imagen con fallback
+                const pImg = document.getElementById('p-img');
+                pImg.src = (p.img && p.img !== "") ? p.img : 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
+                
                 document.getElementById('badge-manejo').innerText = p.manejo;
                 
-                // Mapeo de Hitos (Sincronizado con simulador.js: titulo y desc)
                 if(p.hitos) {
                     document.getElementById('milestones-container').innerHTML = p.hitos.map((h, i) => `
                         <div class="relative flex gap-10 group">
@@ -135,7 +137,6 @@
                     b.innerText = "Usuario INDAP"; b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase";
                 }
 
-                // GPS Distancia Educativa
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(pos => {
                         const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, parseFloat(p.lat), parseFloat(p.lon));
