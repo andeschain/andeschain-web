@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AndesChain | Dashboard Institucional</title>
+    <title>AndesChain | Command Center BI</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,38 +35,31 @@
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
         
         .btn-fullscreen { 
-            position: absolute; top: 24px; right: 24px; z-index: 1010; 
+            position: absolute; top: 24px; left: 320px; z-index: 1010; 
             background: white; width: 42px; height: 42px; border-radius: 12px; 
             display: flex; align-items: center; justify-content: center; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;
         }
         .btn-fullscreen:hover { transform: scale(1.1); color: #10B981; }
 
-        .floating-hud { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
+        .floating-hud { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); pointer-events: auto; }
         
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        /* ALINEACIÓN MEJORADA: Ventana de Capas alineada con Segmentación (right: 24px + width: 208px) */
+        /* ALINEACIÓN RÍGIDA COLUMNA DERECHA */
         .leaflet-bottom.leaflet-right { bottom: 24px; right: 24px; z-index: 1005; }
         .leaflet-control-layers { 
             border: none !important; border-radius: 1.5rem !important; padding: 16px !important; 
             font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
-            background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(12px) !important;
-            width: 208px !important; margin: 0 !important;
+            background: white !important; width: 208px !important; margin: 0 !important;
         }
 
-        .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25) !important; }
+        /* POPUP ANDESCHAIN PRO */
+        .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; }
         .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
-        .leaflet-popup-close-button { color: #111111 !important; font-size: 16px !important; padding: 12px !important; z-index: 5001; }
-        
-        .popup-img { height: 140px; width: 100%; object-fit: cover; display: block; background: #f1f5f9; }
-        .popup-btn { 
-            background-color: #064E3B; color: white !important; font-weight: 800; font-size: 10px; 
-            text-transform: uppercase; letter-spacing: 0.1em; text-align: center; 
-            padding: 14px; border-radius: 0.8rem; display: block; transition: all 0.3s ease; 
-        }
-        .popup-btn:hover { background-color: #10B981; transform: translateY(-1px); }
+        .leaflet-popup-close-button { color: #111111 !important; font-size: 20px !important; padding: 12px !important; z-index: 5001; }
+        .popup-btn { background-color: #064E3B !important; color: white !important; font-weight: 800; font-size: 10px; text-transform: uppercase; text-align: center; padding: 14px; border-radius: 0.8rem; display: block; text-decoration: none; }
 
         .chart-container { height: 95px; position: relative; width: 100%; display: flex; justify-content: center; }
         .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 8px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -74,11 +67,7 @@
         .dot { width: 5px; height: 5px; border-radius: 50%; }
 
         #mobile-block { display: none; }
-        @media (max-width: 1024px) {
-            #main-content { display: none !important; }
-            #mobile-block { display: flex !important; }
-        }
-
+        @media (max-width: 1024px) { #main-content { display: none !important; } #mobile-block { display: flex !important; } }
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
         .blur-content { filter: blur(25px); pointer-events: none; }
         .shake { animation: shake 0.4s ease-in-out; }
@@ -90,8 +79,8 @@
     <div id="mobile-block" class="fixed inset-0 z-[10000] bg-white flex flex-col items-center justify-center p-12 text-center">
         <img src="assets/favicon.png" class="h-12 mb-8">
         <h2 class="font-display font-bold text-2xl text-brand-900 mb-4 tracking-tighter uppercase">Modo Beta</h2>
-        <p class="text-fintual-mute text-sm leading-relaxed mb-8">Esta versión institucional requiere acceso desde computador para el correcto despliegue de capas técnicas.</p>
-        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest">Desktop Requerido</div>
+        <p class="text-fintual-mute text-sm leading-relaxed mb-8">Acceso exclusivo Desktop para el despliegue de capas de planificación territorial.</p>
+        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest">Requiere Computador</div>
     </div>
 
     <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
@@ -99,7 +88,9 @@
             <div class="flex flex-col items-center gap-3">
                 <img src="assets/favicon.png" class="h-12">
                 <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain Dashboard</h2>
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">Demo para unidades de fomento productivo, planificación territorial municipal e INDAP.</p>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">
+                    Demo para unidades de fomento productivo, planificación territorial municipal e INDAP.
+                </p>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
@@ -123,8 +114,6 @@
                     <option value="Pirque">Pirque</option>
                     <option value="Isla de Maipo">Isla de Maipo</option>
                     <option value="Talagante">Talagante</option>
-                    <option value="Peñaflor">Peñaflor</option>
-                    <option value="Melipilla">Melipilla</option>
                     <option value="Limache">Limache</option>
                     <option value="Valdivia">Valdivia</option>
                 </select>
@@ -140,15 +129,14 @@
                     <h4 id="count-indap" class="text-lg font-display font-bold leading-none">0</h4>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 text-brand-600">
-                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-brand-600">Resiliencia</p>
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia</p>
                     <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
                 </div>
-                <div class="text-center border-l border-fintual-gray pl-8 text-fintual-mute">
+                <div class="text-center border-l border-fintual-gray pl-8">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">CO2 Ahorrado</p>
-                    <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none text-fintual-text">0.0 t</h4>
+                    <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none">0.0 t</h4>
                 </div>
             </div>
-
             <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demos: On</button>
         </nav>
 
@@ -156,15 +144,14 @@
             <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
                     <h2 class="font-display font-bold text-sm mb-4 leading-none text-brand-900 uppercase">ACTORES LOCALES</h2>
-                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[400px]"></div>
                 </div>
             </div>
 
-            <div class="absolute top-6 right-6 z-[1000] w-52 max-h-[85%] flex flex-col pointer-events-none">
+            <div class="absolute top-6 right-6 z-[1000] w-52 max-h-[65%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 space-y-6 text-center pointer-events-auto overflow-y-auto">
                     <div>
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Segmento Actor</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-3 italic">Perfil según capacidad operativa</p>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Segmento Actor</p>
                         <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
@@ -173,8 +160,7 @@
                         </div>
                     </div>
                     <div class="pt-4 border-t border-black/5">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Sistema de Cultivo</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-3 italic">Metodología de producción</p>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Sistema de Cultivo</p>
                         <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
@@ -190,31 +176,28 @@
                 <div id="legend-soil" class="space-y-1.5 hidden">
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#059669]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase I-II</p><p class="text-[7px] text-fintual-mute font-bold">Alta prioridad agrícola (CIREN).</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase I-II</p><p class="text-[7px] text-fintual-mute font-bold text-left">Suelo agrícola de alta prioridad (CIREN).</p></div>
                     </div>
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight">Suelo Clase III</p><p class="text-[7px] text-fintual-mute font-bold">Limitaciones moderadas.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight text-left">Suelo Clase III</p><p class="text-[7px] text-fintual-mute font-bold text-left">Suelo con limitaciones de cultivo.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="pt-2 border-t border-black/5 hidden">
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute font-bold">Bajo decreto DGA 2026.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute font-bold text-left">Bajo decreto DGA 2026.</p></div>
                     </div>
                 </div>
-                <p class="text-[6px] text-fintual-mute italic uppercase tracking-tighter pt-1">Fuentes: CIREN · DGA 2026</p>
             </div>
 
             <div id="map-wrapper">
-                <div class="btn-fullscreen" onclick="toggleFullscreen()" title="Pantalla Completa">
-                    <i class="fas fa-expand-alt text-slate-600"></i>
-                </div>
+                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt text-slate-600"></i></div>
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Analizando Territorio</span>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Sincronizando...</span>
                     </div>
                 </div>
             </div>
@@ -236,8 +219,7 @@
                 setTimeout(() => { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); }, 400);
             } else {
                 err.innerText = "Esa no es la clave. Intenta conectar con la tierra de nuevo.";
-                err.classList.remove('hidden');
-                input.classList.add('shake');
+                err.classList.remove('hidden'); input.classList.add('shake');
                 setTimeout(() => input.classList.remove('shake'), 400);
             }
         }
@@ -253,7 +235,7 @@
             baseLight.addTo(map); 
 
             waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
-            const baseMaps = { "Esquema": baseLight, "Satelital": baseSat };
+            const baseMaps = { "Mapa": baseLight, "Satélite": baseSat };
             const overlays = { 
                 "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica</span>": waterLayer, 
                 "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo</span>": soilLayer 
@@ -302,14 +284,11 @@
 
             const raw = window.getProductos ? window.getProductos() : [];
             const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
-            
             document.getElementById('count-lots').innerText = filtered.length;
             document.getElementById('count-indap').innerText = filtered.filter(p => p.fomento === "INDAP").length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
             document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
-
-            renderList(filtered);
-            renderMarkers(filtered);
+            renderList(filtered); renderMarkers(filtered);
             setTimeout(() => { initCharts(filtered); loader.classList.add('hidden'); }, 300);
         }
 
@@ -319,12 +298,13 @@
                 const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
                 const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
                 m.options.productId = p.id;
+                // Popup con estilos forzados
                 m.bindPopup(`
-                    <div class="overflow-hidden bg-white font-sans shadow-xl border border-black/5">
-                        <img src="${p.img}" class="popup-img">
-                        <div class="p-4">
-                            <p class="font-display font-bold text-[14px] leading-tight text-brand-900 mb-0.5">${p.nombre}</p>
-                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-4 italic leading-none text-left">Productor: ${p.productor}</p>
+                    <div style="overflow:hidden; font-family:'Plus Jakarta Sans';">
+                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover; display:block;">
+                        <div style="padding:15px; text-align:left;">
+                            <p style="font-weight:800; font-size:13px; margin:0; color:#111;">${p.nombre}</p>
+                            <p style="font-size:9px; font-weight:700; color:#888; text-transform:uppercase; margin:4px 0 12px 0;">${p.productor}</p>
                             <a href="producto_v1.2.html?id=${p.id}" class="popup-btn">Ver Pasaporte</a>
                         </div>
                     </div>`, { padding: 0 });
@@ -335,7 +315,7 @@
         function renderList(data) {
             document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
-                    <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shadow-sm bg-slate-100">
+                    <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover bg-slate-100">
                     <div class="min-w-0 text-left">
                         <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
