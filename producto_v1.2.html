@@ -12,10 +12,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 
-                        'brand': { 500: '#10B981', 900: '#064E3B' },
-                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
-                    },
+                    colors: { 'brand': { 500: '#10B981', 900: '#064E3B' }, 'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' } },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
             }
@@ -23,11 +20,7 @@
     </script>
     <style>
         body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
-        .img-viewport { 
-            height: 60vh; background: #fcfcfc; display: flex; 
-            align-items: center; justify-content: center; overflow: hidden;
-            border-radius: 0 0 3rem 3rem; border-bottom: 1px solid #f2f2f2;
-        }
+        .img-viewport { height: 60vh; background: #fcfcfc; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 0 0 3rem 3rem; border-bottom: 1px solid #f2f2f2; }
         .img-viewport img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .milestone-dot { width: 12px; height: 12px; border-radius: 50%; background: #10B981; position: relative; z-index: 10; border: 3px solid white; box-shadow: 0 0 0 1px #10B981; }
         .milestone-line { position: absolute; left: 5px; top: 12px; bottom: -30px; width: 1px; background: #e2e8f0; }
@@ -38,7 +31,7 @@
     <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-fintual-gray/50">
         <a href="dashboard_v1.2.html" class="flex items-center gap-2 group text-fintual-mute hover:text-fintual-text transition-all">
             <i class="fas fa-arrow-left text-sm"></i>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest">Panel Territorial</span>
+            <span class="text-[10px] font-extrabold uppercase tracking-widest">Regresar al Panel</span>
         </a>
         <img src="assets/favicon.png" class="h-6">
     </nav>
@@ -49,15 +42,15 @@
                 <span id="badge-tipo" class="tag bg-brand-500/10 text-brand-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase">Origen Verificado</span>
                 <span id="badge-manejo" class="tag bg-fintual-gray text-fintual-mute px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">---</span>
             </div>
-            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter">Cargando...</h1>
+            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter text-brand-900">Cargando...</h1>
             
             <div id="proximity-card" class="inline-flex items-center gap-4 p-5 rounded-[2rem] bg-slate-50 border border-slate-100 hidden">
                 <div class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-lg shadow-brand-500/20">
-                    <i class="fas fa-leaf text-sm"></i>
+                    <i class="fas fa-truck-fast text-sm"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1 text-left">Logística de Proximidad</p>
-                    <p class="text-sm font-semibold text-slate-800 text-left">Estás a <span id="distancia-val">--</span> km de este origen.</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1 text-left">Circuito Corto</p>
+                    <p class="text-sm font-semibold text-slate-800 text-left">Este producto viajó solo <span id="distancia-val">--</span> km para llegar a ti.</p>
                 </div>
             </div>
         </div>
@@ -70,15 +63,15 @@
             <div class="space-y-2">
                 <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Suelo (CIREN)</p>
                 <p class="font-display font-bold text-2xl text-brand-500 leading-none">Clase I</p>
-                <p class="text-xs text-fintual-mute">Alta capacidad productiva.</p>
+                <p class="text-xs text-fintual-mute">Potencial máximo del territorio municipal.</p>
             </div>
             <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Recurso (DGA)</p>
-                <p class="font-display font-bold text-2xl text-fintual-blue leading-none">Cuenca Maipo</p>
-                <p class="text-xs text-fintual-mute">Derechos registrados.</p>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Gestión DGA</p>
+                <p class="font-display font-bold text-2xl text-fintual-blue leading-none">Acuífero Local</p>
+                <p class="text-xs text-fintual-mute">Uso eficiente bajo protocolo de escasez.</p>
             </div>
             <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Productor</p>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Identidad</p>
                 <p id="p-productor" class="font-display font-bold text-2xl leading-none">---</p>
                 <p id="p-ubicacion" class="text-xs text-fintual-mute italic">---</p>
             </div>
@@ -103,10 +96,7 @@
                 document.getElementById('p-productor').innerText = p.productor;
                 document.getElementById('p-ubicacion').innerText = p.ubicacion;
                 document.getElementById('badge-manejo').innerText = p.manejo;
-                
-                // Lógica de Imagen Individual (Sincronizada con el Dashboard)
-                const pImg = document.getElementById('p-img');
-                pImg.src = p.img || 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
+                document.getElementById('p-img').src = p.img || 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
                 
                 if(p.hitos) {
                     document.getElementById('milestones-container').innerHTML = p.hitos.map((h, i) => `
@@ -124,8 +114,7 @@
 
                 if(p.fomento === "INDAP") {
                     const b = document.getElementById('badge-tipo');
-                    b.innerText = "Usuario INDAP"; 
-                    b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase";
+                    b.innerText = "Usuario INDAP"; b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase";
                 }
 
                 if ("geolocation" in navigator) {
