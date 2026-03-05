@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Command Center Territorial</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' },
+                        'emergency': '#EF4444'
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #0f172a; }
+        #map { height: 100%; width: 100%; z-index: 1; transition: filter 0.5s ease; }
+        
+        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
+        
+        .btn-fullscreen { 
+            position: absolute; top: 24px; right: 24px; z-index: 1010; 
+            background: white; width: 42px; height: 42px; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;
+        }
+        .btn-fullscreen:hover { transform: scale(1.1); color: #10B981; }
+
+        .floating-hud { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); pointer-events: auto; }
+        
+        .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); transition: all 0.4s ease; }
+        .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
+        .pin-emergency { background: #EF4444 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(239,68,68,0.6); animation: pulse-red 2s infinite; }
+
+        @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        
+        .leaflet-control-layers { 
+            border: none !important; border-radius: 1.5rem !important; padding: 16px !important; 
+            font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+            background: rgba(255, 255, 255, 0.96) !important; width: 208px !important;
+        }
+
+        .policy-btn { transition: all 0.3s ease; }
+        .policy-active { background: #064E3B !important; color: white !important; box-shadow: 0 4px 12px rgba(6,78,59,0.2); }
+
+        .chart-container { height: 95px; position: relative; width: 100%; display: flex; justify-content: center; }
+        .blur-content { filter: blur(25px); pointer-events: none; }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div id="auth-screen" class="fixed inset-0 bg-white flex items-center justify-center p-4 z-[9999]">
+        <div class="max-w-sm w-full text-center space-y-10">
+            <div class="flex flex-col items-center gap-3">
+                <img src="assets/favicon.png" class="h-12">
+                <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain Dashboard</h2>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">Gestión de Políticas Públicas v2026</p>
+            </div>
+            <div class="space-y-6">
+                <input type="password" id="pass-input" placeholder="Password" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none placeholder:text-slate-200">
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500">Desbloquear Territorio</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="blur-content h-screen flex flex-col">
+        <nav class="px-8 py-4 flex justify-between items-center bg-white border-b border-fintual-gray z-[100]">
+            <div class="flex items-center gap-6">
+                <div class="flex flex-col items-center leading-none">
+                    <img src="assets/favicon.png" class="h-6 mb-1">
+                    <span class="text-[8px] font-bold uppercase tracking-tighter text-fintual-text">AndesChain</span>
+                </div>
+                <div class="h-8 w-[1px] bg-fintual-gray"></div>
+                <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-lg outline-none cursor-pointer bg-transparent">
+                    <option value="Paine">Paine</option>
+                    <option value="Buin">Buin</option>
+                    <option value="Valdivia">Valdivia</option>
+                    <option value="Limache">Limache</option>
+                </select>
+
+                <div class="hidden lg:flex items-center gap-2 bg-fintual-gray/50 p-1 rounded-full ml-4">
+                    <button onclick="setPolicyMode('fomento', this)" class="policy-btn policy-active px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-white">Fomento</button>
+                    <button onclick="setPolicyMode('emergencia', this)" class="policy-btn px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest text-fintual-mute hover:text-brand-600">Emergencia</button>
+                    <button onclick="setPolicyMode('inversion', this)" class="policy-btn px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest text-fintual-mute hover:text-brand-600">Inversión</button>
+                </div>
+            </div>
+            
+            <div id="top-stats" class="hidden lg:flex items-center gap-8">
+                <div class="text-center">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros</p>
+                    <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
+                </div>
+                <div class="text-center border-l border-fintual-gray pl-8 text-indigo-600">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Eficiencia Social</p>
+                    <h4 id="kpi-roi" class="text-lg font-display font-bold leading-none">1.4x</h4>
+                </div>
+                <div class="text-center border-l border-fintual-gray pl-8 text-orange-600">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Riesgo Vial</p>
+                    <h4 id="kpi-vial" class="text-lg font-display font-bold leading-none">Bajo</h4>
+                </div>
+                <div class="text-center border-l border-fintual-gray pl-8 text-blue-600">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Ahorro Aljibe</p>
+                    <h4 id="kpi-water" class="text-lg font-display font-bold leading-none">0%</h4>
+                </div>
+            </div>
+
+            <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demos: On</button>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
+                    <h2 class="font-display font-bold text-sm mb-4 leading-none">Trazabilidad Ética</h2>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
+                </div>
+            </div>
+
+            <div class="absolute top-6 right-6 z-[1000] w-52 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-5 space-y-6 text-center pointer-events-auto overflow-y-auto">
+                    <div>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Distribución de Apoyo</p>
+                        <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-black/5">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Prioridad de Inversión</p>
+                        <div class="space-y-3">
+                            <div class="text-left">
+                                <div class="flex justify-between text-[7px] font-bold uppercase mb-1"><span>Riego Tecnificado</span><span id="perc-riego">65%</span></div>
+                                <div class="w-full bg-slate-100 h-1 rounded-full"><div id="bar-riego" class="bg-blue-500 h-full rounded-full" style="width: 65%"></div></div>
+                            </div>
+                            <div class="text-left">
+                                <div class="flex justify-between text-[7px] font-bold uppercase mb-1"><span>Suelos Degradados</span><span id="perc-suelo">22%</span></div>
+                                <div class="w-full bg-slate-100 h-1 rounded-full"><div id="bar-suelo" class="bg-orange-400 h-full rounded-full" style="width: 22%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-black/5">
+                        <button class="w-full py-3 bg-fintual-text text-white rounded-xl font-bold text-[8px] uppercase tracking-widest hover:bg-brand-600 transition-all">
+                            <i class="fas fa-file-pdf mr-2"></i> Exportar para Alcaldía
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tech-legend" class="absolute bottom-10 left-6 z-[1000] w-64 floating-hud p-4 space-y-3 hidden">
+                <p class="text-[8px] font-extrabold uppercase text-brand-900 tracking-wider">Capa de Decisión Activa</p>
+                <div id="legend-content" class="text-[7px] font-bold text-fintual-mute uppercase">
+                    Mostrando cruce de datos INDAP vs Capacidad de Suelo CIREN.
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt"></i></div>
+                <div id="map"></div>
+                <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-[9px] font-bold uppercase tracking-widest">Calculando Impacto Comunal...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, waterLayer, soilLayer, showDemo = true;
+        let currentPolicy = 'fomento';
+
+        function validatePass() {
+            const input = document.getElementById('pass-input');
+            if (input.value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('blur-content');
+                initMap();
+            }
+        }
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            waterLayer = L.layerGroup();
+            soilLayer = L.layerGroup();
+            
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            
+            // Simulación de KPIs dinámicos para el municipio
+            const roi = (Math.random() * (1.8 - 1.2) + 1.2).toFixed(1);
+            document.getElementById('kpi-roi').innerText = roi + "x";
+            document.getElementById('kpi-water').innerText = Math.floor(Math.random() * 25) + "%";
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${comuna}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                if (results[0] && results[0].geojson) {
+                    if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+                    geoJsonLayer = L.geoJSON(results[0].geojson, { style: { color: '#064E3B', weight: 2, fillOpacity: 0.05 } }).addTo(map);
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                }
+            } catch (e) {}
+
+            const raw = window.getProductos ? window.getProductos() : [];
+            const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()));
+            
+            document.getElementById('count-lots').innerText = filtered.length;
+            renderList(filtered);
+            renderMarkers(filtered);
+            initCharts(filtered);
+            
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 800);
+        }
+
+        function renderMarkers(data) {
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+            data.forEach(p => {
+                const isCritical = currentPolicy === 'emergencia' && Math.random() > 0.6;
+                const className = isCritical ? 'pin-emergency' : (p.demo === "SI" ? 'pin-demo' : 'pin-real');
+                
+                const icon = L.divIcon({ className, iconSize: [12, 12], iconAnchor: [6, 6] });
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                
+                m.bindPopup(`<div class="p-3 font-sans">
+                    <p class="font-bold text-brand-900">${p.nombre}</p>
+                    <p class="text-[9px] uppercase font-bold text-fintual-mute">Origen: ${p.productor}</p>
+                    <div class="mt-2 pt-2 border-t border-slate-100 flex gap-2">
+                         <span class="text-[7px] bg-slate-100 px-2 py-1 rounded">IDAP: ${p.fomento || 'NO'}</span>
+                         <span class="text-[7px] bg-blue-50 text-blue-600 px-2 py-1 rounded">Riego: 70%</span>
+                    </div>
+                </div>`);
+                markers.push(m);
+            });
+        }
+
+        function setPolicyMode(mode, btn) {
+            currentPolicy = mode;
+            
+            // UI Toggle
+            document.querySelectorAll('.policy-btn').forEach(b => {
+                b.classList.remove('policy-active', 'bg-white');
+                b.classList.add('text-fintual-mute');
+            });
+            btn.classList.add('policy-active');
+            btn.classList.remove('text-fintual-mute');
+
+            // Lógica de Negocio Territorial
+            const legend = document.getElementById('tech-legend');
+            const legendText = document.getElementById('legend-content');
+            legend.classList.remove('hidden');
+
+            if(mode === 'emergencia') {
+                legendText.innerText = "ALERTA: Mostrando predios con mayor vulnerabilidad hídrica y falta de tecnificación.";
+                document.getElementById('kpi-vial').innerText = "Crítico";
+                document.getElementById('kpi-vial').parentElement.classList.replace('text-orange-600', 'text-red-600');
+                map.getContainer().style.filter = "sepia(0.2) saturate(1.2)";
+            } else if (mode === 'inversion') {
+                legendText.innerText = "PROYECCIÓN: Zonas sugeridas para inversión en infraestructura vial y centros de acopio.";
+                document.getElementById('kpi-vial').innerText = "Media";
+                document.getElementById('kpi-vial').parentElement.classList.replace('text-red-600', 'text-orange-600');
+                map.getContainer().style.filter = "hue-rotate(10deg)";
+            } else {
+                legendText.innerText = "GENERAL: Trazabilidad estándar de productores activos en la comuna.";
+                document.getElementById('kpi-vial').innerText = "Bajo";
+                map.getContainer().style.filter = "none";
+            }
+
+            renderMarkers(window.getProductos().filter(p => p.ubicacion.toLowerCase().includes(document.getElementById('comuna-selector').value.toLowerCase())));
+        }
+
+        function renderList(data) {
+            document.getElementById('recent-list').innerHTML = data.slice(0,10).map(p => `
+                <div onclick="focusMarker('${p.id}')" class="flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-brand-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-8 h-8 rounded-lg object-cover">
+                    <div class="min-w-0">
+                        <p class="font-bold text-[9px] truncate text-fintual-text">${p.nombre}</p>
+                        <p class="text-[7px] text-fintual-mute uppercase">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function focusMarker(id) {
+            const target = markers.find(m => m.options.productId === id);
+            if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); }
+        }
+
+        function initCharts(data) {
+            const ctx = document.getElementById('chartSegmentacion');
+            if (chart1) chart1.destroy();
+            chart1 = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Agricultores', 'Empresas', 'Otros'],
+                    datasets: [{
+                        data: [data.length, Math.floor(data.length/3), 2],
+                        backgroundColor: ['#10B981', '#4E5AF0', '#111111'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '80%', plugins: { legend: { display: false } } }
+            });
+        }
+
+        window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') validatePass(); };
+    </script>
+</body>
+</html>
