@@ -47,7 +47,6 @@
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        /* ALINEACIÓN RÍGIDA COLUMNA DERECHA */
         .leaflet-bottom.leaflet-right { bottom: 24px; right: 24px; z-index: 1005; }
         .leaflet-control-layers { 
             border: none !important; border-radius: 1.5rem !important; padding: 16px !important; 
@@ -55,7 +54,6 @@
             background: white !important; width: 208px !important; margin: 0 !important;
         }
 
-        /* POPUP ANDESCHAIN PRO */
         .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; }
         .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
         .leaflet-popup-close-button { color: #111111 !important; font-size: 20px !important; padding: 12px !important; z-index: 5001; }
@@ -96,7 +94,7 @@
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
                 <p id="auth-error" class="text-[10px] text-red-500 font-bold hidden"></p>
-                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 transition-all">Acceso Dashboard AndesChain</button>
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 transition-all">Acceso</button>
             </div>
         </div>
     </div>
@@ -187,7 +185,7 @@
                 <div id="legend-water" class="pt-2 border-t border-black/5 hidden">
                     <div class="flex items-start gap-2">
                         <div class="w-2 h-2 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase text-left">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute font-bold text-left">Bajo decreto DGA 2026.</p></div>
+                        <div><p class="text-[8px] font-bold leading-tight text-fintual-blue uppercase">Zona Estrés Hídrico</p><p class="text-[7px] text-fintual-mute font-bold text-left">Bajo decreto DGA 2026.</p></div>
                     </div>
                 </div>
             </div>
@@ -254,7 +252,6 @@
                 if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.add('hidden');
                 if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
             });
-
             updateTerritory("Paine");
         }
 
@@ -274,14 +271,12 @@
                     const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
                     maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
-                    
                     const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
                     if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
                     const soilIII = turf.buffer(geoData, -0.8, {units: 'kilometers'});
                     if (soilIII && soilI) L.geoJSON(turf.difference(soilIII, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer);
                     const waterArea = turf.intersect(geoData, turf.bboxPolygon([turf.bbox(geoData)[0], turf.bbox(geoData)[1], (turf.bbox(geoData)[0] + turf.bbox(geoData)[2])/2 + 0.05, turf.bbox(geoData)[3]]));
                     if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
-                    
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) {}
@@ -302,9 +297,10 @@
                 const icon = L.divIcon({ className: isDemo ? 'pin-demo' : 'pin-real', iconSize: [10, 10], iconAnchor: [5, 5] });
                 const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
                 m.options.productId = p.id;
+                const imgUrl = (p.img && p.img !== "") ? p.img : 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
                 m.bindPopup(`
                     <div style="overflow:hidden; font-family:'Plus Jakarta Sans';">
-                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover; display:block;" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
+                        <img src="${imgUrl}" style="width:100%; height:120px; object-fit:cover; display:block;" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
                         <div style="padding:15px; text-align:left;">
                             <p style="font-weight:800; font-size:13px; margin:0; color:#111;">${p.nombre}</p>
                             <p style="font-size:9px; font-weight:700; color:#888; text-transform:uppercase; margin:4px 0 12px 0;">${p.productor}</p>
@@ -316,14 +312,17 @@
         }
 
         function renderList(data) {
-            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
+            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => {
+                const imgUrl = (p.img && p.img !== "") ? p.img : 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
+                return `
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all text-left">
-                    <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover bg-slate-100" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
+                    <img src="${imgUrl}" class="w-10 h-10 rounded-lg object-cover bg-slate-100" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
                     <div class="min-w-0">
                         <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
 
         function focusMarker(id) { const target = markers.find(m => m.options.productId === id); if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); } }
