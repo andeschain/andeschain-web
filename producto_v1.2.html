@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificado de Origen Digital | AndesChain</title>
+    <title>Pasaporte de Origen Digital | AndesChain</title>
     <link rel="icon" type="image/png" href="assets/favicon.png"> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -24,20 +24,11 @@
     <style>
         body { background-color: #FFFFFF; color: #111111; letter-spacing: -0.02em; }
         .img-viewport { 
-            height: 60vh; 
-            background: #fcfcfc; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden;
-            border-radius: 0 0 3rem 3rem;
-            border-bottom: 1px solid #f2f2f2;
+            height: 60vh; background: #fcfcfc; display: flex; 
+            align-items: center; justify-content: center; overflow: hidden;
+            border-radius: 0 0 3rem 3rem; border-bottom: 1px solid #f2f2f2;
         }
-        .img-viewport img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            object-fit: contain; 
-        }
+        .img-viewport img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .milestone-dot { width: 12px; height: 12px; border-radius: 50%; background: #10B981; position: relative; z-index: 10; border: 3px solid white; box-shadow: 0 0 0 1px #10B981; }
         .milestone-line { position: absolute; left: 5px; top: 12px; bottom: -30px; width: 1px; background: #e2e8f0; }
     </style>
@@ -79,12 +70,12 @@
             <div class="space-y-2">
                 <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Suelo (CIREN)</p>
                 <p class="font-display font-bold text-2xl text-brand-500 leading-none">Clase I</p>
-                <p class="text-xs text-fintual-mute">Alta capacidad productiva. Sin limitaciones físicas importantes para el cultivo.</p>
+                <p class="text-xs text-fintual-mute">Alta capacidad productiva.</p>
             </div>
             <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
                 <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Recurso (DGA)</p>
                 <p class="font-display font-bold text-2xl text-fintual-blue leading-none">Cuenca Maipo</p>
-                <p class="text-xs text-fintual-mute">Derechos registrados. Uso eficiente bajo protocolo de escasez hídrica 2026.</p>
+                <p class="text-xs text-fintual-mute">Derechos registrados.</p>
             </div>
             <div class="space-y-2 border-l border-fintual-gray pl-0 md:pl-12">
                 <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Productor</p>
@@ -111,12 +102,11 @@
                 document.getElementById('p-nombre').innerText = p.nombre;
                 document.getElementById('p-productor').innerText = p.productor;
                 document.getElementById('p-ubicacion').innerText = p.ubicacion;
-                
-                // Asignar imagen con fallback
-                const pImg = document.getElementById('p-img');
-                pImg.src = (p.img && p.img !== "") ? p.img : 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
-                
                 document.getElementById('badge-manejo').innerText = p.manejo;
+                
+                // Lógica de Imagen Individual (Sincronizada con el Dashboard)
+                const pImg = document.getElementById('p-img');
+                pImg.src = p.img || 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80';
                 
                 if(p.hitos) {
                     document.getElementById('milestones-container').innerHTML = p.hitos.map((h, i) => `
@@ -134,7 +124,8 @@
 
                 if(p.fomento === "INDAP") {
                     const b = document.getElementById('badge-tipo');
-                    b.innerText = "Usuario INDAP"; b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase";
+                    b.innerText = "Usuario INDAP"; 
+                    b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase";
                 }
 
                 if ("geolocation" in navigator) {
