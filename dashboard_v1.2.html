@@ -34,7 +34,6 @@
         
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
         
-        /* Botón Fullscreen Desasociado arriba a la derecha */
         .btn-fullscreen { 
             position: absolute; top: 24px; right: 24px; z-index: 1010; 
             background: white; width: 42px; height: 42px; border-radius: 12px; 
@@ -48,19 +47,20 @@
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
         
-        /* Alineación Ventana de Capas */
-        .leaflet-bottom.leaflet-right { bottom: 24px; right: 80px; z-index: 1005; }
+        /* ALINEACIÓN MEJORADA: Ventana de Capas alineada con Segmentación (right: 24px + width: 208px) */
+        .leaflet-bottom.leaflet-right { bottom: 24px; right: 24px; z-index: 1005; }
         .leaflet-control-layers { 
-            border: none !important; border-radius: 1.5rem !important; padding: 12px !important; 
-            font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+            border: none !important; border-radius: 1.5rem !important; padding: 16px !important; 
+            font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+            background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(12px) !important;
+            width: 208px !important; margin: 0 !important;
         }
 
-        /* Popup v2.4 - Colores corporativos y fijación de cierre */
         .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.25) !important; }
         .leaflet-popup-content { margin: 0 !important; width: 240px !important; }
         .leaflet-popup-close-button { color: #111111 !important; font-size: 16px !important; padding: 12px !important; z-index: 5001; }
         
-        .popup-img { height: 140px; width: 100%; object-fit: cover; display: block; }
+        .popup-img { height: 140px; width: 100%; object-fit: cover; display: block; background: #f1f5f9; }
         .popup-btn { 
             background-color: #064E3B; color: white !important; font-weight: 800; font-size: 10px; 
             text-transform: uppercase; letter-spacing: 0.1em; text-align: center; 
@@ -73,7 +73,6 @@
         .legend-item { display: flex; items-center; gap: 3px; }
         .dot { width: 5px; height: 5px; border-radius: 50%; }
 
-        /* Bloqueo Móvil */
         #mobile-block { display: none; }
         @media (max-width: 1024px) {
             #main-content { display: none !important; }
@@ -83,11 +82,7 @@
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
         .blur-content { filter: blur(25px); pointer-events: none; }
         .shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -95,12 +90,8 @@
     <div id="mobile-block" class="fixed inset-0 z-[10000] bg-white flex flex-col items-center justify-center p-12 text-center">
         <img src="assets/favicon.png" class="h-12 mb-8">
         <h2 class="font-display font-bold text-2xl text-brand-900 mb-4 tracking-tighter uppercase">Modo Beta</h2>
-        <p class="text-fintual-mute text-sm leading-relaxed mb-8">
-            Esta versión institucional aún no está disponible para celulares. Accede desde un computador para una mejor experiencia de análisis territorial.
-        </p>
-        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest">
-            Desktop Requerido
-        </div>
+        <p class="text-fintual-mute text-sm leading-relaxed mb-8">Esta versión institucional requiere acceso desde computador para el correcto despliegue de capas técnicas.</p>
+        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest">Desktop Requerido</div>
     </div>
 
     <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
@@ -108,9 +99,7 @@
             <div class="flex flex-col items-center gap-3">
                 <img src="assets/favicon.png" class="h-12">
                 <h2 class="font-display font-bold text-xl tracking-tight text-brand-900 uppercase">AndesChain Dashboard</h2>
-                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">
-                    Demo para unidades de fomento productivo, planificación territorial municipal e INDAP.
-                </p>
+                <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-[0.15em] px-8 leading-relaxed">Demo para unidades de fomento productivo, planificación territorial municipal e INDAP.</p>
             </div>
             <div class="space-y-6">
                 <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full px-0 py-4 border-b border-fintual-gray text-center text-xl focus:border-brand-500 outline-none transition-all">
@@ -154,9 +143,9 @@
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-brand-600">Resiliencia</p>
                     <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
                 </div>
-                <div class="text-center border-l border-fintual-gray pl-8">
+                <div class="text-center border-l border-fintual-gray pl-8 text-fintual-mute">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">CO2 Ahorrado</p>
-                    <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none">0.0 t</h4>
+                    <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none text-fintual-text">0.0 t</h4>
                 </div>
             </div>
 
@@ -166,7 +155,7 @@
         <div class="flex-1 relative flex flex-col overflow-hidden">
             <div class="absolute top-6 left-6 z-[1000] w-72 max-h-[85%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 flex flex-col overflow-hidden pointer-events-auto">
-                    <h2 class="font-display font-bold text-sm mb-4 leading-none text-brand-900 uppercase">Productores Locales</h2>
+                    <h2 class="font-display font-bold text-sm mb-4 leading-none text-brand-900 uppercase">ACTORES LOCALES</h2>
                     <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-2 max-h-[350px]"></div>
                 </div>
             </div>
@@ -174,7 +163,8 @@
             <div class="absolute top-6 right-6 z-[1000] w-52 max-h-[85%] flex flex-col pointer-events-none">
                 <div class="floating-hud p-5 space-y-6 text-center pointer-events-auto overflow-y-auto">
                     <div>
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Segmento Actor</p>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Segmento Actor</p>
+                        <p class="text-[6px] text-fintual-mute/60 mb-3 italic">Perfil según capacidad operativa</p>
                         <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
@@ -183,7 +173,8 @@
                         </div>
                     </div>
                     <div class="pt-4 border-t border-black/5">
-                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-3 tracking-widest leading-none">Sistema de Cultivo</p>
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Sistema de Cultivo</p>
+                        <p class="text-[6px] text-fintual-mute/60 mb-3 italic">Metodología de producción</p>
                         <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
@@ -221,9 +212,9 @@
                 </div>
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
-                    <div class="flex flex-col items-center gap-3 text-center">
+                    <div class="flex flex-col items-center gap-3">
                         <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Analizando Capas Geográficas</span>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Analizando Territorio</span>
                     </div>
                 </div>
             </div>
@@ -239,7 +230,6 @@
             const val = document.getElementById('pass-input').value;
             const err = document.getElementById('auth-error');
             const input = document.getElementById('pass-input');
-            
             if (val === CLAVE) {
                 sessionStorage.setItem('auth_andes', 'true');
                 document.getElementById('auth-screen').style.opacity = '0';
@@ -253,12 +243,7 @@
         }
 
         window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
-        
-        function toggleFullscreen() { 
-            const wrapper = document.getElementById('map-wrapper');
-            wrapper.classList.toggle('fullscreen-mode'); 
-            setTimeout(() => { if(map) map.invalidateSize(); }, 500); 
-        }
+        function toggleFullscreen() { document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); setTimeout(() => { if(map) map.invalidateSize(); }, 500); }
 
         function initMap() {
             if (map) return;
@@ -267,13 +252,11 @@
             const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
             baseLight.addTo(map); 
 
-            waterLayer = L.layerGroup(); 
-            soilLayer = L.layerGroup();
-
-            const baseMaps = { "Visualización Mapa": baseLight, "Satelital": baseSat };
+            waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
+            const baseMaps = { "Esquema": baseLight, "Satelital": baseSat };
             const overlays = { 
-                "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica (DGA)</span>": waterLayer, 
-                "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo (CIREN)</span>": soilLayer 
+                "<span style='color: #4E5AF0; font-weight:800;'>💧 Disponibilidad Hídrica</span>": waterLayer, 
+                "<span style='color: #10B981; font-weight:800;'>🌱 Capacidad de Suelo</span>": soilLayer 
             };
             L.control.layers(baseMaps, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
 
@@ -287,7 +270,6 @@
                 if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.add('hidden');
                 if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
             });
-
             updateTerritory("Paine");
         }
 
@@ -307,17 +289,13 @@
                     const world = turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]);
                     maskLayer = L.geoJSON(turf.difference(world, geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
                     geoJsonLayer = L.geoJSON(geoData, { style: { color: '#FFFFFF', weight: 2.5, fillOpacity: 0 } }).addTo(map);
-
                     const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
                     if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.4, fillColor: '#059669' } }).addTo(soilLayer);
-
                     const soilIII = turf.buffer(geoData, -0.8, {units: 'kilometers'});
                     if (soilIII && soilI) L.geoJSON(turf.difference(soilIII, soilI), { style: { color: '#A3E635', weight: 0, fillOpacity: 0.25, fillColor: '#A3E635' } }).addTo(soilLayer);
-
                     const bbox = turf.bbox(geoData);
                     const waterArea = turf.intersect(geoData, turf.bboxPolygon([bbox[0], bbox[1], (bbox[0] + bbox[2])/2 + 0.05, bbox[3]]));
                     if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
-
                     map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1.5 });
                 }
             } catch (e) {}
@@ -346,7 +324,7 @@
                         <img src="${p.img}" class="popup-img">
                         <div class="p-4">
                             <p class="font-display font-bold text-[14px] leading-tight text-brand-900 mb-0.5">${p.nombre}</p>
-                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-4 italic leading-none">Productor: ${p.productor}</p>
+                            <p class="text-[9px] text-fintual-mute uppercase font-bold tracking-widest mb-4 italic leading-none text-left">Productor: ${p.productor}</p>
                             <a href="producto_v1.2.html?id=${p.id}" class="popup-btn">Ver Pasaporte</a>
                         </div>
                     </div>`, { padding: 0 });
@@ -359,7 +337,7 @@
                 <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-2 rounded-xl border border-black/5 hover:bg-black/[0.02] cursor-pointer transition-all">
                     <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shadow-sm bg-slate-100">
                     <div class="min-w-0 text-left">
-                        <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text text-brand-900">${p.nombre}</p>
+                        <p class="font-bold text-[10px] truncate leading-none mb-1 text-fintual-text">${p.nombre}</p>
                         <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
                     </div>
                 </div>`).join('');
