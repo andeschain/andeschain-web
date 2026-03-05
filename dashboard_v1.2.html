@@ -33,15 +33,21 @@
         #map { height: 100%; width: 100%; z-index: 1; }
         .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; }
         
-        /* Ubicación Profesional a la Derecha */
         .btn-fullscreen { position: absolute; top: 24px; right: 24px; z-index: 1010; background: white; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
         .btn-fullscreen:hover { transform: scale(1.1); color: #10B981; }
 
         .floating-hud { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); pointer-events: auto; }
         
-        .hint-box { position: relative; cursor: help; }
-        .hint-content { visibility: hidden; width: 200px; background-color: #111; color: #fff; text-align: left; border-radius: 12px; padding: 12px; position: absolute; z-index: 5000; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; font-size: 10px; line-height: 1.4; font-weight: 400; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .hint-box:hover .hint-content { visibility: visible; opacity: 1; }
+        /* CORRECCIÓN HINTS DINÁMICOS */
+        .hint-box { position: relative; display: inline-block; cursor: help; }
+        .hint-content { 
+            visibility: hidden; width: 220px; background-color: #111111; color: #ffffff; 
+            text-align: left; border-radius: 10px; padding: 12px; 
+            position: absolute; z-index: 6000; bottom: 130%; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: all 0.2s ease; font-size: 10px; line-height: 1.4; pointer-events: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .hint-box:hover .hint-content { visibility: visible; opacity: 1; bottom: 140%; }
 
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.9; }
@@ -102,22 +108,22 @@
                 <div class="text-center hint-box">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros Verificados</p>
                     <h4 id="count-lots" class="text-lg font-display font-bold leading-none">0</h4>
-                    <span class="hint-content">Unidades productivas con trazabilidad digital activa en el territorio.</span>
+                    <span class="hint-content"><b>Trazabilidad Digital:</b> Número de predios con identidad digital activa verificados mediante el protocolo AndesChain.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 text-indigo-600 hint-box">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Impacto INDAP</p>
                     <h4 id="count-indap" class="text-lg font-display font-bold leading-none">0</h4>
-                    <span class="hint-content">Productores de la Agricultura Familiar Campesina (AFC) georeferenciados.</span>
+                    <span class="hint-content"><b>Fomento Productivo:</b> Productores de la Agricultura Familiar vinculados a programas de apoyo estatal.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 text-brand-600 hint-box">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Resiliencia Crítica</p>
                     <h4 id="kpi-resiliencia" class="text-lg font-display font-bold leading-none">0%</h4>
-                    <span class="hint-content">Capacidad de respuesta productiva frente a variables climáticas locales.</span>
+                    <span class="hint-content"><b>Capacidad Adaptativa:</b> Probabilidad de continuidad productiva ante eventos de sequía o crisis hídrica.</span>
                 </div>
                 <div class="text-center border-l border-fintual-gray pl-8 hint-box">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Descarbonización</p>
                     <h4 id="kpi-co2" class="text-lg font-display font-bold leading-none">0.0 t</h4>
-                    <span class="hint-content">Toneladas de CO2 mitigadas por fomento de circuitos cortos de comercialización.</span>
+                    <span class="hint-content"><b>Logística Local:</b> Toneladas de CO2 mitigadas al comercializar productos en radios menores a 30km.</span>
                 </div>
             </div>
             <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute" id="demo-btn">Demos: On</button>
@@ -131,22 +137,22 @@
                 </div>
             </div>
 
-            <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-72 floating-hud p-5 space-y-4 hidden">
+            <div id="tech-legend" class="absolute bottom-6 left-6 z-[1000] w-72 floating-hud p-5 space-y-4 hidden animate-in slide-in-from-left duration-300">
                 <p class="text-[9px] font-extrabold uppercase text-brand-900 tracking-wider border-b border-black/5 pb-2">Interpretación Territorial BI</p>
                 <div id="legend-soil" class="space-y-2 hidden">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#059669]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight">Clase I-II (CIREN)</p><p class="text-[8px] text-fintual-mute">Suelos de alta productividad. Prioridad para soberanía alimentaria.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight">Clase I-II (Suelo)</p><p class="text-[8px] text-fintual-mute">Alta prioridad de protección. Suelos con mínima limitación de uso.</p></div>
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight">Clase III (CIREN)</p><p class="text-[8px] text-fintual-mute">Suelos con limitaciones moderadas. Requieren manejo tecnificado.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight">Clase III (Suelo)</p><p class="text-[8px] text-fintual-mute">Requiere manejo tecnificado y rotación de cultivos controlada.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="hidden">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#4E5AF0]"></div>
-                        <div><p class="text-[9px] font-bold leading-tight text-fintual-blue uppercase">Zona de Estrés Hídrico</p><p class="text-[8px] text-fintual-mute">Áreas bajo decretos DGA con restricción de nuevos derechos.</p></div>
+                        <div><p class="text-[9px] font-bold leading-tight text-fintual-blue uppercase">Estrés Hídrico DGA</p><p class="text-[8px] text-fintual-mute">Áreas con restricción de nuevos derechos según disponibilidad acuífera.</p></div>
                     </div>
                 </div>
             </div>
@@ -155,8 +161,8 @@
                 <div class="floating-hud p-5 space-y-6 text-center pointer-events-auto overflow-y-auto">
                     <div class="hint-box">
                         <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Perfil Actor</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Segmentación operativa</p>
-                        <span class="hint-content">Clasificación técnica entre AFC (Pequeños), PYME y Empresas para focalización presupuestaria.</span>
+                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Segmentación según capacidad</p>
+                        <span class="hint-content"><b>Analítica de Actores:</b> Segmenta entre productores familiares (AFC) y corporativos para políticas de fomento diferenciadas.</span>
                         <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#10B981]"></span> AFC</div>
@@ -166,8 +172,8 @@
                     </div>
                     <div class="pt-4 border-t border-black/5 hint-box">
                         <p class="text-[7px] font-bold uppercase text-fintual-mute mb-1 tracking-widest leading-none">Matriz de Cultivo</p>
-                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Impacto y sostenibilidad</p>
-                        <span class="hint-content">Identifica la adopción de prácticas agroecológicas y orgánicas en el territorio.</span>
+                        <p class="text-[6px] text-fintual-mute/60 mb-2 italic">Sostenibilidad y manejo</p>
+                        <span class="hint-content"><b>Salud del Suelo:</b> Monitorea la transición desde agricultura tradicional hacia agroecología y orgánica.</span>
                         <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
                         <div class="chart-legend">
                             <div class="legend-item"><span class="dot bg-[#059669]"></span> ORG</div>
@@ -179,14 +185,12 @@
             </div>
 
             <div id="map-wrapper">
-                <div class="btn-fullscreen" onclick="toggleFullscreen()" title="Pantalla Completa">
-                    <i class="fas fa-expand-alt text-slate-600 text-sm"></i>
-                </div>
+                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand-alt text-slate-600"></i></div>
                 <div id="map"></div>
                 <div id="loader" class="absolute inset-0 bg-white/60 backdrop-blur-md z-[2000] flex items-center justify-center hidden">
                     <div class="flex flex-col items-center gap-3">
                         <div class="w-5 h-5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Analizando Capas Geográficas</span>
+                        <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center">Analizando Territorio</span>
                     </div>
                 </div>
             </div>
@@ -216,19 +220,18 @@
             const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
             waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
             
-            L.control.layers({ "Mapa": baseLight, "Satélite": baseSat }, { "💧 Estrés Hídrico": waterLayer, "🌱 Calidad Suelo": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
+            L.control.layers({ "Mapa BI": baseLight, "Satélite": baseSat }, { "💧 Disponibilidad Hídrica": waterLayer, "🌱 Capacidad Suelo": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
             
             map.on('overlayadd', e => {
                 document.getElementById('tech-legend').classList.remove('hidden');
                 if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.remove('hidden');
-                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.remove('hidden');
+                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.remove('hidden');
             });
             map.on('overlayremove', e => {
                 if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.add('hidden');
-                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.add('hidden');
+                if(e.name.includes('Hídrica')) document.getElementById('legend-water').classList.add('hidden');
                 if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
             });
-
             updateTerritory("Paine");
         }
 
@@ -245,7 +248,6 @@
             document.getElementById('count-lots').innerText = filtered.length;
             document.getElementById('count-indap').innerText = filtered.filter(p => p.fomento === "INDAP").length;
             document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
-            document.getElementById('kpi-co2').innerText = (filtered.length * 0.12).toFixed(1) + " t";
             renderList(filtered); renderMarkers(filtered);
             initCharts(filtered);
 
