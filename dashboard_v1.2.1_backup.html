@@ -57,8 +57,13 @@
         .pin-real { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
         .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.8; }
         
-        .leaflet-bottom.leaflet-right { bottom: 24px; right: 80px; z-index: 1005; }
-        .leaflet-control-layers { border: none !important; border-radius: 1.2rem !important; padding: 12px !important; font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; }
+        /* ALINEACIÓN GEOMÉTRICA: Ventana de Capas alineada con HUD Superior */
+        .leaflet-bottom.leaflet-right { bottom: 24px; right: 24px; z-index: 1005; }
+        .leaflet-control-layers { 
+            border: none !important; border-radius: 1.2rem !important; padding: 12px !important; 
+            font-family: 'Outfit', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+            margin-right: 0 !important;
+        }
 
         .chart-container { height: 100px; width: 100%; display: flex; justify-content: center; }
         
@@ -111,7 +116,7 @@
             <div id="top-stats" class="hidden lg:flex items-center gap-12">
                 <div class="text-left hint-box">
                     <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros Totales</p>
-                    <h4 id="count-lots" class="text-xl font-display font-bold leading-none">0</h4>
+                    <h4 id="count-lots" class="text-xl font-display font-bold leading-none text-brand-900">0</h4>
                     <span class="hint-content"><b>Activos Digitales:</b> Volumen total de predios rurales verificados en sistema.</span>
                 </div>
                 <div class="text-left border-l border-fintual-gray pl-10 text-indigo-600 hint-box">
@@ -145,13 +150,13 @@
                     </div>
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[10px] font-bold">Clase III (CIREN)</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Suelos con limitaciones moderadas. Requieren manejo técnico.</p></div>
+                        <div><p class="text-[10px] font-bold">Clase III (CIREN)</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Suelos con limitaciones moderadas. Requiere manejo técnico.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="hidden">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#4E5AF0] animate-pulse"></div>
-                        <div><p class="text-[10px] font-bold text-fintual-blue uppercase">Estrés Hídrico (DGA)</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Áreas bajo decretos de escasez. Restricción de nuevos derechos.</p></div>
+                        <div><p class="text-[10px] font-bold text-fintual-blue uppercase">Estrés Hídrico (DGA)</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Áreas bajo decretos de escasez. Restricción para nuevos derechos.</p></div>
                     </div>
                 </div>
             </div>
