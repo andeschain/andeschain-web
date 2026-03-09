@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Command Center v1.3</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; letter-spacing: -0.01em; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 0 24px 24px 24px; border-radius: 2rem; border: 1px solid #EEEEEE; }
+        #map { height: 100%; width: 100%; z-index: 10; }
+        
+        .btn-fullscreen { 
+            position: absolute; bottom: 180px; right: 12px; z-index: 1000; 
+            background: white; width: 34px; height: 34px; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; border: 1px solid #eee;
+        }
+
+        .floating-hud { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.03); border-radius: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.04); pointer-events: auto; }
+        
+        .pin-real { background: #10B981 !important; border: 2px solid white !important; border-radius: 50%; box-shadow: 0 0 10px rgba(16,185,129,0.5); z-index: 500 !important; }
+        .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white !important; border-radius: 50%; opacity: 0.9; z-index: 499 !important; }
+        
+        .leaflet-bottom.leaflet-right { bottom: 12px; right: 12px; z-index: 1000; }
+        .leaflet-control-layers { border: none !important; border-radius: 1rem !important; padding: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; font-family: 'Outfit', sans-serif !important; }
+
+        /* Estilo Fintual: Gráficos limpios y con centro amplio */
+        .chart-container { height: 120px; width: 120px; margin: 0 auto; position: relative; }
+        .chart-legend { font-size: 7px; font-weight: 800; color: #888; margin-top: 12px; display: flex; justify-content: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+        /* Hints (Tooltips) de diseño profesional */
+        .hint-box { position: relative; cursor: help; }
+        .hint-content { 
+            visibility: hidden; width: 220px; background: #111; color: #fff; text-align: left; 
+            border-radius: 1rem; padding: 14px; position: absolute; z-index: 6000; bottom: 125%; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: all 0.3s; font-size: 10px; line-height: 1.4; pointer-events: none;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .hint-box:hover .hint-content { visibility: visible; opacity: 1; bottom: 135%; }
+
+        #mobile-block { display: none; }
+        @media (max-width: 1024px) {
+            #main-content, #auth-screen { display: none !important; }
+            #mobile-block { display: flex !important; }
+        }
+
+        #auth-screen { background: #FFFFFF; z-index: 9999; }
+        .blur-content { filter: blur(30px); pointer-events: none; opacity: 0.5; }
+    </style>
+</head>
+<body class="font-sans antialiased text-fintual-text">
+
+    <div id="mobile-block" class="fixed inset-0 z-[10000] bg-white flex flex-col items-center justify-center p-12 text-center">
+        <img src="assets/favicon.png" class="h-12 mb-8">
+        <h2 class="font-display font-bold text-2xl text-brand-900 mb-4 tracking-tighter uppercase">Modo Piloto</h2>
+        <p class="text-fintual-mute text-sm leading-relaxed mb-8">Esta infraestructura de planificación territorial requiere una resolución de pantalla de escritorio para el análisis preciso de capas cartográficas.</p>
+        <div class="px-6 py-3 bg-brand-50 rounded-full text-brand-600 font-bold text-[10px] uppercase tracking-widest border border-brand-500/20">Acceso vía Desktop Requerido</div>
+    </div>
+
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center">
+        <div class="max-w-xs w-full text-center space-y-12">
+            <img src="assets/favicon.png" class="h-12 mx-auto">
+            <div class="space-y-6">
+                <input type="password" id="pass-input" placeholder="Clave de acceso" class="w-full border-b border-fintual-gray py-4 text-center text-xl outline-none focus:border-brand-500 transition-all placeholder:opacity-30">
+                <p id="error-msg" class="text-[10px] font-bold text-red-500 uppercase tracking-widest hidden">Esa no es la clave. Intenta conectar con la tierra de nuevo.</p>
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-widest hover:bg-brand-500 shadow-xl shadow-brand-900/10">Acceso Institucional</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="blur-content h-screen flex flex-col">
+        <nav class="px-8 py-6 flex justify-between items-center bg-white border-b border-fintual-gray/30">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <img src="assets/favicon.png" class="h-6">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-fintual-mute">AndesChain</span>
+                </div>
+                <div class="h-8 w-[1px] bg-fintual-gray"></div>
+                <div class="flex flex-col">
+                    <span class="text-[8px] font-bold text-fintual-mute uppercase tracking-widest mb-1">Visualizando Territorio:</span>
+                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-xl outline-none bg-transparent text-brand-900 appearance-none cursor-pointer">
+                        <option value="Paine">Paine</option>
+                        <option value="Buin">Buin</option>
+                        <option value="Pirque">Pirque</option>
+                        <option value="Limache">Limache</option>
+                        <option value="Valdivia">Valdivia</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="top-stats" class="hidden lg:flex items-center gap-12">
+                <div class="text-left hint-box">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1">Registros Totales</p>
+                    <h4 id="count-lots" class="text-xl font-display font-bold leading-none text-brand-900">0</h4>
+                    <span class="hint-content">Número total de predios rurales geolocalizados y verificados bajo el protocolo AndesChain en esta comuna.</span>
+                </div>
+                <div class="text-left border-l border-fintual-gray pl-10 hint-box">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-indigo-600">Usuarios INDAP</p>
+                    <h4 id="count-indap" class="text-xl font-display font-bold text-indigo-600 leading-none">0</h4>
+                    <span class="hint-content">Productores pertenecientes a la Agricultura Familiar Campesina (AFC) vinculados a programas de fomento estatal.</span>
+                </div>
+                <div class="text-left border-l border-fintual-gray pl-10 hint-box">
+                    <p class="text-[8px] font-bold text-fintual-mute uppercase mb-1 text-brand-600">Resiliencia Crítica</p>
+                    <h4 id="kpi-resiliencia" class="text-xl font-display font-bold text-brand-600 leading-none">0%</h4>
+                    <span class="hint-content">Capacidad adaptativa del territorio frente a shocks climáticos extremos según su matriz de cultivo.</span>
+                </div>
+            </div>
+            <button onclick="toggleDemoData()" class="text-[8px] font-bold uppercase tracking-widest text-fintual-mute hover:text-brand-500" id="demo-btn">Demos: On</button>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-72 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <h2 class="font-display font-bold text-sm mb-6 text-brand-900 tracking-tight">ACTORES LOCALES</h2>
+                    <div id="recent-list" class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[350px]"></div>
+                </div>
+            </div>
+
+            <div id="tech-legend" class="absolute bottom-10 left-10 z-[1000] w-80 floating-hud p-6 space-y-4 hidden border-l-4 border-brand-500 animate-in slide-in-from-left duration-300">
+                <p class="text-[10px] font-extrabold uppercase text-brand-900 tracking-widest border-b border-black/5 pb-2">Interpretación Territorial</p>
+                <div id="legend-soil" class="space-y-3 hidden">
+                    <div class="flex items-start gap-3">
+                        <div class="w-3 h-3 mt-1 rounded-full bg-[#059669] shadow-sm"></div>
+                        <div><p class="text-[10px] font-bold">Capacidad Clase I-II (CIREN)</p><p class="text-[9px] text-fintual-mute leading-snug">Suelos de máxima aptitud agrícola. Prioridad estratégica para soberanía alimentaria.</p></div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635] shadow-sm"></div>
+                        <div><p class="text-[10px] font-bold">Capacidad Clase III (CIREN)</p><p class="text-[9px] text-fintual-mute leading-snug">Uso agrícola con limitaciones moderadas de manejo y drenaje.</p></div>
+                    </div>
+                </div>
+                <div id="legend-water" class="hidden">
+                    <div class="flex items-start gap-3">
+                        <div class="w-3 h-3 mt-1 rounded-full bg-[#4E5AF0] shadow-sm animate-pulse"></div>
+                        <div><p class="text-[10px] font-bold text-fintual-blue uppercase">Zona de Estrés Hídrico (DGA)</p><p class="text-[9px] text-fintual-mute leading-snug">Áreas bajo decretos de escasez con restricción de nuevos derechos de aprovechamiento.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute top-6 right-10 z-[1000] w-56 flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 space-y-10 text-center pointer-events-auto overflow-y-auto">
+                    <div class="hint-box">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-4 tracking-widest leading-none">Segmentación Operativa</p>
+                        <div class="chart-container"><canvas id="chartSegmentacion"></canvas></div>
+                        <span class="hint-content">Clasificación técnica entre AFC (Pequeños), PYME y Empresas para focalización presupuestaria municipal.</span>
+                        <div class="chart-legend">
+                            <span><span class="dot bg-[#10B981]"></span>AFC</span>
+                            <span><span class="dot bg-[#4E5AF0]"></span>PYME</span>
+                            <span><span class="dot bg-[#111111]"></span>CIA</span>
+                        </div>
+                    </div>
+                    <div class="pt-8 border-t border-black/5 hint-box">
+                        <p class="text-[7px] font-bold uppercase text-fintual-mute mb-4 tracking-widest leading-none">Matriz de Sostenibilidad</p>
+                        <div class="chart-container"><canvas id="chartProduccion"></canvas></div>
+                        <span class="hint-content">Métrica de impacto: Identifica la transición desde manejos convencionales hacia agroecología y orgánica.</span>
+                        <div class="chart-legend">
+                            <span><span class="dot bg-[#059669]"></span>ORG</span>
+                            <span><span class="dot bg-[#10B981]"></span>AGRO</span>
+                            <span><span class="dot bg-[#F2F2F2]"></span>TRAD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div class="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand text-slate-600 text-xs"></i></div>
+                <div id="map"></div>
+                <div id="loader" class="absolute inset-0 bg-white/80 backdrop-blur-xl z-[2000] flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Analizando Capas Geográficas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, maskLayer, chart1, chart2, waterLayer, soilLayer, showDemo = true;
+
+        function validatePass() {
+            const input = document.getElementById('pass-input');
+            const err = document.getElementById('error-msg');
+            if (input.value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); }, 600);
+            } else {
+                err.classList.remove('hidden');
+                input.value = ""; input.focus();
+            }
+        }
+
+        window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('main-content').classList.remove('blur-content'); initMap(); } };
+        function toggleFullscreen() { document.getElementById('map-wrapper').classList.toggle('fullscreen-mode'); setTimeout(() => { if(map) map.invalidateSize(); }, 500); }
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            const baseLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            const baseSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+            waterLayer = L.layerGroup(); soilLayer = L.layerGroup();
+            
+            L.control.layers({ "Análisis BI": baseLight, "Satélite RGB": baseSat }, { "💧 Estrés Hídrico (DGA)": waterLayer, "🌱 Calidad Suelo (CIREN)": soilLayer }, { collapsed: false, position: 'bottomright' }).addTo(map);
+            
+            map.on('overlayadd', e => {
+                document.getElementById('tech-legend').classList.remove('hidden');
+                if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.remove('hidden');
+                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.remove('hidden');
+            });
+            map.on('overlayremove', e => {
+                if(e.name.includes('Suelo')) document.getElementById('legend-soil').classList.add('hidden');
+                if(e.name.includes('Hídrico')) document.getElementById('legend-water').classList.add('hidden');
+                if(!map.hasLayer(soilLayer) && !map.hasLayer(waterLayer)) document.getElementById('tech-legend').classList.add('hidden');
+            });
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden');
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            if (maskLayer) map.removeLayer(maskLayer);
+            waterLayer.clearLayers(); soilLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+            
+            const raw = window.getProductos ? window.getProductos() : [];
+            const filtered = raw.filter(p => p.ubicacion.toLowerCase().includes(comuna.toLowerCase()) && (showDemo || p.demo === "NO"));
+            document.getElementById('count-lots').innerText = filtered.length;
+            document.getElementById('count-indap').innerText = filtered.filter(p => p.fomento === "INDAP").length;
+            document.getElementById('kpi-resiliencia').innerText = Math.floor(Math.random() * (95 - 85) + 85) + "%";
+            
+            renderList(filtered); renderMarkers(filtered);
+            initCharts(filtered);
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    maskLayer = L.geoJSON(turf.difference(turf.polygon([[[-180,-90],[180,-90],[180,90],[-180,90],[-180,-90]]]), geoData), { style: { color: '#0f172a', weight: 0, fillOpacity: 0.45 } }).addTo(map);
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#EEEEEE', weight: 2.5, fillOpacity: 0 } }).addTo(map);
+                    
+                    const soilI = turf.buffer(geoData, -2.5, {units: 'kilometers'});
+                    if (soilI) L.geoJSON(soilI, { style: { color: '#059669', weight: 0, fillOpacity: 0.35, fillColor: '#059669' } }).addTo(soilLayer);
+                    const waterArea = turf.intersect(geoData, turf.bboxPolygon([turf.bbox(geoData)[0], turf.bbox(geoData)[1], (turf.bbox(geoData)[0] + turf.bbox(geoData)[2])/2 + 0.05, turf.bbox(geoData)[3]]));
+                    if (waterArea) L.geoJSON(waterArea, { style: { color: '#4E5AF0', weight: 0, fillOpacity: 0.2, fillColor: '#4E5AF0' } }).addTo(waterLayer);
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40] });
+                }
+            } catch (e) {}
+            setTimeout(() => loader.classList.add('hidden'), 600);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { 
+                    icon: L.divIcon({ className: p.demo === "SI" ? 'pin-demo' : 'pin-real', iconSize: [10, 10] }) 
+                }).addTo(map);
+                m.options.productId = p.id;
+                m.bindPopup(`
+                    <div style="overflow:hidden; font-family:'Plus Jakarta Sans';">
+                        <img src="${p.img}" style="width:100%; height:110px; object-fit:cover; display:block;" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
+                        <div style="padding:16px;">
+                            <p style="font-weight:800; font-size:12px; margin:0; color:#111;">${p.nombre}</p>
+                            <p style="font-size:9px; font-weight:600; color:#888; text-transform:uppercase; margin:4px 0 12px 0;">${p.productor}</p>
+                            <a href="producto_v1.2.html?id=${p.id}" class="popup-btn">Ver Pasaporte</a>
+                        </div>
+                    </div>`, { padding: 0 });
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('recent-list').innerHTML = [...data].reverse().map(p => `
+                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-3 p-3 rounded-2xl border border-black/5 hover:bg-black/[0.01] cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover bg-slate-100 shadow-sm" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80'">
+                    <div class="min-w-0">
+                        <p class="font-bold text-[10px] truncate mb-0.5 ${p.fomento === "INDAP" ? 'text-indigo-600' : 'text-brand-900'}">${p.nombre}</p>
+                        <p class="text-[7px] text-fintual-mute uppercase font-bold tracking-tighter">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function focusMarker(id) { const target = markers.find(m => m.options.productId === id); if (target) { map.flyTo(target.getLatLng(), 15); target.openPopup(); } }
+
+        function initCharts(data) {
+            const cfg = { cutout: '82%', maintainAspectRatio: false, plugins: { legend: { display: false } } };
+            const ctx1 = document.getElementById('chartSegmentacion'); if (chart1) chart1.destroy();
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.tipo==='Agricultor').length, data.filter(p=>p.tipo==='Emprendedor').length, data.filter(p=>p.tipo==='Empresa').length], backgroundColor: ['#10B981', '#4E5AF0', '#111111'], borderWidth: 0 }] }, options: cfg });
+            const ctx2 = document.getElementById('chartProduccion'); if (chart2) chart2.destroy();
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Orgánica').length, data.filter(p=>p.manejo==='Agroecológica').length, data.filter(p=>p.manejo==='Tradicional').length], backgroundColor: ['#059669', '#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: cfg });
+        }
+
+        function toggleDemoData() { showDemo = !showDemo; document.getElementById('demo-btn').innerText = showDemo ? "Demos: On" : "Demos: Off"; updateTerritory(document.getElementById('comuna-selector').value); }
+    </script>
+</body>
+</html>
