@@ -10,13 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
+        /**
+         * DICCIONARIO DE DATOS - PASAPORTE CONSCIENTE v1.3.2
+         * --------------------------------------------------
+         * @p-nombre: Nombre comercial del producto.
+         * @p-productor: Identidad del actor territorial.
+         * @co2-ahorro: Cálculo proyectado basado en logística local vs importación.
+         * @sello-sag: Sello dinámico que carga assets/sello-organico.png si manejo === "Orgánica".
+         */
         tailwind.config = {
             theme: {
                 extend: {
                     colors: { 
                         'brand': { 500: '#10B981', 900: '#064E3B' }, 
-                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' },
-                        'organic': '#2D5A27'
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                 }
@@ -28,27 +35,28 @@
         .img-viewport { height: 60vh; background: #fcfcfc; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 0 0 3rem 3rem; border-bottom: 1px solid #f2f2f2; position: relative; }
         .img-viewport img { width: 100%; height: 100%; object-fit: cover; }
         
+        /* Contenedor Sello Orgánico Local */
         .sello-organico { 
-            position: absolute; bottom: 24px; right: 24px; width: 90px; height: 90px; 
-            background: white; border-radius: 50%; padding: 10px; display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12); border: 2px solid #2D5A27;
-            z-index: 20; flex-direction: column; align-items: center; justify-content: center;
+            position: absolute; bottom: 24px; right: 24px; width: 100px; height: 100px; 
+            background: white; border-radius: 50%; padding: 4px; display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12); border: 1px solid #eee;
+            z-index: 20; align-items: center; justify-content: center;
         }
+        .sello-organico img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
 
         .milestone-dot { width: 12px; height: 12px; border-radius: 50%; background: #10B981; position: relative; z-index: 10; border: 3px solid white; box-shadow: 0 0 0 1px #10B981; }
         .milestone-line { position: absolute; left: 5px; top: 12px; bottom: -30px; width: 1px; background: #e2e8f0; }
         
-        /* Botón Flotante para Móviles (CTA Compra) */
-        .buy-cta { background: #064E3B; color: white; padding: 18px 32px; border-radius: 1.5rem; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s; display: inline-flex; items-center; gap: 12px; box-shadow: 0 10px 25px rgba(6, 78, 59, 0.2); }
+        .buy-cta { background: #064E3B; color: white; padding: 18px 32px; border-radius: 1.5rem; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s; display: inline-flex; items-center; gap: 12px; box-shadow: 0 10px 25px rgba(6, 78, 59, 0.2); text-decoration: none; }
         .buy-cta:hover { background: #10B981; transform: translateY(-2px); }
     </style>
 </head>
 <body class="font-sans antialiased text-fintual-text">
 
     <nav class="px-8 py-6 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-fintual-gray/50">
-        <a href="dashboard_v1.3.2.html" class="flex items-center gap-2 group text-fintual-mute hover:text-brand-900 transition-all text-left">
+        <a href="dashboard_v1.3.2.html" class="flex items-center gap-2 group text-fintual-mute hover:text-brand-900 transition-all text-left text-decoration-none">
             <i class="fas fa-arrow-left text-xs"></i>
-            <span class="text-[10px] font-bold uppercase tracking-widest">Regresar</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-left">Regresar</span>
         </a>
         <button onclick="openBuyModal()" class="px-5 py-2 bg-brand-900 text-white text-[10px] font-bold uppercase rounded-full tracking-widest hover:bg-brand-500 transition-all">
             Comprar Origen
@@ -62,7 +70,7 @@
                 <span id="badge-tipo" class="tag bg-brand-500/10 text-brand-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-brand-500/20">Origen Verificado</span>
                 <span id="badge-manejo" class="tag bg-fintual-gray text-fintual-mute px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">---</span>
             </div>
-            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter text-brand-900">Cargando...</h1>
+            <h1 id="p-nombre" class="text-6xl md:text-8xl font-display font-bold leading-[0.85] tracking-tighter text-brand-900 text-left">Cargando...</h1>
             
             <div id="proximity-card" class="inline-flex flex-col md:flex-row items-start md:items-center gap-6 p-6 rounded-[2rem] bg-slate-50 border border-slate-100 hidden shadow-sm">
                 <div class="flex items-center gap-4">
@@ -71,7 +79,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Impacto de Proximidad</p>
-                        <p class="text-sm font-semibold text-slate-800 italic text-left">Podrías abastecerte a solo <span id="distancia-val">--</span> km.</p>
+                        <p class="text-sm font-semibold text-slate-800 italic text-left leading-none">Podrías abastecerte a solo <span id="distancia-val">--</span> km.</p>
                     </div>
                 </div>
                 <div class="h-px w-full md:h-8 md:w-px bg-slate-200"></div>
@@ -86,13 +94,12 @@
 
         <div class="img-viewport shadow-2xl">
             <div id="sello-organico" class="sello-organico">
-                <i class="fas fa-seedling text-organic text-xl mb-1"></i>
-                <span class="text-[8px] font-black text-organic leading-none text-center uppercase">Orgánico<br>Chile</span>
+                <img src="assets/sello-organico.png" alt="Sello Orgánico Chile SAG">
             </div>
             <img id="p-img" src="" alt="Origen" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200&q=80'">
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-fintual-gray pt-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-fintual-gray pt-12 text-left">
             <div class="space-y-2">
                 <p class="text-[10px] font-bold text-fintual-mute uppercase tracking-widest">Suelo (CIREN)</p>
                 <p class="font-display font-bold text-2xl text-brand-500 leading-none">Aptitud Clase I-II</p>
@@ -110,12 +117,12 @@
             </div>
         </div>
 
-        <div class="py-12 bg-brand-50 rounded-[3rem] p-10 flex flex-col md:flex-row justify-between items-center gap-8 border border-brand-500/10">
-            <div class="text-left space-y-2">
-                <h4 class="font-display font-bold text-3xl text-brand-900 tracking-tight">Apoya esta producción territorial</h4>
-                <p class="text-sm text-fintual-mute max-w-md">Tu compra directa fortalece la economía de <span id="p-comuna-label" class="font-bold">esta comuna</span> y asegura la continuidad de estas prácticas sostenibles.</p>
+        <div class="py-12 bg-brand-50 rounded-[3rem] p-10 flex flex-col md:flex-row justify-between items-center gap-8 border border-brand-500/10 text-left">
+            <div class="space-y-2">
+                <h4 class="font-display font-bold text-3xl text-brand-900 tracking-tight text-left leading-none">Apoya esta producción territorial</h4>
+                <p class="text-sm text-fintual-mute max-w-md text-left">Tu compra directa fortalece la economía de <span id="p-comuna-label" class="font-bold">esta comuna</span> y asegura la continuidad de estas prácticas sostenibles.</p>
             </div>
-            <a href="#" id="buy-link" class="buy-cta">
+            <a href="#" onclick="openBuyModal(); return false;" class="buy-cta">
                 <i class="fas fa-shopping-bag"></i>
                 Solicitar Pedido
             </a>
@@ -143,33 +150,35 @@
                 document.getElementById('badge-manejo').innerText = p.manejo;
                 document.getElementById('p-img').src = p.img || 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=1200&q=80';
                 
-                // Sello Orgánico Chile
+                // Activar sello orgánico si aplica
                 if(p.manejo === "Orgánica") {
                     document.getElementById('sello-organico').style.display = 'flex';
                 }
 
-                // Hitos con lenguaje de Compromiso (UX Escritural)
-                const hitosCompromiso = [
+                // Hitos con lenguaje propositivo
+                const hitosPorDefecto = [
                     { t: "Preparación Responsable", d: "Acondicionamiento del suelo preservando microorganismos nativos." },
                     { t: "Siembra con Origen", d: "Uso de variedades adaptadas al microclima local." },
                     { t: "Cosecha Manual Selectiva", d: "Recolección en punto óptimo de madurez para minimizar desperdicios." }
                 ];
                 
-                document.getElementById('milestones-container').innerHTML = (p.hitos || hitosCompromiso).map((h, i, arr) => `
+                const hitosRender = (p.hitos && p.hitos.length > 0) ? p.hitos : hitosPorDefecto;
+
+                document.getElementById('milestones-container').innerHTML = hitosRender.map((h, i, arr) => `
                     <div class="relative flex gap-10 group">
                         ${i !== arr.length - 1 ? '<div class="milestone-line"></div>' : ''}
                         <div class="milestone-dot"></div>
                         <div class="pb-2 text-left">
-                            <p class="text-[9px] font-bold text-brand-500 uppercase tracking-widest mb-1">${h.fecha || 'Ciclo 2026'}</p>
-                            <p class="text-xl font-display font-bold text-brand-900 leading-tight mb-2">${h.titulo || h.t}</p>
-                            <p class="text-sm text-fintual-mute max-w-xl font-light leading-relaxed">${h.desc || h.d}</p>
+                            <p class="text-[9px] font-bold text-brand-500 uppercase tracking-widest mb-1 text-left">${h.fecha || 'Ciclo 2026'}</p>
+                            <p class="text-xl font-display font-bold text-brand-900 leading-tight mb-2 text-left">${h.titulo || h.t}</p>
+                            <p class="text-sm text-fintual-mute max-w-xl font-light leading-relaxed text-left">${h.desc || h.d}</p>
                         </div>
                     </div>
                 `).join('');
 
                 if(p.fomento === "INDAP" || p.fomento === "PRODESAL") {
                     const b = document.getElementById('badge-tipo');
-                    b.innerText = `Fomento Institucional: ${p.fomento}`; 
+                    b.innerText = `Apoyado por ${p.fomento}`; 
                     b.className = "tag bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm";
                 }
 
@@ -177,8 +186,6 @@
                     navigator.geolocation.getCurrentPosition(pos => {
                         const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, parseFloat(p.lat), parseFloat(p.lon));
                         document.getElementById('distancia-val').innerText = dist.toFixed(1);
-                        
-                        // Impacto pedagógico: Un producto importado viaja min 2000km. 
                         const co2Ahorrado = (2000 - dist) * 0.12; 
                         document.getElementById('co2-val').innerText = co2Ahorrado > 0 ? co2Ahorrado.toFixed(2) : "0.5";
                         document.getElementById('proximity-card').classList.remove('hidden');
@@ -188,7 +195,7 @@
         };
 
         function openBuyModal() {
-            alert("Piloto AndesChain: En la siguiente fase, aquí podrás contactar directamente al productor vía WhatsApp o comprar mediante el carrito territorial. ¡Gracias por apoyar la soberanía local!");
+            alert("Piloto AndesChain: En la siguiente fase, podrás contactar directamente al productor vía WhatsApp o comprar mediante el carrito territorial. ¡Gracias por apoyar la soberanía local!");
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
