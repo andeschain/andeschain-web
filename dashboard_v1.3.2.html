@@ -53,7 +53,6 @@
         #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
         .blur-content { filter: blur(25px); pointer-events: none; }
 
-        /* Estilo para el buscador */
         #search-actores::placeholder { color: #cbd5e1; font-weight: 500; }
     </style>
 </head>
@@ -87,7 +86,7 @@
                     <span id="municipio-tag" class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-900">MUNICIPALIDAD</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-bold text-fintual-mute uppercase tracking-widest mb-1">Jurisdicción:</span>
+                    <span class="text-[8px] font-bold text-fintual-mute uppercase tracking-widest mb-1 text-left">Jurisdicción:</span>
                     <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-xl outline-none cursor-pointer bg-transparent text-brand-900">
                         <option value="Paine">Paine</option>
                         <option value="Buin">Buin</option>
@@ -135,7 +134,7 @@
                     
                     <div class="relative mb-6">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
-                        <input type="text" id="search-actores" onkeyup="filterActores()" placeholder="Buscar producto, actor o INDAP..." 
+                        <input type="text" id="search-actores" onkeyup="filterActores()" placeholder="Buscar producto, INDAP, orgánico..." 
                             class="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-9 pr-4 text-[10px] outline-none focus:border-brand-500/30 transition-all font-medium">
                     </div>
 
@@ -147,18 +146,18 @@
                 <p class="text-[9px] font-extrabold uppercase text-brand-900 tracking-widest border-b border-black/5 pb-2 text-left">Interpretación Territorial BI</p>
                 <div id="legend-soil" class="space-y-3 hidden">
                     <div class="flex items-start gap-3">
-                        <div class="w-3 h-3 mt-1 rounded-full bg-[#059669]"></div>
+                        <div class="w-3 h-3 mt-1 rounded-full bg-[#059669] shadow-sm"></div>
                         <div><p class="text-[10px] font-bold">Clase de Capacidad I-II</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Suelos de máxima aptitud agrícola (CIREN). Prioridad institucional para soberanía alimentaria.</p></div>
                     </div>
                     <div class="flex items-start gap-3">
-                        <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635]"></div>
-                        <div><p class="text-[10px] font-bold">Clase de Capacidad III</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Suelos con limitaciones moderadas de manejo. Requieren inversión en tecnificación.</p></div>
+                        <div class="w-3 h-3 mt-1 rounded-full bg-[#A3E635] shadow-sm"></div>
+                        <div><p class="text-[10px] font-bold">Clase de Capacidad III</p><p class="text-[9px] text-fintual-mute text-left leading-snug">Suelos con limitaciones moderadas de manejo. Requieren inversión en tecnificación.</p></div>
                     </div>
                 </div>
                 <div id="legend-water" class="hidden text-left">
                     <div class="flex items-start gap-3">
                         <div class="w-3 h-3 mt-1 rounded-full bg-[#4E5AF0] shadow-sm animate-pulse"></div>
-                        <div><p class="text-[10px] font-bold text-fintual-blue uppercase">Zonificación de Estrés Hídrico</p><p class="text-[9px] text-fintual-mute leading-snug text-left">Áreas bajo decreto DGA con restricción para nuevos derechos de aprovechamiento.</p></div>
+                        <div><p class="text-[10px] font-bold text-fintual-blue uppercase">Zonificación de Estrés Hídrico</p><p class="text-[9px] text-fintual-mute text-left leading-snug">Áreas bajo decretos DGA con restricción para nuevos derechos de aprovechamiento.</p></div>
                     </div>
                 </div>
             </div>
@@ -293,7 +292,7 @@
             });
         }
 
-        // LÓGICA DE BÚSQUEDA FILTRADA
+        // LÓGICA DE BÚSQUEDA FILTRADA + AUTO ZOOM
         function filterActores() {
             const query = document.getElementById('search-actores').value.toLowerCase();
             const comuna = document.getElementById('comuna-selector').value;
@@ -311,6 +310,17 @@
             });
 
             renderList(filtered);
+
+            // Funcionalidad de Auto-Ajuste de Zoom
+            if (filtered.length > 0) {
+                const group = new L.featureGroup(markers.filter(m => filtered.some(f => f.id === m.options.productId)));
+                if (group.getLayers().length > 0) {
+                    map.flyToBounds(group.getBounds(), { padding: [50, 50], maxZoom: 15, duration: 1 });
+                }
+            } else if (geoJsonLayer) {
+                // Si no hay resultados, volver a la vista de la comuna
+                map.flyToBounds(geoJsonLayer.getBounds(), { padding: [40, 40], duration: 1 });
+            }
         }
 
         function renderList(data) {
