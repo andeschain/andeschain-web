@@ -15,7 +15,7 @@
                 extend: {
                     colors: {
                         'andes': {
-                            50: '#F0F9FF', 500: '#00D1FF', 600: '#00B2DA', 900: '#0A1E29', // Blue Accent
+                            50: '#F0F9FF', 500: '#00D1FF', 600: '#00B2DA', 900: '#0A1E29',
                             'leaf': '#059669', 'earth': '#1E293B'
                         },
                     },
@@ -31,21 +31,13 @@
     <style>
         body { background-color: #FFFFFF; color: #1E293B; }
         .hero-gradient { background: radial-gradient(circle at top right, #F0FDF4, #FFFFFF 70%); }
-        .btn-andes { 
-            @apply px-8 py-4 rounded-2xl font-bold transition-all duration-300 transform active:scale-95 text-center;
-        }
-        .card-glass { 
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(0,0,0,0.05);
-        }
         .text-balance { text-wrap: balance; }
-        .tab-active { @apply border-b-2 border-andes-leaf text-andes-leaf; }
+        .nav-link { @apply text-sm font-medium text-slate-500 hover:text-andes-leaf transition-colors cursor-pointer; }
     </style>
 </head>
 <body class="antialiased hero-gradient">
 
-    <nav id="navbar" class="fixed w-full z-50 bg-white/80 backdrop-blur-md py-4 transition-all duration-300">
+    <nav id="navbar" class="fixed w-full z-50 bg-white/80 backdrop-blur-md py-4 border-b border-slate-100">
         <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-2 group">
                 <img src="assets/favicon.png" class="h-8 group-hover:rotate-12 transition-transform">
@@ -53,15 +45,19 @@
             </a>
             
             <div class="flex items-center gap-4 md:gap-8">
-                <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500">
-                    <a href="#proposito" class="hover:text-andes-leaf">Propósito</a>
-                    <a href="#tecnologia" class="hover:text-andes-leaf">Cómo funciona</a>
+                <div class="hidden md:flex gap-6">
+                    <a onclick="scrollToSection('view-productor')" class="nav-link" data-i18n="nav-producers">Soy Productor</a>
+                    <a onclick="scrollToSection('view-institucion')" class="nav-link" data-i18n="nav-institutions">Soy Institución</a>
+                    <a href="#tecnologia" class="nav-link" data-i18n="nav-how">Cómo funciona</a>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="changeLang('es')" class="text-xs font-bold hover:opacity-70">🇨🇱 ES</button>
-                    <button onclick="changeLang('en')" class="text-xs font-bold hover:opacity-70">🇺🇸 EN</button>
+                
+                <div class="flex gap-3 bg-slate-100 p-1.5 rounded-full px-3">
+                    <button onclick="changeLang('es')" class="text-[10px] font-bold hover:text-andes-leaf transition-colors">ES</button>
+                    <div class="w-[1px] h-3 bg-slate-300 self-center"></div>
+                    <button onclick="changeLang('en')" class="text-[10px] font-bold hover:text-andes-leaf transition-colors">EN</button>
                 </div>
-                <a href="registro.html" class="bg-andes-earth text-white px-5 py-2.5 rounded-full text-xs font-bold hover:shadow-lg transition-all">
+
+                <a href="registro.html" class="bg-andes-earth text-white px-5 py-2.5 rounded-full text-xs font-bold hover:shadow-lg transition-all" data-i18n="btn-register">
                     Registrarse
                 </a>
             </div>
@@ -71,256 +67,243 @@
     <header class="pt-32 md:pt-48 pb-20 px-6">
         <div class="max-w-4xl mx-auto text-center">
             <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-andes-leaf/10 border border-andes-leaf/20">
-                <p class="text-[10px] font-bold text-andes-leaf uppercase tracking-widest" id="hero-tag">Infraestructura de Confianza Territorial</p>
+                <p class="text-[10px] font-bold text-andes-leaf uppercase tracking-widest" data-i18n="hero-tag">Infraestructura de Confianza Territorial</p>
             </div>
-            <h1 class="font-display text-5xl md:text-7xl font-extrabold text-andes-earth leading-[1.1] mb-8 text-balance" id="hero-title">
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold text-andes-earth leading-[1.1] mb-8 text-balance" id="hero-title" data-i18n="hero-title">
                 Cada alimento tiene una <span class="text-andes-leaf italic font-light">historia</span> que merece ser contada.
             </h1>
-            <p class="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed" id="hero-desc">
+            <p class="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed" data-i18n="hero-desc">
                 Transformamos el origen y la tradición de los productores locales en activos digitales verificados. Data real para políticas públicas y resiliencia climática.
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="registro.html" class="btn-andes bg-andes-leaf text-white hover:bg-andes-earth hover:shadow-xl">
+                <a href="registro.html" class="px-8 py-4 rounded-2xl font-bold bg-andes-leaf text-white hover:bg-andes-earth shadow-lg transition-all" data-i18n="btn-certify">
                     Certificar mi origen
                 </a>
-                <button onclick="document.getElementById('acceso-inst').scrollIntoView()" class="btn-andes border border-slate-200 hover:bg-slate-50">
+                <button onclick="scrollToSection('acceso-inst')" class="px-8 py-4 rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 transition-all" data-i18n="btn-gov">
                     Acceso Institucional
                 </button>
             </div>
         </div>
     </header>
 
-    <section id="proposito" class="py-20 bg-white">
-        <div class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="font-display text-3xl font-bold mb-4">Unimos dos necesidades en un solo lugar.</h2>
-                <p class="text-slate-500">Haz click para ver cómo impactamos en cada sector.</p>
+    <section id="view-productor" class="py-24 bg-white border-t border-slate-50">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center text-left">
+            <div>
+                <h3 class="font-display text-4xl font-bold mb-6 text-andes-earth" data-i18n="prod-title">Sal del montón y <span class="text-andes-leaf">diferénciate.</span></h3>
+                <p class="text-slate-600 mb-8 text-lg leading-relaxed" data-i18n="prod-desc">
+                    Sabemos que pones el corazón en tu tierra, pero el mercado te trata como a cualquiera. Con nuestro **Pasaporte de Origen Digital**, le demuestras al mundo que tu producto es único.
+                </p>
+                <ul class="space-y-4 text-slate-700">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-andes-leaf"></i> <span data-i18n="prod-li1">Vende por tu historia, no por tu peso.</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-andes-leaf"></i> <span data-i18n="prod-li2">Llega a clientes que valoran lo ético.</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-andes-leaf"></i> <span data-i18n="prod-li3">Tu trabajo, respaldado por tecnología mundial.</span></li>
+                </ul>
             </div>
-
-            <div class="flex justify-center gap-8 mb-12 border-b">
-                <button onclick="toggleView('productor')" id="btn-productor" class="pb-4 font-bold text-sm tracking-widest uppercase tab-active transition-all">Soy Productor</button>
-                <button onclick="toggleView('institucion')" id="btn-institucion" class="pb-4 font-bold text-sm tracking-widest uppercase text-slate-400 hover:text-slate-600 transition-all">Soy Institución</button>
-            </div>
-
-            <div id="view-productor" class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h3 class="font-display text-4xl font-bold mb-6 text-andes-earth">Sal del montón y <span class="text-andes-leaf">diferénciate.</span></h3>
-                    <p class="text-slate-600 mb-6 text-lg leading-relaxed">
-                        Sabemos que pones el corazón en tu tierra, pero el mercado te trata como a cualquiera. Con nuestro **Pasaporte de Origen Digital**, le demuestras al mundo que tu producto es único.
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3 font-medium"><i class="fas fa-check text-andes-leaf"></i> Vende por tu historia, no por tu peso.</li>
-                        <li class="flex items-center gap-3 font-medium"><i class="fas fa-check text-andes-leaf"></i> Llega a clientes que valoran lo ético.</li>
-                        <li class="flex items-center gap-3 font-medium"><i class="fas fa-check text-andes-leaf"></i> Tu trabajo, respaldado por tecnología mundial.</li>
-                    </ul>
-                </div>
-                <div class="rounded-[2.5rem] overflow-hidden shadow-2xl rotate-2">
-                    <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80" alt="Agricultor real">
-                </div>
-            </div>
-
-            <div id="view-institucion" class="hidden grid md:grid-cols-2 gap-12 items-center">
-                <div class="rounded-[2.5rem] overflow-hidden shadow-2xl -rotate-2">
-                    <img src="https://images.unsplash.com/photo-1573163773712-03790a178382?w=800&q=80" alt="Data análisis">
-                </div>
-                <div>
-                    <h3 class="font-display text-4xl font-bold mb-6 text-andes-earth">Inteligencia de Datos para la <span class="text-andes-leaf">Gobernanza.</span></h3>
-                    <p class="text-slate-600 mb-6 text-lg leading-relaxed">
-                        Optimice la toma de decisiones públicas con métricas granulares sobre resiliencia hídrica, salud de suelos y huella de carbono. Facilitamos el cumplimiento de agendas internacionales (FAO/ONU).
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3 font-medium text-sm"><i class="fas fa-microchip text-andes-leaf"></i> Monitoreo satelital de predios vinculados.</li>
-                        <li class="flex items-center gap-3 font-medium text-sm"><i class="fas fa-shield-halved text-andes-leaf"></i> Trazabilidad inmutable mediante Blockchain.</li>
-                        <li class="flex items-center gap-3 font-medium text-sm"><i class="fas fa-chart-line text-andes-leaf"></i> Dashboard de impacto territorial en tiempo real.</li>
-                    </ul>
-                </div>
+            <div class="rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80" alt="Agricultor" class="hover:scale-105 transition-transform duration-700">
             </div>
         </div>
     </section>
 
-    <section class="py-12 border-y border-slate-100 bg-slate-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <p class="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10">Infraestructura de clase mundial</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 grayscale opacity-40 hover:opacity-100 transition-all duration-500">
-                <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029" class="h-8" title="Polygon Blockchain">
-                <img src="https://www.fao.org/images/corporatelibraries/fao-logo/fao-logo-es.svg" class="h-10" title="FAO Standards">
-                <div class="flex items-center gap-2 font-black text-xl text-slate-700"><i class="fas fa-satellite"></i> SAT-DATA</div>
-                <div class="flex items-center gap-2 font-black text-xl text-slate-700"><i class="fas fa-fingerprint"></i> WEB3-AUTH</div>
+    <section id="view-institucion" class="py-24 bg-slate-50">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center text-left">
+            <div class="order-2 md:order-1 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1573163773712-03790a178382?w=800&q=80" alt="Data" class="hover:scale-105 transition-transform duration-700">
+            </div>
+            <div class="order-1 md:order-2">
+                <h3 class="font-display text-4xl font-bold mb-6 text-andes-earth" data-i18n="inst-title">Inteligencia de Datos para la <span class="text-andes-leaf">Gobernanza.</span></h3>
+                <p class="text-slate-600 mb-8 text-lg leading-relaxed" data-i18n="inst-desc">
+                    Optimice la toma de decisiones públicas con métricas granulares sobre resiliencia hídrica, salud de suelos y huella de carbono. Facilitamos el cumplimiento de agendas internacionales (FAO/ONU).
+                </p>
+                <ul class="space-y-4 text-slate-700">
+                    <li class="flex items-center gap-3"><i class="fas fa-microchip text-andes-leaf"></i> <span data-i18n="inst-li1">Monitoreo satelital de predios vinculados.</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-shield-halved text-andes-leaf"></i> <span data-i18n="inst-li2">Trazabilidad inmutable mediante Blockchain.</span></li>
+                    <li class="flex items-center gap-3"><i class="fas fa-chart-line text-andes-leaf"></i> <span data-i18n="inst-li3">Dashboard de impacto territorial en tiempo real.</span></li>
+                </ul>
             </div>
         </div>
     </section>
 
     <section id="tecnologia" class="py-24 bg-white px-6">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-20">
-                <h2 class="font-display text-4xl font-bold mb-4">Un puente digital para un mundo rural.</h2>
-                <p class="text-slate-500 max-w-xl mx-auto leading-relaxed text-balance">
-                    Diseñamos una tecnología que es invisible para el productor, pero transparente para la institución. Una verdad compleja contada de forma simple.
-                </p>
-            </div>
-
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="font-display text-4xl font-bold mb-16" data-i18n="tech-main-title">Un puente digital para un mundo rural.</h2>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-10 rounded-[3rem] bg-slate-50 hover:bg-andes-50 transition-colors border border-slate-100 group">
-                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm group-hover:scale-110 transition-transform">
+                <div class="p-10 rounded-[3rem] bg-slate-50 border border-slate-100 group">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm group-hover:bg-andes-leaf group-hover:text-white transition-all">
                         <i class="fas fa-mobile-alt text-2xl"></i>
                     </div>
-                    <h4 class="font-display text-xl font-bold mb-4 text-andes-earth text-left">1. Evidencia en Terreno</h4>
-                    <p class="text-slate-500 text-sm leading-relaxed text-left italic">"Captura el momento".</p>
-                    <p class="text-slate-600 text-sm leading-relaxed text-left mt-2">
-                        Usas nuestra App para tomar fotos de tu siembra, o del ciclo productivo que quieras registrar. Nosotros validamos coordenadas GPS, más datos como fecha, hora, temperatura desde la imagen (Metadata EXIF) sin que tengas que hacer nada más.
-                    </p>
+                    <h4 class="font-display text-xl font-bold mb-4 text-andes-earth" data-i18n="tech-1-t">1. Evidencia en Terreno</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-i18n="tech-1-d">Usas nuestra App para tomar fotos de tu siembra. Validamos coordenadas GPS y fecha desde la Metadata sin esfuerzo adicional.</p>
                 </div>
-
-                <div class="p-10 rounded-[3rem] bg-slate-50 hover:bg-andes-50 transition-colors border border-slate-100 group">
-                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm group-hover:scale-110 transition-transform">
+                <div class="p-10 rounded-[3rem] bg-slate-50 border border-slate-100 group">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm group-hover:bg-andes-leaf group-hover:text-white transition-all">
                         <i class="fas fa-satellite-dish text-2xl"></i>
                     </div>
-                    <h4 class="font-display text-xl font-bold mb-4 text-andes-earth text-left">2. Verificación Satelital</h4>
-                    <p class="text-slate-500 text-sm leading-relaxed text-left italic text-balance">"La ciencia respalda tu trabajo".</p>
-                    <p class="text-slate-600 text-sm leading-relaxed text-left mt-2 font-medium">
-                        Cruzamos tus datos con imágenes de satélite y clima. Matemáticamente demostramos que lo que dices es verdad.
-                    </p>
+                    <h4 class="font-display text-xl font-bold mb-4 text-andes-earth" data-i18n="tech-2-t">2. Verificación Satelital</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed" data-i18n="tech-2-d">Cruzamos tus datos con imágenes de satélite y clima. Matemáticamente demostramos la veracidad del ciclo productivo.</p>
                 </div>
-
-                <div class="p-10 rounded-[3rem] bg-andes-earth text-white border border-andes-earth group relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-andes-leaf/20 rounded-full blur-3xl"></div>
-                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                        <i class="fas fa-id-card text-2xl text-andes-leaf"></i>
+                <div class="p-10 rounded-[3rem] bg-andes-earth text-white group">
+                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-andes-leaf mb-8 shadow-sm">
+                        <i class="fas fa-id-card text-2xl"></i>
                     </div>
-                    <h4 class="font-display text-xl font-bold mb-4 text-left">3. Pasaporte Digital (POD)</h4>
-                    <p class="text-white/60 text-sm leading-relaxed text-left italic">"Tu sello de confianza".</p>
-                    <p class="text-white/80 text-sm leading-relaxed text-left mt-2">
-                        Generamos tu identidad digital única. Un QR que cualquier cliente escanea para ver tu historia completa, sin intermediarios.
-                    </p>
+                    <h4 class="font-display text-xl font-bold mb-4" data-i18n="tech-3-t">3. Pasaporte Digital (POD)</h4>
+                    <p class="text-white/60 text-sm leading-relaxed" data-i18n="tech-3-d">Generamos tu identidad digital única. Un QR para que el cliente acceda a tu historia completa y verificada.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="acceso-inst" class="py-24 bg-andes-earth text-white px-6 overflow-hidden relative">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <div>
-                <h2 class="font-display text-4xl font-extrabold mb-8 text-balance leading-tight text-left italic tracking-tighter">
-                    Impactamos la gobernanza a través de la transparencia.
-                </h2>
-                <p class="text-white/60 text-lg mb-10 leading-relaxed text-left">
-                    AndesChain provee la infraestructura para la digitalización rural. Genere data sólida para adaptación climática y políticas de fomento productivo.
-                </p>
-                <div class="space-y-6">
-                    <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                        <i class="fas fa-database text-andes-leaf mt-1"></i>
-                        <div>
-                            <p class="font-bold text-sm text-left">Interoperabilidad Institucional</p>
-                            <p class="text-xs text-white/50 text-left">Integración nativa con capas ODEPA, CIREN e INDAP.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 text-left italic">
-                        <i class="fas fa-cloud-sun text-andes-leaf mt-1"></i>
-                        <div>
-                            <p class="font-bold text-sm">Resiliencia Climática</p>
-                            <p class="text-xs text-white/50">Monitoreo de estrés hídrico y vigor vegetativo regional.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-8 md:p-12 rounded-[3rem] text-slate-900 shadow-2xl">
-                <h3 class="font-display text-2xl font-bold mb-2">Solicitar Acceso Dashboard</h3>
-                <p class="text-slate-400 text-sm mb-8">Uso exclusivo para municipios y organismos.</p>
-                <form id="andesForm" action="https://formsubmit.co/ajax/info@andeschain.io" method="POST" class="space-y-4">
-                    <input type="text" name="entidad" placeholder="Entidad o Municipio" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-andes-leaf transition-all font-medium text-sm">
-                    <input type="email" name="email" placeholder="Correo Institucional" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-andes-leaf transition-all font-medium text-sm">
-                    <button type="submit" class="w-full bg-andes-earth text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-black transition-all">
-                        Solicitar Credenciales
-                    </button>
-                </form>
-                <div id="formResponse" class="hidden mt-4 text-center text-xs font-bold text-andes-leaf"></div>
-            </div>
+    <section id="acceso-inst" class="py-24 bg-andes-earth text-white px-6">
+        <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-[3rem] text-slate-900 shadow-2xl text-center">
+            <h3 class="font-display text-3xl font-bold mb-2" data-i18n="form-title">Solicitar Acceso Dashboard</h3>
+            <p class="text-slate-400 text-sm mb-8" data-i18n="form-subtitle">Uso exclusivo para municipios y organismos.</p>
+            <form id="andesForm" class="space-y-4 max-w-md mx-auto">
+                <input type="text" placeholder="Entidad o Municipio" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-andes-leaf transition-all text-sm">
+                <input type="email" placeholder="Correo Institucional" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-andes-leaf transition-all text-sm">
+                <button type="submit" class="w-full bg-andes-earth text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-black transition-all" data-i18n="form-btn">
+                    Solicitar Credenciales
+                </button>
+            </form>
         </div>
     </section>
 
-    <footer class="py-16 bg-white px-6">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10 border-t pt-16">
-            <div class="text-center md:text-left">
-                <div class="flex items-center gap-2 mb-4 justify-center md:justify-start">
+    <footer class="py-16 bg-white px-6 border-t border-slate-100">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="text-left">
+                <div class="flex items-center gap-2 mb-4">
                     <img src="assets/favicon.png" class="h-6 opacity-30">
                     <span class="font-bold text-slate-300 tracking-tighter uppercase text-sm">AndesChain.io</span>
                 </div>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest leading-relaxed">
-                    Infraestructura Digital basada en Ley N° 19.799. <br> Blockchain & Satellite Monitoring v2026.
-                </p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest" data-i18n="footer-copy">Infraestructura Digital basada en Ley N° 19.799. v2026.</p>
             </div>
             <div class="flex gap-8 text-slate-400 text-sm font-bold">
-                <a href="https://www.elotrohuerto.cl" class="hover:text-andes-earth underline decoration-slate-200">El Otro Huerto</a>
-                <a href="mailto:info@andeschain.io" class="hover:text-andes-earth underline decoration-slate-200">Soporte</a>
+                <a href="https://www.elotrohuerto.cl" class="hover:text-andes-earth underline">El Otro Huerto</a>
+                <a href="mailto:info@andeschain.io" class="hover:text-andes-earth underline" data-i18n="footer-support">Soporte</a>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function toggleView(type) {
-            const prod = document.getElementById('view-productor');
-            const inst = document.getElementById('view-institucion');
-            const btnP = document.getElementById('btn-productor');
-            const btnI = document.getElementById('btn-institucion');
+        const dictionary = {
+            es: {
+                "nav-producers": "Soy Productor",
+                "nav-institutions": "Soy Institución",
+                "nav-how": "Cómo funciona",
+                "btn-register": "Registrarse",
+                "hero-tag": "Infraestructura de Confianza Territorial",
+                "hero-title": 'Cada alimento tiene una <span class="text-andes-leaf italic font-light">historia</span> que merece ser contada.',
+                "hero-desc": "Transformamos el origen y la tradición de los productores locales en activos digitales verificados. Data real para políticas públicas y resiliencia climática.",
+                "btn-certify": "Certificar mi origen",
+                "btn-gov": "Acceso Institucional",
+                "prod-title": "Sal del montón y <span class='text-andes-leaf'>diferénciate.</span>",
+                "prod-desc": "Sabemos que pones el corazón en tu tierra, pero el mercado te trata como a cualquiera. Con nuestro Pasaporte de Origen Digital, le demuestras al mundo que tu producto es único.",
+                "prod-li1": "Vende por tu historia, no por tu peso.",
+                "prod-li2": "Llega a clientes que valoran lo ético.",
+                "prod-li3": "Tu trabajo, respaldado por tecnología mundial.",
+                "inst-title": "Inteligencia de Datos para la <span class='text-andes-leaf'>Gobernanza.</span>",
+                "inst-desc": "Optimice la toma de decisiones públicas con métricas granulares sobre resiliencia hídrica, salud de suelos y huella de carbono. Facilitamos el cumplimiento de agendas internacionales.",
+                "inst-li1": "Monitoreo satelital de predios vinculados.",
+                "inst-li2": "Trazabilidad inmutable mediante Blockchain.",
+                "inst-li3": "Dashboard de impacto territorial en tiempo real.",
+                "tech-main-title": "Un puente digital para un mundo rural.",
+                "tech-1-t": "1. Evidencia en Terreno",
+                "tech-1-d": "Usas nuestra App para tomar fotos de tu siembra. Validamos coordenadas GPS y fecha desde la Metadata sin esfuerzo adicional.",
+                "tech-2-t": "2. Verificación Satelital",
+                "tech-2-d": "Cruzamos tus datos con imágenes de satélite y clima. Matemáticamente demostramos la veracidad del ciclo productivo.",
+                "tech-3-t": "3. Pasaporte Digital (POD)",
+                "tech-3-d": "Generamos tu identidad digital única. Un QR para que el cliente acceda a tu historia completa y verificada.",
+                "form-title": "Solicitar Acceso Dashboard",
+                "form-subtitle": "Uso exclusivo para municipios y organismos.",
+                "form-btn": "Solicitar Credenciales",
+                "footer-copy": "Infraestructura Digital basada en Ley N° 19.799. v2026.",
+                "footer-support": "Soporte",
+                "swal-title": "¡Solicitud Recibida!",
+                "swal-text": "Nuestra mesa técnica revisará su identidad institucional y enviará el acceso en 24 horas."
+            },
+            en: {
+                "nav-producers": "I'm a Producer",
+                "nav-institutions": "I'm an Institution",
+                "nav-how": "How it works",
+                "btn-register": "Join now",
+                "hero-tag": "Territorial Trust Infrastructure",
+                "hero-title": 'Every food product has a <span class="text-andes-leaf italic font-light">story</span> that deserves to be told.',
+                "hero-desc": "We transform the origin and tradition of local producers into verified digital assets. Real-time data for public policy and climate resilience.",
+                "btn-certify": "Certify my origin",
+                "btn-gov": "Institutional Access",
+                "prod-title": "Stand out and <span class='text-andes-leaf'>differentiate.</span>",
+                "prod-desc": "We know you put your heart into your land, but the market treats you like anyone else. With our Digital Origin Passport, you show the world that your product is unique.",
+                "prod-li1": "Sell your story, not just your weight.",
+                "prod-li2": "Reach customers who value ethical sourcing.",
+                "prod-li3": "Your work, backed by global technology.",
+                "inst-title": "Data Intelligence for <span class='text-andes-leaf'>Governance.</span>",
+                "inst-desc": "Optimize public decision-making with granular metrics on water resilience, soil health, and carbon footprint. We facilitate compliance with international agendas.",
+                "inst-li1": "Satellite monitoring of linked farms.",
+                "inst-li2": "Immutable traceability through Blockchain.",
+                "inst-li3": "Real-time territorial impact dashboard.",
+                "tech-main-title": "A digital bridge for a rural world.",
+                "tech-1-t": "1. Field Evidence",
+                "tech-1-d": "Use our App to take photos of your crops. We validate GPS coordinates and date from Metadata without extra effort.",
+                "tech-2-t": "2. Satellite Verification",
+                "tech-2-d": "We cross-reference your data with satellite and weather imagery. We mathematically prove the truth of your production cycle.",
+                "tech-3-t": "3. Digital Passport (POD)",
+                "tech-3-d": "We generate your unique digital identity. A QR code so customers can access your full verified story.",
+                "form-title": "Request Dashboard Access",
+                "form-subtitle": "Exclusive use for municipalities and agencies.",
+                "form-btn": "Request Credentials",
+                "footer-copy": "Digital Infrastructure based on Law N° 19.799. v2026.",
+                "footer-support": "Support",
+                "swal-title": "Request Received!",
+                "swal-text": "Our technical team will review your institutional identity and send access within 24 hours."
+            }
+        };
 
-            if(type === 'productor') {
-                prod.classList.remove('hidden');
-                inst.classList.add('hidden');
-                btnP.classList.add('tab-active');
-                btnI.classList.remove('tab-active', 'text-slate-400');
-                btnI.classList.add('text-slate-400');
+        let currentLang = 'es';
+
+        function changeLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dictionary[lang][key]) {
+                    el.innerHTML = dictionary[lang][key];
+                }
+            });
+            // Actualizar placeholders del form
+            const inputs = document.querySelectorAll('input');
+            if(lang === 'en') {
+                inputs[0].placeholder = "Agency or Municipality";
+                inputs[1].placeholder = "Official Email";
             } else {
-                inst.classList.remove('hidden');
-                prod.classList.add('hidden');
-                btnI.classList.add('tab-active');
-                btnP.classList.remove('tab-active', 'text-slate-400');
-                btnP.classList.add('text-slate-400');
+                inputs[0].placeholder = "Entidad o Municipio";
+                inputs[1].placeholder = "Correo Institucional";
             }
         }
 
-        function changeLang(lang) {
-            // Diccionario simplificado para demostración
-            const dictionary = {
-                es: {
-                    tag: "Infraestructura de Confianza Territorial",
-                    title: 'Cada alimento tiene una <span class="text-andes-leaf italic font-light">historia</span> que merece ser contada.',
-                    desc: "Transformamos el origen y la tradición de los productores locales en activos digitales verificados. Data real para políticas públicas y resiliencia climática."
-                },
-                en: {
-                    tag: "Territorial Trust Infrastructure",
-                    title: 'Every food product has a <span class="text-andes-leaf italic font-light">story</span> that deserves to be told.',
-                    desc: "We transform the origin and tradition of local producers into verified digital assets. Real data for public policy and climate resilience."
-                }
-            };
-            
-            document.getElementById('hero-tag').innerText = dictionary[lang].tag;
-            document.getElementById('hero-title').innerHTML = dictionary[lang].title;
-            document.getElementById('hero-desc').innerText = dictionary[lang].desc;
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            const offset = 100;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = el.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
         }
 
-        // Form Submission
-        const form = document.getElementById('andesForm');
-        form.addEventListener('submit', function(e) {
+        document.getElementById('andesForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = form.querySelector('button');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enviando...';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                Swal.fire({
-                    title: '¡Solicitud Recibida!',
-                    text: 'Nuestra mesa técnica revisará su identidad institucional y enviará el acceso en 24 horas.',
-                    icon: 'success',
-                    confirmButtonColor: '#059669',
-                    borderRadius: '2rem'
-                });
-                btn.innerHTML = 'Solicitar Credenciales';
-                btn.disabled = false;
-                form.reset();
-            }, 1500);
+            Swal.fire({
+                title: dictionary[currentLang]["swal-title"],
+                text: dictionary[currentLang]["swal-text"],
+                icon: 'success',
+                confirmButtonColor: '#059669',
+                borderRadius: '2rem'
+            });
+            this.reset();
         });
     </script>
 </body>
