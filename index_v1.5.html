@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Trust Infrastructure for Identity Foods</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'slate': { 850: '#111827' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-bg { background: radial-gradient(circle at top right, #F8FAF0, #FFFFFF); }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); }
+        .step-card:hover .step-number { transform: scale(1.1) rotate(5deg); background-color: #10B981; }
+        .trust-logo { filter: grayscale(100%); opacity: 0.6; transition: all 0.5s ease; }
+        .trust-logo:hover { filter: grayscale(0%); opacity: 1; }
+    </style>
+</head>
+<body class="antialiased hero-bg text-slate-900">
+
+    <nav class="fixed w-full z-50 glass-nav border-b border-slate-100 py-3 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <img src="assets/favicon.png" class="h-8 group-hover:rotate-12 transition-transform">
+                <span class="font-display font-800 text-brand-900 tracking-tighter text-xl uppercase italic">AndesChain</span>
+            </a>
+            <div class="flex items-center gap-6">
+                <div class="flex gap-3">
+                    <button onclick="setLang('es')" class="hover:scale-110 transition-transform">🇨interface</button>
+                    <button onclick="setLang('en')" class="hover:scale-110 transition-transform">🇺🇸</button>
+                </div>
+                <div class="hidden lg:flex items-center bg-slate-100 rounded-2xl p-1 border border-slate-200">
+                    <input type="password" id="inst-pass" placeholder="Clave Institucional" class="bg-transparent px-4 py-1.5 outline-none text-[10px] font-bold w-32">
+                    <button onclick="accessDashboard()" class="bg-brand-900 text-white px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-brand-600 transition-all">Entrar</button>
+                </div>
+                <a href="registro.html" class="bg-brand-500 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-600 transition-all shadow-md">Registrarse</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-40 pb-20 px-6 max-w-7xl mx-auto text-center lg:text-left lg:flex lg:items-center lg:gap-16">
+        <div class="lg:w-3/5">
+            <span class="inline-block py-1 px-3 rounded-full bg-brand-50 border border-brand-100 text-brand-600 text-[10px] font-bold uppercase tracking-widest mb-6">Infraestructura de Confianza v1.5</span>
+            <h1 class="text-5xl md:text-7xl font-display font-800 text-brand-900 leading-[1.1] mb-8">
+                Cada alimento tiene una <br><span class="text-brand-500 font-light italic">historia que contar.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-500 font-medium mb-10 max-w-2xl leading-relaxed">
+                Convertimos la identidad de productores locales en **activos digitales verificados**. Infraestructura B2G para soberanía alimentaria y adaptación al cambio climático.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                <a href="registro.html" class="bg-brand-900 text-white px-10 py-5 rounded-2xl font-bold text-center shadow-2xl hover:-translate-y-1 transition-all">Soy Productor / Emprendedor</a>
+                <div class="flex items-center gap-4 px-4">
+                    <div class="flex -space-x-3">
+                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://randomuser.me/api/portraits/men/32.jpg">
+                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://randomuser.me/api/portraits/women/44.jpg">
+                    </div>
+                    <span class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">+120 Productores Activos</span>
+                </div>
+            </div>
+        </div>
+        <div class="hidden lg:block lg:w-2/5">
+            <div class="relative">
+                <div class="absolute -inset-4 bg-brand-500/10 blur-3xl rounded-full"></div>
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800" class="relative rounded-[3rem] shadow-2xl border-8 border-white">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-10">Construido sobre Infraestructura Global de Confianza</p>
+            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-20">
+                <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029" class="h-7 trust-logo" alt="Polygon Network">
+                <img src="https://www.fao.org/images/corporatelibraries/fao-logo/fao-logo-es.svg" class="h-12 trust-logo" alt="FAO">
+                <div class="flex items-center gap-2 trust-logo">
+                    <i class="fas fa-satellite-dish text-2xl text-slate-400"></i>
+                    <span class="font-black text-xl tracking-tighter">SAT-DATA</span>
+                </div>
+                <div class="flex items-center gap-2 trust-logo">
+                    <i class="fas fa-fingerprint text-2xl text-slate-400"></i>
+                    <span class="font-black text-xl tracking-tighter">WEB3-AUTH</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12">
+            <div class="p-10 rounded-[3rem] bg-slate-50 border border-slate-100 group hover:border-brand-500 transition-all">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-600 mb-8 shadow-sm group-hover:bg-brand-600 group-hover:text-white transition-all">
+                    <i class="fas fa-user-tag text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-800 text-brand-900 mb-6 uppercase tracking-tight italic">Para el Productor Local</h3>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-times-circle text-red-400 mt-1"></i>
+                        <p class="text-sm text-slate-500 leading-relaxed italic"><span class="font-bold text-slate-800 not-italic">El Problema:</span> Pérdida de identidad y márgenes asfixiantes ante intermediarios masivos.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-check-circle text-brand-600 mt-1"></i>
+                        <p class="text-sm text-slate-700 font-medium leading-relaxed">
+                            <span class="text-brand-600 font-bold uppercase text-[10px] block mb-1">Impacto AndesChain:</span>
+                            Tu origen es un activo digital. Vendes por tu historia, diferenciándote de los commodities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-10 rounded-[3rem] bg-brand-900 text-white relative overflow-hidden group">
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-500/10 rounded-full blur-3xl"></div>
+                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-brand-500 mb-8 group-hover:bg-brand-500 group-hover:text-white transition-all">
+                    <i class="fas fa-university text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-800 mb-6 uppercase tracking-tight italic">Para Instituciones Públicas</h3>
+                <div class="space-y-6 relative z-10">
+                    <div class="flex gap-4">
+                        <i class="fas fa-exclamation-triangle text-amber-400 mt-1"></i>
+                        <p class="text-sm text-slate-300 leading-relaxed italic"><span class="font-bold text-white not-italic">El Problema:</span> Falta de datos precisos para focalizar subsidios y medir resiliencia hídrica.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-chart-line text-brand-500 mt-1"></i>
+                        <p class="text-sm text-slate-100 font-medium leading-relaxed">
+                            <span class="text-brand-500 font-bold uppercase text-[10px] block mb-1">Impacto B2G:</span>
+                            Decisiones basadas en evidencia real. Capas CIREN/DGA integradas para una política pública quirúrgica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-slate-900 text-white px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-display font-800 mb-4 tracking-tight uppercase">Tecnología de Verificación</h2>
+                <p class="text-slate-400 font-medium">Un protocolo simple para una verdad compleja. Diseñado para la nueva economía.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="step-card bg-white/5 border border-white/10 p-8 rounded-[2.5rem] relative overflow-hidden transition-all group">
+                    <div class="step-number absolute -top-4 -right-4 w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-xl font-black text-brand-500 transition-all">01</div>
+                    <div class="text-brand-500 mb-6"><i class="fas fa-mobile-alt text-3xl"></i></div>
+                    <h4 class="text-xl font-bold mb-4">Evidencia en Terreno</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">Registro de hitos (siembra/cosecha) con validación de coordenadas GPS y fecha exacta mediante metadatos EXIF en tiempo real.</p>
+                </div>
+                <div class="step-card bg-white/5 border border-white/10 p-8 rounded-[2.5rem] relative overflow-hidden transition-all group">
+                    <div class="step-number absolute -top-4 -right-4 w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-xl font-black text-brand-500 transition-all">02</div>
+                    <div class="text-brand-500 mb-6"><i class="fas fa-satellite text-3xl"></i></div>
+                    <h4 class="text-xl font-bold mb-4">Validación Satelital</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">Nuestro nodo cruza la evidencia visual con imágenes satelitales y datos climáticos, asegurando la veracidad del evento.</p>
+                </div>
+                <div class="step-card bg-brand-600 p-8 rounded-[2.5rem] relative overflow-hidden transition-all group shadow-2xl">
+                    <div class="step-number absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-xl font-black text-white transition-all">03</div>
+                    <div class="text-white mb-6"><i class="fas fa-qrcode text-3xl"></i></div>
+                    <h4 class="text-xl font-bold mb-4">Pasaporte POD</h4>
+                    <p class="text-brand-50 text-sm leading-relaxed">Generamos un Pasaporte de Origen Digital (POD) único. El cliente accede a la historia completa y verificada sin intermediarios.</p>
+                    <a href="dashboard_v1.5.html" class="inline-block mt-6 text-white text-[10px] font-bold uppercase tracking-widest border-b border-white pb-1">Ver Ejemplo Real →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 bg-white px-8 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 italic tracking-tighter">AndesChain Infrastructure v2026</p>
+                <p class="text-[9px] text-slate-300 max-w-sm leading-relaxed uppercase">
+                    Protocolo inmutable basado en la Ley 19.799. Integridad digital para la cadena agroalimentaria. © AndesChain Technology.
+                </p>
+            </div>
+            <div class="flex gap-8 items-center">
+                <a href="https://www.elotrohuerto.cl" class="text-[10px] font-bold text-slate-400 hover:text-brand-600 uppercase tracking-widest transition-colors underline decoration-slate-200">El Otro Huerto</a>
+                <a href="mailto:info@andeschain.io" class="text-[10px] font-bold text-slate-400 hover:text-brand-600 uppercase tracking-widest transition-colors">Soporte</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function accessDashboard() {
+            const pass = document.getElementById('inst-pass').value;
+            if (pass === "Andes2026") {
+                sessionStorage.setItem('auth_andes', 'true');
+                window.location.href = 'dashboard_v1.5.html';
+            } else {
+                Swal.fire({
+                    title: 'Acceso Denegado',
+                    text: 'Clave institucional inválida. Solicite acceso en info@andeschain.io',
+                    icon: 'error',
+                    confirmButtonColor: '#064E3B'
+                });
+            }
+        }
+        function setLang(lang) {
+            console.log("Lenguaje cambiado a: " + lang);
+        }
+    </script>
+</body>
+</html>
