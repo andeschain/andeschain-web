@@ -1,125 +1,412 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AndesChain | Trust Infrastructure for Origin Foods</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <title>AndesChain.io | Infraestructura de Confianza para Alimentos con Identidad</title>
+    <meta name="description" content="Certificamos digitalmente la historia de productores y emprendores locales mediante blockchain.">
+    <meta name="author" content="AndesChain Technology">
+
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/favicon.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 'brand': { 500: '#10B981', 600: '#059669', 900: '#064E3B' } },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] }
+                    colors: {
+                        'corp': {
+                            50: '#F0FDF4', 100: '#DCFCE7', 200: '#BBF7D0', 500: '#059669', 
+                            600: '#047857', 800: '#065F46', 900: '#022C22', 
+                        },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                 }
             }
         }
     </script>
-</head>
-<body class="bg-white text-slate-900 font-sans">
 
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 py-3 px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center gap-2">
-                <img src="assets/favicon.png" class="h-8">
-                <span class="font-display font-800 text-brand-900 tracking-tighter text-xl italic">AndesChain</span>
+    <style>
+        body { background-color: #FFFFFF; color: #1E293B; overflow-x: hidden; width: 100%; }
+        .btn-primary {
+            background-color: #059669; color: white; 
+            font-weight: 600; padding: 12px 24px; border-radius: 8px;
+            transition: all 0.2s ease-in-out; cursor: pointer;
+            display: inline-block; font-size: 0.95rem;
+        }
+        @media (min-width: 768px) { .btn-primary { padding: 14px 32px; font-size: 1rem; } }
+        .btn-primary:hover { background-color: #047857; transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.2); }
+        
+        .input-corp {
+            width: 100%; padding: 12px 14px; background: #F8FAFC;
+            border: 1px solid #CBD5E1; border-radius: 8px;
+            outline: none; transition: 0.2s; color: #0F172A; font-weight: 500; font-size: 16px;
+        }
+        .input-corp:focus { border-color: #059669; background: white; box-shadow: 0 0 0 2px #DCFCE7; }
+
+        .iti { width: 100%; display: block; }
+        .iti__flag-container { padding-left: 8px; }
+        #phone { padding-left: 82px !important; }
+
+        nav.scrolled { padding-top: 0.4rem; padding-bottom: 0.4rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        
+        .whatsapp-float {
+            position: fixed; width: 48px; height: 48px; bottom: 16px; right: 16px;
+            background-color: #25d366; color: #FFF; border-radius: 50px;
+            text-align: center; font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+        }
+
+        .card-corp {
+            background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+            padding: 24px; height: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-corp:hover { 
+            border-color: #059669; 
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(5, 150, 105, 0.1);
+        }
+
+        .trust-item { filter: grayscale(100%); opacity: 0.5; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .trust-item:hover { filter: grayscale(0%); opacity: 1; }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <a href="https://wa.me/56958799778" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <nav id="navbar" class="fixed w-full z-50 bg-white/95 backdrop-blur-sm py-3 border-b border-slate-100 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="block">
+                <img src="assets/logo-header.png" id="nav-logo" alt="AndesChain Logo" class="h-9 md:h-16 w-auto object-contain transition-all duration-300">
             </a>
-            <div class="flex items-center gap-6">
-                <div class="flex gap-3 text-xl">
-                    <button onclick="switchLang('es')" title="Español">🇨interface</button>
-                    <button onclick="switchLang('en')" title="English">🇺🇸</button>
-                </div>
-                <button onclick="requestAccess()" class="hidden md:block bg-slate-100 text-slate-700 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-slate-200 transition-all">
-                    Dashboard <i class="fas fa-lock ml-1"></i>
-                </button>
-                <a href="registro.html" class="bg-brand-900 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:shadow-lg transition-all">
-                    Registrarse
+            <div class="flex items-center gap-4">
+                <a href="registro.html" class="text-[10px] md:text-sm font-bold bg-corp-600 text-white px-3 md:px-5 py-2 rounded-full hover:bg-corp-800 transition-all shadow-md uppercase tracking-tight">
+                    Registrate
                 </a>
             </div>
         </div>
     </nav>
 
-    <section class="pt-32 pb-16 px-6 text-center lg:text-left lg:flex lg:items-center lg:gap-12 max-w-7xl mx-auto">
-        <div class="lg:w-1/2">
-            <h1 class="text-4xl md:text-6xl font-display font-800 text-brand-900 leading-tight mb-6">
-                Tu origen, certificado por <span class="text-brand-500">Blockchain y Satélites.</span>
-            </h1>
-            <p class="text-lg text-slate-500 mb-8 font-medium">
-                Damos valor a la Agricultura Familiar Campesina (AFC) y emprendedores rurales, conectando su historia con políticas públicas basadas en datos reales.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="registro.html" class="bg-brand-900 text-white px-8 py-4 rounded-2xl font-bold text-center shadow-xl hover:-translate-y-1 transition-all">Soy Productor</a>
-                <button onclick="requestAccess()" class="border-2 border-brand-900 text-brand-900 px-8 py-4 rounded-2xl font-bold hover:bg-brand-50 transition-all">Acceso Institucional</button>
+    <section class="pt-32 md:pt-48 pb-12 md:pb-16 px-4 relative overflow-hidden text-center">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwNTk2NjkiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-50 -z-10"></div>
+        <div class="max-w-4xl mx-auto relative z-10 px-2 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-corp-50 border border-corp-100 text-corp-800 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-4">Tecnología de Certificación Pública</span>
+            <h1 class="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-corp-900 leading-[1.1]">Cada alimento tiene una<br><span class="text-corp-500">historia que contar.</span></h1>
+            <p class="text-sm md:text-lg lg:text-xl text-slate-600 font-medium mb-8 max-w-2xl mx-auto text-center"> Convertimos la historia de productores locales en activos digitales verificados. Infraestructura de confianza para entidades públicas.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="registro.html" class="btn-primary">Certifica el origen de lo que produces.</a>
+                <a href="#tecnologia" class="inline-block py-3 px-6 text-slate-600 font-semibold hover:text-corp-600 transition-colors">Cómo funciona →</a>
             </div>
         </div>
-        <div class="hidden lg:block lg:w-1/2">
-            <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800" class="rounded-[3rem] shadow-2xl">
+
+        <div class="max-w-5xl mx-auto mt-16 md:mt-24 px-4">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-10 text-center">Infraestructura construida sobre estándares globales</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 items-center justify-items-center max-w-3xl mx-auto">
+                <div class="trust-item">
+                    <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029" alt="Polygon Network" class="h-6 md:h-8">
+                </div>
+                <div class="trust-item">
+                    <img src="https://www.fao.org/images/corporatelibraries/fao-logo/fao-logo-es.svg" alt="FAO Standards" class="h-10 md:h-12">
+                </div>
+                <div class="trust-item flex flex-col items-center gap-1">
+                    <i class="fas fa-satellite-dish text-2xl text-slate-400"></i>
+                    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">SAT-DATA</span>
+                </div>
+                <div class="trust-item flex flex-col items-center gap-1">
+                    <i class="fas fa-microchip text-2xl text-slate-400"></i>
+                    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Web3 Auth</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="bg-slate-50 py-12 border-y border-slate-100">
-        <div class="max-w-7xl mx-auto px-6">
-            <p class="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-8">Infraestructura respaldada por estándares globales</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all">
-                <img src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029" class="h-6" alt="Polygon">
-                <img src="https://www.fao.org/images/corporatelibraries/fao-logo/fao-logo-es.svg" class="h-10" alt="FAO">
-                <span class="font-black text-xl text-slate-400">CIREN</span>
-                <span class="font-black text-xl text-slate-400">ODEPA</span>
-                <span class="font-black text-xl text-slate-400">INDAP</span>
+    <section id="impacto" class="py-16 md:py-28 bg-slate-50 border-y border-slate-200 px-4 relative overflow-hidden text-left">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">El impacto que <span class="text-corp-500">construimos</span></h2>
+                <p class="text-slate-600 mt-6 text-xl md:text-2xl font-medium max-w-4xl mx-auto leading-relaxed text-center">
+                    Certificado de origen con transparencia digital que potencia la <span class="text-slate-900 font-bold">economía local, los territorios, y las personas.</span>
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <div class="group bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl hover:border-corp-300 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-corp-50 rounded-full blur-3xl group-hover:bg-corp-100 transition-colors"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-corp-100 rounded-2xl flex items-center justify-center text-corp-600 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
+                            <i class="fas fa-tag text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-slate-900 mb-6 tracking-tight">Valorización del Origen</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <i class="fas fa-minus-circle text-red-400 mt-1"></i>
+                                <p class="text-sm text-slate-500 leading-relaxed italic"><span class="font-bold text-slate-700 not-italic">El Problema:</span> El productor local pierde su identidad y margen ante intermediarios masivos.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <i class="fas fa-check-circle text-corp-500 mt-1"></i>
+                                <p class="text-sm text-slate-600 leading-relaxed font-medium"><span class="font-bold text-corp-600">La Solución:</span> El origen se vuelve un activo digital inmutable, permitiendo cobrar por historia y no por commodity.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group bg-corp-900 p-8 md:p-12 rounded-[2.5rem] shadow-2xl hover:shadow-emerald-900/30 transition-all duration-500 relative overflow-hidden border border-corp-800">
+                    <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-corp-600/20 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-corp-500 mb-8 group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-[0_0_20px_rgba(5,150,105,0.4)]">
+                            <i class="fas fa-university text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-white mb-6 tracking-tight">Integridad Institucional</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <i class="fas fa-minus-circle text-amber-400 mt-1"></i>
+                                <p class="text-sm text-slate-300 leading-relaxed italic"><span class="font-bold text-slate-100 not-italic">El Problema:</span> Baja visibilidad del impacto real de la inversión pública en terreno y trazabilidad fragmentada.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <i class="fas fa-check-circle text-corp-500 mt-1"></i>
+                                <p class="text-sm text-slate-200 leading-relaxed font-medium"><span class="font-bold text-corp-500">La Solución:</span> Auditoría en tiempo real. Cada hito genera una traza inmutable con evidencia satelital, blindando la probidad del gasto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
-        <div>
-            <h3 class="text-xs font-black uppercase text-brand-500 tracking-widest mb-4">Para Productores</h3>
-            <h4 class="text-3xl font-display font-800 text-brand-900 mb-6">Descomoditiza tu cosecha.</h4>
-            <ul class="space-y-4">
-                <li class="flex gap-4 items-start"><i class="fas fa-camera text-brand-500 mt-1"></i> <span>Registra hitos con fotos georeferenciadas desde tu celular.</span></li>
-                <li class="flex gap-4 items-start"><i class="fas fa-check-double text-brand-500 mt-1"></i> <span>Recibe validación satelital y climática automática.</span></li>
-                <li class="flex gap-4 items-start"><i class="fas fa-qrcode text-brand-500 mt-1"></i> <span>Obtén tu Pasaporte de Origen Digital (POD) para vender con identidad.</span></li>
-            </ul>
+    <section id="tecnologia" class="py-16 md:py-32 bg-white px-4">
+        <div class="max-w-5xl mx-auto text-center mb-10 md:mb-16">
+            <h2 class="text-2xl md:text-4xl font-extrabold text-corp-900 mb-3 text-center">Tecnología de Verificación</h2>
+            <p class="text-slate-600 text-sm md:text-lg font-medium text-center">Un protocolo simple para una verdad compleja. Diseñado para la nueva economía.</p>
         </div>
-        <div>
-            <h3 class="text-xs font-black uppercase text-brand-500 tracking-widest mb-4">Para Instituciones</h3>
-            <h4 class="text-3xl font-display font-800 text-brand-900 mb-6">Datos para Políticas Públicas.</h4>
-            <ul class="space-y-4">
-                <li class="flex gap-4 items-start"><i class="fas fa-chart-line text-brand-500 mt-1"></i> <span>Visualiza el impacto real del fomento productivo en el territorio.</span></li>
-                <li class="flex gap-4 items-start"><i class="fas fa-droplet text-brand-500 mt-1"></i> <span>Gestiona riesgos de escasez hídrica con capas DGA actualizadas.</span></li>
-                <li class="flex gap-4 items-start"><i class="fas fa-file-export text-brand-500 mt-1"></i> <span>Exporta reportes de adaptación climática para fondos regionales.</span></li>
-            </ul>
+
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-left">
+            
+            <article class="group p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-2xl hover:border-corp-300 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute -top-6 -right-6 w-24 h-24 bg-corp-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-corp-50 border border-corp-100 text-corp-600 rounded-2xl flex items-center justify-center text-2xl mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">1. Evidencia en Terreno</h3>
+                    <p class="text-slate-600 text-xs md:text-base leading-relaxed">
+                        El productor usa nuestra <strong>App</strong> para registrar hitos clave como siembra o cosecha. Validamos coordenadas GPS y fecha exacta en el momento (EXIF).
+                    </p>
+                </div>
+            </article>
+
+            <article class="group p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-2xl hover:border-corp-300 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute -top-6 -right-6 w-24 h-24 bg-corp-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-corp-50 border border-corp-100 text-corp-600 rounded-2xl flex items-center justify-center text-2xl mb-8 group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
+                        <i class="fas fa-satellite-dish"></i>
+                    </div>
+                    <h3 class="font-bold text-lg md:text-xl text-corp-900 mb-2 md:mb-3 tracking-tight">2. Validación Satelital</h3>
+                    <p class="text-slate-600 text-xs md:text-base leading-relaxed">
+                        Nuestro nodo validador cruza la metadata de la foto con <strong>imágenes satelitales</strong> y datos climáticos para asegurar matemáticamente la veracidad del evento.
+                    </p>
+                </div>
+            </article>
+
+            <article class="group p-10 rounded-[2.5rem] bg-corp-900 shadow-xl hover:shadow-emerald-900/30 transition-all duration-500 relative overflow-hidden border border-corp-800">
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-corp-600/20 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-corp-500 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_20px_rgba(5,150,105,0.4)]">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3 class="font-bold text-lg md:text-xl text-white mb-2 md:mb-3 tracking-tight">3. Ficha de Origen Digital (FOD)</h3>
+                    <p class="text-slate-300 text-xs md:text-base leading-relaxed mb-6">
+                        Generamos un pasaporte digital único. El consumidor/cliente escanea el QR y accede a la <strong>historia completa y verificada</strong>, sin intermediarios.
+                    </p>
+                    <a href="dashboard.html" class="inline-flex items-center gap-2 text-corp-500 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
+                        Ver Ejemplo Real <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </section>
+    <section id="unete" class="py-16 md:py-24 px-4 bg-corp-900 text-white overflow-hidden text-center md:text-left">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div>
+                <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">Únete a la infraestructura de confianza.</h2>
+                <p class="text-corp-100 text-sm md:text-lg mb-8 leading-relaxed">Si tu producto tiene origen, tiene valor. Te ayudamos a demostrarlo ante el mundo.</p>
+                
+                <div class="space-y-3 max-w-xs mx-auto md:mx-0 text-left">
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-shield-alt text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Solidez Institucional</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-microchip text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Precisión de Datos</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <i class="fas fa-globe-americas text-corp-500 text-xs"></i>
+                        <span class="font-semibold text-[10px] uppercase tracking-wider">Estándar Global</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-2xl text-slate-900 shadow-2xl w-full max-w-sm mx-auto md:max-w-none text-left">
+                <form id="andesForm" action="https://formsubmit.co/ajax/info@andeschain.io" method="POST" class="space-y-4">
+                    <div class="hidden" aria-hidden="true">
+                        <input type="text" name="_address_confirm" id="honeypot" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="_form_timer" id="form_timer">
+                    <input type="hidden" name="_captcha" value="false">
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre</label>
+                        <input type="text" name="nombre" class="input-corp" placeholder="Tu nombre" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Empresa</label>
+                        <input type="text" name="empresa" class="input-corp" placeholder="Nombre de tu organización" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                        <input type="email" name="email" class="input-corp" placeholder="email@profesional.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Celular</label>
+                        <input type="tel" id="phone" name="celular_full" class="input-corp" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-primary w-full mt-2 uppercase tracking-wide">Solicitar información</button>
+                    <div id="formResponse" class="hidden mt-4 p-4 rounded-xl text-center font-bold text-xs border-2 transition-all"></div>
+                </form>
+            </div>
         </div>
     </section>
 
-    <footer class="bg-slate-900 text-white py-12 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-center md:text-left">
-                <p class="font-display font-bold text-xl mb-2">AndesChain</p>
-                <p class="text-slate-400 text-xs italic">Transformando territorios, persona a persona.</p>
+    <footer class="py-12 bg-white px-6">
+        <div class="max-w-6xl mx-auto border-t border-slate-100 pt-10 text-center md:text-left">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
+                <div class="flex items-center gap-2 mx-auto md:mx-0">
+                    <img src="assets/favicon.png" class="w-5 h-5" alt="AndesChain">
+                    <span class="font-bold text-slate-900 tracking-tight">AndesChain.io</span>
+                </div>
             </div>
-            <div class="flex gap-6 text-sm text-slate-400">
-                <a href="#" class="hover:text-brand-500">Mercado El Otro Huerto</a>
-                <a href="mailto:info@andeschain.io" class="hover:text-brand-500">Soporte</a>
+            <div class="max-w-4xl">
+                <p class="text-[9px] text-slate-400 leading-relaxed uppercase tracking-tight text-center md:text-left">
+                    Infraestructura tecnológica basada en la Ley N° 19.799. Sistema de verificación de datos inmutables mediante Blockchain. 
+                    No sustituye certificaciones privativas de organismos del Estado de Chile. © 2026 AndesChain Technology
+                </p>
             </div>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        function requestAccess() {
-            Swal.fire({
-                title: 'Acceso Restringido',
-                text: 'El Command Center es de uso exclusivo para Instituciones (Municipios, GORE, FAO). Solicite su clave a info@andeschain.io',
-                icon: 'info',
-                confirmButtonColor: '#064E3B',
-                confirmButtonText: 'Entendido'
+        // --- FUNCIÓN UNIFICADA ONLOAD ---
+        window.onload = function() {
+            // Inicializar timer del formulario
+            const timer = document.getElementById('form_timer');
+            if (timer) timer.value = Date.now();
+
+            // Lógica de redirección exitosa desde captura
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('envio') === 'exitoso') {
+                Swal.fire({
+                    title: '¡Certificación Enviada!',
+                    text: 'La información ha sido recibida correctamente nuestra plataforma.',
+                    icon: 'success',
+                    confirmButtonText: 'Continuar',
+                    confirmButtonColor: '#059669',
+                    borderRadius: '2rem',
+                    customClass: {
+                        popup: 'rounded-[2rem]',
+                        confirmButton: 'rounded-xl font-bold uppercase tracking-wide'
+                    }
+                });
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        };
+
+        const phoneInput = document.querySelector("#phone");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "cl",
+            separateDialCode: true,
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+        });
+
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                const navbar = document.getElementById('navbar');
+                const logo = document.getElementById('nav-logo');
+                if (window.scrollY > 30) {
+                    navbar.classList.add('scrolled');
+                    logo.style.height = '40px';
+                } else {
+                    navbar.classList.remove('scrolled');
+                    logo.style.height = '';
+                }
+                scrollTimeout = null;
+            }, 100);
+        });
+
+        const form = document.getElementById('andesForm');
+        const responseDiv = document.getElementById('formResponse');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (document.getElementById('honeypot').value !== "") { return; }
+            const loadTime = document.getElementById('form_timer').value;
+            const submitTime = Date.now();
+            if (submitTime - loadTime < 4000) {
+                alert("Por seguridad, por favor completa el formulario con calma.");
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Procesando...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.tel_full = iti.getNumber();
+            delete data._address_confirm;
+            delete data._form_timer;
+
+            fetch("https://formsubmit.co/ajax/info@andeschain.io", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json()).then(d => {
+                btn.innerHTML = '¡SOLICITUD ENVIADA!'; btn.disabled = false;
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#059669', '#ffffff'] });
+                responseDiv.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200');
+                responseDiv.classList.add('bg-corp-50', 'text-corp-900', 'border-corp-500');
+                responseDiv.innerHTML = '<i class="fas fa-check-circle mr-2 text-corp-500"></i> Pronto nos pondremos en contacto.';
+                form.reset();
+                document.getElementById('form_timer').value = Date.now();
+            }).catch(e => {
+                btn.innerHTML = 'INTENTAR DE NUEVO'; btn.disabled = false;
+                responseDiv.classList.remove('hidden');
+                responseDiv.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+                responseDiv.innerText = "Error de conexión. Intenta nuevamente.";
             });
-        }
-        function switchLang(lang) {
-            Swal.fire({ title: lang === 'es' ? 'Cambiando a Español' : 'Switching to English', timer: 1000, showConfirmButton: false });
-        }
+        });
     </script>
 </body>
 </html>
