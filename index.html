@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndesChain | Digital Origin Infrastructure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'brand': { 500: '#10B981', 600: '#059669', 900: '#064E3B' } },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-slate-900 overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="assets/favicon.png" class="h-8">
+                <span class="font-display font-800 text-brand-900 tracking-tighter text-xl italic">AndesChain<span class="text-brand-500">.io</span></span>
+            </div>
+            <div class="flex items-center gap-6">
+                <select onchange="updateLang(this.value)" class="bg-slate-50 text-[10px] font-bold uppercase p-2 rounded-lg outline-none">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+                <a href="dashboard_v1.5.html" class="bg-brand-900 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-600 transition-all">Command Center</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-48 pb-24 px-6 text-center">
+        <div class="max-w-5xl mx-auto">
+            <span id="tagline" class="inline-block py-1 px-3 rounded-full bg-brand-50 text-brand-600 text-[10px] font-bold uppercase mb-6 tracking-widest border border-brand-100">B2G & Social Impact Protocol</span>
+            <h1 id="hero-title" class="text-5xl md:text-7xl font-display font-800 text-brand-900 leading-[1.1] mb-8">
+                Descomoditizando la agricultura local con <span class="text-brand-500">evidencia digital.</span>
+            </h1>
+            <p id="hero-desc" class="text-xl text-slate-500 max-w-3xl mx-auto mb-12 font-medium">
+                Transformamos el origen y la tradición en activos digitales inmutables. Una herramienta estratégica para municipios y organismos internacionales en la adaptación al cambio climático.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="dashboard_v1.5.html" class="bg-brand-900 text-white px-10 py-5 rounded-2xl font-bold hover:shadow-2xl transition-all w-full sm:w-auto">Explorar Dashboard v1.5</a>
+                <a href="https://www.elotrohuerto.cl" target="_blank" class="px-10 py-5 text-brand-900 font-bold border-2 border-brand-900 rounded-2xl hover:bg-brand-50 transition-all w-full sm:w-auto">Mercado El Otro Huerto</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const content = {
+            es: { tagline: "Protocolo de Impacto Social y B2G", title: "Descomoditizando la agricultura local con <span class='text-brand-500'>evidencia digital.</span>", desc: "Transformamos el origen y la tradición en activos digitales inmutables. Una herramienta estratégica para municipios y organismos internacionales en la adaptación al cambio climático." },
+            en: { tagline: "B2G & Social Impact Protocol", title: "De-commoditizing local agriculture through <span class='text-brand-500'>digital evidence.</span>", desc: "We transform origin and tradition into immutable digital assets. A strategic tool for municipalities and international organizations in climate change adaptation." }
+        };
+        function updateLang(lang) {
+            document.getElementById('tagline').innerText = content[lang].tagline;
+            document.getElementById('hero-title').innerHTML = content[lang].title;
+            document.getElementById('hero-desc').innerText = content[lang].desc;
+        }
+    </script>
+</body>
+</html>
