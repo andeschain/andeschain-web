@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Policy Command Center v1.7</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 0 24px 24px 24px; border-radius: 2.5rem; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        #map { height: 100%; width: 100%; z-index: 1; transition: filter 0.5s ease; }
+        
+        .floating-hud { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); pointer-events: auto; }
+        
+        /* Acceso Institucional Estricto */
+        #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
+        .blur-content { filter: blur(30px); pointer-events: none; }
+
+        /* Estética de Pines */
+        .pin-verified { background: #10B981 !important; border: 2.5px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pin-verified:hover { transform: scale(1.4); z-index: 1000 !important; }
+
+        .leaflet-popup-content-wrapper { border-radius: 1.5rem !important; padding: 0 !important; overflow: hidden; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 260px !important; }
+    </style>
+</head>
+<body class="font-sans antialiased text-fintual-text">
+
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="max-w-sm w-full text-center space-y-12">
+            <img src="assets/favicon.png" class="h-16 mx-auto mb-4">
+            <div>
+                <h2 class="font-display font-800 text-3xl tracking-tighter text-brand-900 uppercase italic">AndesChain</h2>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-2">Policy Infrastructure v1.7</p>
+            </div>
+            <div class="space-y-6">
+                <input type="password" id="pass-input" placeholder="Password Institucional" class="w-full px-0 py-5 border-b border-slate-200 text-center text-2xl focus:border-brand-500 outline-none transition-all font-display">
+                <button onclick="validatePass()" class="w-full py-5 bg-brand-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-brand-600 transition-all shadow-xl">Desbloquear Análisis</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="blur-content h-screen flex flex-col">
+        <nav class="px-10 py-6 flex justify-between items-center bg-white z-[100]">
+            <div class="flex items-center gap-10">
+                <div class="flex items-center gap-4">
+                    <img src="assets/favicon.png" class="h-8">
+                    <div class="h-8 w-[1px] bg-slate-100"></div>
+                    <div class="flex flex-col text-left">
+                        <span class="text-[9px] font-black text-brand-900 tracking-widest uppercase">Gobernanza Territorial</span>
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-2xl outline-none cursor-pointer bg-transparent text-slate-900 appearance-none -mt-1">
+                            <option value="Paine">Paine</option>
+                            <option value="Valdivia">Valdivia</option>
+                            <option value="Limache">Limache</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex bg-slate-50 p-1 rounded-2xl border border-slate-100">
+                    <button onclick="setMapMode('bi')" id="btn-bi" class="px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-white shadow-sm text-brand-900">Vista BI</button>
+                    <button onclick="setMapMode('risk')" id="btn-risk" class="px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-red-600">Riesgo Climático</button>
+                </div>
+            </div>
+
+            <div id="nav-stats" class="hidden xl:flex items-center gap-12 border-x border-slate-50 px-12">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Estatus Hídrico</p>
+                    <h4 id="stat-water" class="text-xl font-display font-800 text-blue-600 tracking-tighter">--</h4>
+                </div>
+                <div class="text-left border-l border-slate-50 pl-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Calidad Suelo</p>
+                    <h4 id="stat-soil" class="text-xl font-display font-800 text-brand-600 tracking-tighter">--</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-bold text-slate-400">v1.7.0</span>
+                <div class="w-10 h-10 bg-brand-50 rounded-full flex items-center justify-center border border-brand-100 text-brand-600"><i class="fas fa-university"></i></div>
+            </div>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-80 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display font-800 text-sm text-brand-900 uppercase tracking-tighter italic">Verificación Terreno</h2>
+                        <span id="counter" class="text-[10px] font-black bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="actor-list" class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[450px]">
+                        </div>
+                </div>
+            </div>
+
+            <div class="absolute top-6 right-10 z-[1000] w-64 pointer-events-none">
+                <div class="floating-hud p-6 space-y-8 pointer-events-auto">
+                    <div>
+                        <p class="text-[8px] font-black uppercase text-slate-400 mb-4 tracking-widest text-center">Matriz Productiva</p>
+                        <canvas id="chartType" height="120"></canvas>
+                    </div>
+                    <div class="pt-6 border-t border-slate-100">
+                        <p class="text-[8px] font-black uppercase text-slate-400 mb-4 tracking-widest text-center">Sostenibilidad Manejo</p>
+                        <canvas id="chartManejo" height="120"></canvas>
+                    </div>
+                    <button onclick="exportReport()" class="w-full py-4 bg-brand-900 text-white rounded-2xl font-bold text-[9px] uppercase tracking-[0.15em] hover:bg-brand-500 transition-all shadow-xl">
+                        <i class="fas fa-file-pdf mr-2"></i> Generar Reporte CEPAL
+                    </button>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div id="map"></div>
+                <div id="loader" class="absolute inset-0 bg-white/70 backdrop-blur-xl z-[2000] flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-4 text-center">
+                        <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Procesando Cartografía Digital...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador_v1.3.2.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, waterLayer, soilLayer, chart1, chart2;
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('blur-content');
+                    initMap();
+                }, 400);
+            } else {
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        }
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            waterLayer = L.layerGroup().addTo(map); 
+            soilLayer = L.layerGroup().addTo(map);
+
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            waterLayer.clearLayers(); soilLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+
+            try {
+                // LLAMADA A LÍMITES ADMINISTRATIVOS REALES (OSM/NOMINATIM)
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#064E3B', weight: 2, fillOpacity: 0.02 } }).addTo(map);
+                    
+                    const bbox = turf.bbox(geoData);
+
+                    // --- AUDITORÍA TÉCNICA: MODELAMIENTO DE CAPAS CIREN/DGA ---
+                    
+                    // Capa CIREN: Simulación de Valle Central (Suponiendo que el valle ocupa la franja central de la comuna)
+                    const soilZone = turf.bboxPolygon([bbox[0] + 0.05, bbox[1] + 0.05, bbox[2] - 0.05, bbox[3] - 0.05]);
+                    const realSoil = turf.intersect(geoData, turf.buffer(soilZone, -2, {units: 'kilometers'}));
+                    if (realSoil) {
+                        L.geoJSON(realSoil, { style: { color: '#059669', fillColor: '#059669', fillOpacity: 0.3, weight: 0 } }).addTo(soilLayer);
+                    }
+
+                    // Capa DGA: Acuífero en Estrés (Simulamos un polígono oblicuo que cruza la cuenca)
+                    const waterLine = turf.lineString([[bbox[0], bbox[1]], [bbox[2], bbox[3]]]);
+                    const waterBuffer = turf.buffer(waterLine, 2, {units: 'kilometers'});
+                    const realWater = turf.intersect(geoData, waterBuffer);
+                    if (realWater) {
+                        L.geoJSON(realWater, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.15, weight: 1, dashArray: '5, 5' } }).addTo(waterLayer);
+                    }
+
+                    // Actualización de KPIs Reales
+                    document.getElementById('stat-water').innerText = comuna === "Paine" ? "DGA: RESTRICCIÓN" : "DGA: DISPONIBLE";
+                    document.getElementById('stat-soil').innerText = "CIREN: CLASE I-II";
+
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
+                }
+            } catch (e) { console.error("Error GIS:", e); }
+
+            // Carga de Productores desde simulador.js
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna));
+            document.getElementById('counter').innerText = data.length;
+            renderMarkers(data);
+            renderList(data);
+            initCharts(data);
+
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 800);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const icon = L.divIcon({ className: 'pin-verified', iconSize: [12, 12] });
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                m.options.productId = p.id;
+                m.bindPopup(`
+                    <div style="overflow:hidden; font-family:'Plus Jakarta Sans';">
+                        <img src="${p.img}" style="width:100%; height:120px; object-fit:cover; display:block;">
+                        <div style="padding:16px;">
+                            <p style="font-weight:800; font-size:14px; margin:0; color:#064E3B;">${p.nombre}</p>
+                            <p style="font-size:10px; font-weight:600; color:#888; text-transform:uppercase; margin:4px 0 15px 0;">Productor: ${p.productor}</p>
+                            <div style="display:grid; grid-template-cols: 1fr 1fr; gap:8px; margin-bottom:15px;">
+                                <div style="background:#f8fafc; padding:6px; border-radius:8px; text-align:center;">
+                                    <p style="font-size:7px; color:#aaa; margin:0;">SUELO</p>
+                                    <p style="font-size:9px; font-weight:800; color:#059669;">CLASE I</p>
+                                </div>
+                                <div style="background:#f8fafc; padding:6px; border-radius:8px; text-align:center;">
+                                    <p style="font-size:7px; color:#aaa; margin:0;">HÍDRICO</p>
+                                    <p style="font-size:9px; font-weight:800; color:#4E5AF0;">ESTRÉS</p>
+                                </div>
+                            </div>
+                            <a href="pasaporte_v1.7.html?id=${p.id}" style="background:#111; color:white; padding:12px; border-radius:12px; font-size:10px; font-weight:800; text-transform:uppercase; text-decoration:none; display:block; text-align:center;">Abrir Pasaporte POD</a>
+                        </div>
+                    </div>`, { padding: 0 });
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('actor-list').innerHTML = data.map(p => `
+                <div onclick="focusMarker('${p.id}')" class="group flex items-center gap-4 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-[10px] truncate text-slate-800">${p.nombre}</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase">${p.productor}</p>
+                    </div>
+                    <div class="text-right"><i class="fas fa-certificate text-brand-500 text-[10px]"></i></div>
+                </div>`).join('');
+        }
+
+        function focusMarker(id) { 
+            const t = markers.find(m => m.options.productId === id); 
+            if(t) { map.flyTo(t.getLatLng(), 15); t.openPopup(); } 
+        }
+
+        function setMapMode(mode) {
+            document.getElementById('btn-bi').className = mode === 'bi' ? "px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-white shadow-sm text-brand-900" : "px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-600";
+            document.getElementById('btn-risk').className = mode === 'risk' ? "px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-red-600 shadow-sm text-white" : "px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-red-600";
+            document.getElementById('map').style.filter = mode === 'risk' ? "saturate(0.4) contrast(1.1) brightness(0.9)" : "none";
+        }
+
+        function initCharts(data) {
+            const ctx1 = document.getElementById('chartType');
+            const ctx2 = document.getElementById('chartManejo');
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            
+            const common = { cutout: '85%', plugins: { legend: { display: false } } };
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.length, 5, 2], backgroundColor: ['#064E3B', '#10B981', '#E2E8F0'], borderWidth: 0 }] }, options: common });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [8, 4, 2], backgroundColor: ['#4E5AF0', '#00D1FF', '#F2F2F2'], borderWidth: 0 }] }, options: common });
+        }
+
+        function exportReport() { alert("Generando Reporte Técnico para CEPAL..."); }
+    </script>
+</body>
+</html>
