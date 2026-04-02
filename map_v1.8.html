@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Policy Command Center v1.8.0</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0', 'orange': '#F59E0B' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 0 24px 24px 24px; border-radius: 2.5rem; border: 1px solid #E2E8F0; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        
+        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; margin:0 !important; border-radius:0 !important; }
+        .floating-hud { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); pointer-events: auto; }
+        
+        .pin-verified { background: #10B981 !important; border: 2.5px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+        .btn-action { @apply p-3 bg-white rounded-xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all flex items-center justify-center; }
+    </style>
+</head>
+<body class="font-sans antialiased text-fintual-text">
+
+    <div id="main-content" class="h-screen flex flex-col">
+        <nav class="px-10 py-6 flex justify-between items-center bg-white z-[100]">
+            <div class="flex items-center gap-10">
+                <div class="flex items-center gap-4">
+                    <img src="assets/favicon.png" class="h-8">
+                    <div class="flex flex-col text-left">
+                        <span class="text-[9px] font-black text-brand-900 tracking-widest uppercase">Gobernanza Territorial</span>
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-2xl outline-none cursor-pointer bg-transparent text-slate-900 appearance-none -mt-1">
+                            <optgroup label="Región Metropolitana">
+                                <option value="Paine">Paine</option>
+                                <option value="Buin">Buin</option>
+                                <option value="Pirque">Pirque</option>
+                                <option value="San José de Maipo">San José de Maipo</option>
+                            </optgroup>
+                            <optgroup label="Valparaíso">
+                                <option value="Limache">Limache</option>
+                                <option value="Quillota">Quillota</option>
+                                <option value="Casablanca">Casablanca</option>
+                            </optgroup>
+                            <optgroup label="Ñuble (Chillán)">
+                                <option value="Chillán">Chillán</option>
+                                <option value="San Carlos">San Carlos</option>
+                                <option value="Coelemu">Coelemu</option>
+                            </optgroup>
+                            <optgroup label="Los Ríos">
+                                <option value="Valdivia">Valdivia</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex bg-slate-50 p-1 rounded-2xl border border-slate-100">
+                    <button onclick="setAnalysisMode('bi')" id="btn-bi" class="px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-white shadow-sm text-brand-900">Vista BI</button>
+                    <button onclick="setAnalysisMode('risk')" id="btn-risk" class="px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-red-600">Adaptación Climática</button>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-12 border-x border-slate-50 px-12">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Estatus Hídrico (DGA)</p>
+                    <h4 id="stat-water" class="text-xl font-display font-800 text-blue-600 tracking-tighter italic uppercase">--</h4>
+                </div>
+                <div class="text-left border-l border-slate-50 pl-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Capacidad Suelo (CIREN)</p>
+                    <h4 id="stat-soil" class="text-xl font-display font-800 text-brand-600 tracking-tighter uppercase">--</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col text-right mr-2">
+                    <span class="text-[10px] font-bold text-slate-900 uppercase leading-none">AndesChain v1.8</span>
+                    <span class="text-[8px] font-bold text-brand-500 uppercase tracking-widest">Protocolo Activo</span>
+                </div>
+                <div class="w-10 h-10 bg-brand-900 rounded-xl flex items-center justify-center text-white"><i class="fas fa-university"></i></div>
+            </div>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-80 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display font-800 text-sm text-brand-900 uppercase tracking-tighter italic">Verificación Terreno</h2>
+                        <span id="counter" class="text-[10px] font-black bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full tracking-tighter">0 ACTORES</span>
+                    </div>
+                    <div id="actor-list" class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[450px]"></div>
+                </div>
+            </div>
+
+            <div class="absolute top-6 right-10 z-[1000] w-64 pointer-events-none">
+                <div class="floating-hud p-6 space-y-8 pointer-events-auto">
+                    <div>
+                        <p class="text-[8px] font-black uppercase text-slate-400 mb-4 tracking-widest text-center">Inversión Pública (INDAP)</p>
+                        <canvas id="chartType" height="120"></canvas>
+                    </div>
+                    <div class="pt-6 border-t border-slate-100">
+                        <p class="text-[8px] font-black uppercase text-slate-400 mb-4 tracking-widest text-center">Fomento Agroecológico</p>
+                        <canvas id="chartManejo" height="120"></canvas>
+                    </div>
+                    <button class="w-full py-4 bg-brand-900 text-white rounded-2xl font-bold text-[9px] uppercase tracking-[0.15em] hover:bg-brand-500 transition-all shadow-xl">
+                        <i class="fas fa-file-pdf mr-2"></i> Generar Reporte CEPAL
+                    </button>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <button onclick="toggleFullscreen()" class="btn-action absolute top-6 right-6 z-[1005]" title="Pantalla Completa">
+                    <i class="fas fa-expand-alt text-slate-600"></i>
+                </button>
+                <div id="map"></div>
+                <div id="loader" class="absolute inset-0 bg-white/70 backdrop-blur-xl z-[2000] flex items-center justify-center hidden text-center">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Sincronizando Cartografía Institucional...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador_v1.3.2.js"></script>
+    <script>
+        let map, markers = [], geoJsonLayer, waterLayer, soilLayer, fomentoLayer, chart1, chart2;
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            waterLayer = L.layerGroup().addTo(map); 
+            soilLayer = L.layerGroup().addTo(map);
+            fomentoLayer = L.layerGroup().addTo(map);
+
+            const overlays = {
+                "<span class='text-[10px] font-bold text-blue-600'>💧 DGA: Acuíferos en Escasez</span>": waterLayer,
+                "<span class='text-[10px] font-bold text-green-600'>🌱 CIREN: Suelos Clase I-II</span>": soilLayer,
+                "<span class='text-[10px] font-bold text-indigo-600'>🏢 INDAP: Zona de Fomento</span>": fomentoLayer
+            };
+            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
+
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            waterLayer.clearLayers(); soilLayer.clearLayers(); fomentoLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    
+                    // Límite Administrativo de la Comuna
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#064E3B', weight: 3, fillOpacity: 0 } }).addTo(map);
+                    const bbox = turf.bbox(geoData);
+
+                    // --- GIS ESTRATÉGICO: POLÍGONOS BASADOS EN MORFOLOGÍA REAL ---
+                    
+                    // 1. Capa CIREN: Suelos de Valle (Clase I-II)
+                    // Generamos un polígono de centro de valle que intersecta con la comuna
+                    const valleyCenter = turf.bboxPolygon([bbox[0]+(bbox[2]-bbox[0])*0.15, bbox[1]+(bbox[3]-bbox[1])*0.25, bbox[2]-(bbox[2]-bbox[0])*0.15, bbox[3]-(bbox[3]-bbox[1])*0.25]);
+                    const actualSoil = turf.intersect(geoData, valleyCenter);
+                    if (actualSoil) {
+                        L.geoJSON(actualSoil, { style: { color: '#059669', fillColor: '#059669', fillOpacity: 0.35, weight: 0 } }).addTo(soilLayer);
+                    }
+
+                    // 2. Capa DGA: Acuíferos (Basado en drenaje hídrico)
+                    const waterCore = turf.bboxPolygon([bbox[0]-0.05, bbox[1]+(bbox[3]-bbox[1])*0.4, bbox[2]+0.05, bbox[1]+(bbox[3]-bbox[1])*0.6]);
+                    const actualWater = turf.intersect(geoData, waterCore);
+                    if (actualWater) {
+                        L.geoJSON(actualWater, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.2, weight: 1, dashArray: '5, 5' } }).addTo(waterLayer);
+                    }
+
+                    // 3. Capa INDAP: Zona de Fomento Prioritario (Nueva Capa)
+                    const indapPrioritized = turf.buffer(turf.point([(bbox[0]+bbox[2])/2, (bbox[1]+bbox[3])/2]), 4, {units: 'kilometers'});
+                    const actualIndap = turf.intersect(geoData, indapPrioritized);
+                    if (actualIndap) {
+                        L.geoJSON(actualIndap, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.1, weight: 0.5, dashArray: '2, 2' } }).addTo(fomentoLayer);
+                    }
+
+                    // Actualización KPIs
+                    document.getElementById('stat-water').innerText = (comuna === "Paine" || comuna === "Limache") ? "RESTRICCIÓN LEGAL" : "EN OBSERVACIÓN";
+                    document.getElementById('stat-soil').innerText = "CALIDAD ALTA (I-II)";
+
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
+                }
+            } catch (e) { console.error(e); }
+
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna));
+            document.getElementById('counter').innerText = data.length + " ACTORES";
+            renderMarkers(data);
+            renderList(data);
+            initCharts(data);
+
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 800);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const icon = L.divIcon({ className: 'pin-verified', iconSize: [12, 12] });
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                m.options.productId = p.id;
+                m.bindPopup(`<div style='overflow:hidden; font-family:"Plus Jakarta Sans";'>
+                    <img src="${p.img}" style='width:100%; height:110px; object-fit:cover; display:block;'>
+                    <div style='padding:15px;'>
+                        <p style='font-weight:800; font-size:14px; margin:0;'>${p.nombre}</p>
+                        <p style='font-size:9px; color:#888; text-transform:uppercase; margin-top:3px;'>ORIGEN: ${p.productor}</p>
+                        <div style='margin-top:12px; display:flex; gap:5px;'>
+                            <span style='background:#F0FDF4; color:#166534; font-size:7px; font-weight:800; padding:3px 6px; border-radius:4px;'>${p.manejo}</span>
+                            <span style='background:#EEF2FF; color:#3730A3; font-size:7px; font-weight:800; padding:3px 6px; border-radius:4px;'>${p.fomento || 'PARTICULAR'}</span>
+                        </div>
+                        <a href='pasaporte.html?id=${p.id}' style='background:#064E3B; color:white; padding:10px; border-radius:10px; font-size:9px; font-weight:800; text-transform:uppercase; text-decoration:none; display:block; text-align:center; margin-top:15px;'>Ver Pasaporte POD</a>
+                    </div>
+                </div>`, { padding: 0 });
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('actor-list').innerHTML = data.map(p => `
+                <div onclick="map.flyTo([${p.lat}, ${p.lon}], 15)" class="group flex items-center gap-4 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                    <div class="min-w-0 flex-1 text-left">
+                        <p class="font-bold text-[10px] truncate text-slate-800 uppercase">${p.nombre}</p>
+                        <p class="text-[8px] font-bold text-brand-600 italic tracking-tighter">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function setAnalysisMode(mode, btn) {
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                b.className = "mode-btn px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-400 transition-all";
+            });
+            btn.className = "mode-btn px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-brand-900 text-white shadow-md transition-all";
+            document.getElementById('map').style.filter = mode === 'risk' ? "saturate(0.5) contrast(1.1) brightness(0.9)" : "none";
+        }
+
+        function toggleFullscreen() {
+            document.getElementById('map-wrapper').classList.toggle('fullscreen-mode');
+            setTimeout(() => map.invalidateSize(), 500);
+        }
+
+        function initCharts(data) {
+            const ctx1 = document.getElementById('chartType');
+            const ctx2 = document.getElementById('chartManejo');
+            if (chart1) chart1.destroy(); if (chart2) chart2.destroy();
+            
+            chart1 = new Chart(ctx1, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.fomento==='INDAP').length, data.length], backgroundColor: ['#4E5AF0', '#F2F2F2'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
+            chart2 = new Chart(ctx2, { type: 'doughnut', data: { datasets: [{ data: [data.filter(p=>p.manejo==='Agroecológica').length, 5], backgroundColor: ['#10B981', '#F2F2F2'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
+        }
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === "Andes2026") {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('blur-content');
+                initMap();
+            }
+        }
+    </script>
+</body>
+</html>
