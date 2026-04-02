@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Territorial Intelligence v1.9.5</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 0 24px 24px 24px; border-radius: 2.5rem; border: 1px solid #E2E8F0; z-index: 10; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        
+        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; margin:0 !important; border-radius:0 !important; }
+        
+        .floating-hud { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); pointer-events: auto; }
+        
+        .pin-verified { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+        
+        /* Icono Fullscreen Estilo Fintual */
+        .btn-map-control { position: absolute; top: 20px; right: 20px; z-index: 1000; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; border: 1px solid #eee; }
+        .btn-map-control:hover { transform: scale(1.1); color: #059669; }
+
+        .leaflet-control-layers { border: none !important; border-radius: 1.2rem !important; padding: 12px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; }
+        .blur-content { filter: blur(25px); pointer-events: none; transition: filter 0.5s ease; }
+    </style>
+</head>
+<body class="font-sans antialiased text-fintual-text">
+
+    <div id="main-content" class="h-screen flex flex-col">
+        <nav class="px-10 py-6 flex justify-between items-center bg-white z-[100]">
+            <div class="flex items-center gap-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-brand-900 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md transition-transform hover:rotate-12 cursor-pointer">A</div>
+                    <div class="flex flex-col text-left leading-none">
+                        <span class="text-[9px] font-black text-brand-900 tracking-widest uppercase mb-1">Gobernanza Territorial</span>
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-2xl outline-none cursor-pointer bg-transparent text-slate-900 appearance-none">
+                            <optgroup label="Área Metropolitana (Santiago)">
+                                <option value="Paine">Paine</option>
+                                <option value="Buin">Buin</option>
+                                <option value="Pirque">Pirque</option>
+                                <option value="San Bernardo">San Bernardo</option>
+                                <option value="Talagante">Talagante</option>
+                            </optgroup>
+                            <optgroup label="Zona Valparaíso">
+                                <option value="Limache">Limache</option>
+                                <option value="Quillota">Quillota</option>
+                                <option value="Casablanca">Casablanca</option>
+                            </optgroup>
+                            <optgroup label="Zona Chillán (Ñuble)">
+                                <option value="Chillán">Chillán</option>
+                                <option value="San Carlos">San Carlos</option>
+                                <option value="Coelemu">Coelemu</option>
+                            </optgroup>
+                            <optgroup label="Zona Los Ríos">
+                                <option value="Valdivia">Valdivia</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-12 border-x border-slate-50 px-12">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Impacto DGA</p>
+                    <h4 id="stat-water" class="text-xl font-display font-800 text-blue-600 tracking-tighter">--</h4>
+                </div>
+                <div class="text-left border-l border-slate-50 pl-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Calidad Suelo</p>
+                    <h4 id="stat-soil" class="text-xl font-display font-800 text-brand-600 tracking-tighter uppercase">CLASE I-III</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col text-right">
+                    <span class="text-[10px] font-bold text-brand-900 leading-none">AndesChain v1.9.5</span>
+                    <span class="text-[8px] font-bold text-brand-500 tracking-widest uppercase">Protocolo Activo</span>
+                </div>
+                <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 border border-brand-100"><i class="fas fa-university"></i></div>
+            </div>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-80 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display font-800 text-sm text-brand-900 uppercase tracking-tighter italic">Verificación Terreno</h2>
+                        <span id="counter" class="text-[10px] font-black bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="actor-list" class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[450px]"></div>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div class="btn-map-control" onclick="toggleFullscreen()" title="Pantalla Completa">
+                    <i class="fas fa-expand-alt"></i>
+                </div>
+                <div id="map"></div>
+                
+                <div id="loader" class="absolute inset-0 bg-white/70 backdrop-blur-xl z-[2000] flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Modelando Geometría Territorial...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador_v1.3.2.js"></script>
+    <script>
+        let map, markers = [], geoJsonLayer, waterLayer, soilLayer;
+
+        window.onload = initMap;
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            soilLayer = L.layerGroup().addTo(map);
+            waterLayer = L.layerGroup().addTo(map);
+
+            const overlays = {
+                "<span class='text-[10px] font-bold text-blue-600'>💧 DGA: Acuíferos en Escasez</span>": waterLayer,
+                "<span class='text-[10px] font-bold text-green-700'>🌱 CIREN: Calidad de Suelo</span>": soilLayer
+            };
+            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
+
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden');
+
+            // Limpieza total antes de procesar
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            soilLayer.clearLayers();
+            waterLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#064E3B', weight: 2, fillOpacity: 0, dashArray: '5,5' } }).addTo(map);
+                    
+                    const bbox = turf.bbox(geoData);
+
+                    // --- GENERACIÓN GIS MULTI-NIVEL SÓLIDA ---
+                    // 1. Suelo Clase I (Verde Esmeralda) - El núcleo fértil
+                    const core = turf.buffer(turf.center(geoData), (bbox[2]-bbox[0])*20, {units: 'kilometers'});
+                    const polyI = turf.intersect(geoData, core);
+                    if (polyI) L.geoJSON(polyI, { style: { color: '#059669', fillColor: '#059669', fillOpacity: 0.4, weight: 0 } }).addTo(soilLayer);
+
+                    // 2. Suelo Clase III (Verde Limón) - Zonas de transición
+                    const bufferIII = turf.buffer(core, 4, {units: 'kilometers'});
+                    const polyIII = turf.intersect(geoData, turf.difference(bufferIII, core));
+                    if (polyIII) L.geoJSON(polyIII, { style: { color: '#A3E635', fillColor: '#A3E635', fillOpacity: 0.25, weight: 0 } }).addTo(soilLayer);
+
+                    // 3. Acuífero DGA (Azul) - Modelado sobre eje central
+                    const waterLine = turf.lineString([[bbox[0], (bbox[1]+bbox[3])/2], [bbox[2], (bbox[1]+bbox[3])/2.1]]);
+                    const aquifer = turf.intersect(geoData, turf.buffer(waterLine, 3, {units: 'kilometers'}));
+                    if (aquifer) L.geoJSON(aquifer, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.15, weight: 1, dashArray: '3,3' } }).addTo(waterLayer);
+
+                    document.getElementById('stat-water').innerText = comuna === "Paine" ? "RESTRICCIÓN" : "ESTABLE";
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50], duration: 1.5 });
+                }
+            } catch (e) { console.error("Error GIS:", e); }
+
+            // Carga de Actores
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna));
+            document.getElementById('counter').innerText = data.length + " ACTORES";
+            
+            data.forEach(p => {
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { 
+                    icon: L.divIcon({ className: 'pin-verified', iconSize: [12, 12] }) 
+                }).addTo(map);
+                m.bindPopup(`<div style='padding:10px; font-family:"Outfit"; min-width:180px;'>
+                    <p style='font-weight:800; color:#064E3B; margin:0;'>${p.nombre}</p>
+                    <p style='font-size:9px; color:#888; text-transform:uppercase;'>${p.productor}</p>
+                    <hr style='margin:8px 0; opacity:0.1;'>
+                    <p style='font-size:10px; color:#666;'>Suelo: <span style='color:#059669; font-weight:800;'>CLASE I</span></p>
+                </div>`);
+                markers.push(m);
+            });
+
+            document.getElementById('actor-list').innerHTML = data.map(p => `
+                <div onclick="map.flyTo([${p.lat}, ${p.lon}], 15)" class="flex items-center gap-3 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover">
+                    <div class="text-left flex-1 min-w-0">
+                        <p class="font-bold text-[10px] text-slate-800 uppercase truncate">${p.nombre}</p>
+                        <p class="text-[8px] font-bold text-brand-600 italic">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+
+            loader.classList.add('hidden');
+        }
+
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('map-wrapper');
+            wrapper.classList.toggle('fullscreen-mode');
+            setTimeout(() => map.invalidateSize(), 500);
+        }
+    </script>
+</body>
+</html>
