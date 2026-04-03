@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard Territorial | AndesChain</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'andes': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 24px; border-radius: 2rem; border: 1px solid #E2E8F0; z-index: 10; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        
+        .floating-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        
+        .pin-verified { background: #10B981 !important; border: 2.5px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+        .pin-demo { background: #cbd5e1 !important; border: 1.5px solid white; border-radius: 50%; opacity: 0.7; }
+        
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #059669; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="h-screen flex flex-col">
+        <!-- HEADER -->
+        <nav class="bg-white border-b px-6 md:px-10 py-4 md:py-6 flex justify-between items-center">
+            <div class="flex items-center gap-6 md:gap-10">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <img src="assets/logo-header.png" alt="AndesChain" class="h-8 md:h-10 cursor-pointer" onclick="location.href='index.html'">
+                    <div class="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
+                    <div class="flex flex-col">
+                        <span class="text-[8px] md:text-[9px] font-black text-andes-900 tracking-widest uppercase">Dashboard Territorial</span>
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-lg md:text-2xl outline-none bg-transparent text-slate-900 cursor-pointer">
+                            <optgroup label="Región Metropolitana">
+                                <option value="Paine">Paine</option>
+                                <option value="Buin">Buin</option>
+                                <option value="Pirque">Pirque</option>
+                                <option value="Talagante">Talagante</option>
+                            </optgroup>
+                            <optgroup label="Valparaíso">
+                                <option value="Limache">Limache</option>
+                                <option value="Quillota">Quillota</option>
+                            </optgroup>
+                            <optgroup label="Biobío">
+                                <option value="Chillán">Chillán</option>
+                                <option value="Concepción">Concepción</option>
+                            </optgroup>
+                            <optgroup label="Los Ríos">
+                                <option value="Valdivia">Valdivia</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-8 border-x border-slate-100 px-8">
+                <div>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Agua DGA</p>
+                    <h4 id="stat-water" class="text-base md:text-xl font-display font-extrabold text-blue-600">--</h4>
+                </div>
+                <div class="border-l border-slate-100 pl-8">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Suelo CIREN</p>
+                    <h4 id="stat-soil" class="text-base md:text-xl font-display font-extrabold text-andes-600">--</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 md:gap-4">
+                <button onclick="toggleDemos()" class="px-3 py-2 border border-slate-200 rounded-full text-[8px] font-bold uppercase text-slate-500 hover:bg-slate-50" id="demo-btn">
+                    Demos: On
+                </button>
+                <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-slate-600">VOLVER</a>
+            </div>
+        </nav>
+
+        <!-- MAP AREA -->
+        <div class="flex-1 relative flex">
+            <!-- SIDEBAR -->
+            <div class="absolute top-6 left-6 z-[1000] w-72 md:w-80 max-h-[85%] hidden md:flex flex-col">
+                <div class="floating-panel p-6 overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display font-extrabold text-sm text-andes-900 uppercase">Productores</h2>
+                        <span id="counter" class="text-[10px] font-black bg-andes-50 text-andes-600 px-2 py-1 rounded-full">0</span>
+                    </div>
+                    
+                    <!-- Indicadores -->
+                    <div id="indicadores-panel" class="mb-6 space-y-3 pb-6 border-b border-slate-100"></div>
+                    
+                    <!-- Lista -->
+                    <div id="actor-list" class="flex-1 overflow-y-auto pr-2 space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- MAP -->
+            <div id="map-wrapper">
+                <div id="map"></div>
+                
+                <div id="loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[2000] flex flex-col items-center justify-center hidden">
+                    <div class="loader mb-4"></div>
+                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-500">Cargando capas territoriales...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador.js"></script>
+    <script src="js/gis-layers.js"></script>
+    
+    <script>
+        let map, markers = [], geoJsonLayer, showDemo = true;
+        let layerSuelos, layerAgua;
+
+        function initMap() {
+            map = L.map('map', { zoomControl: true, attributionControl: false }).setView([-33.82, -70.75], 12);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '©OpenStreetMap, ©CartoDB'
+            }).addTo(map);
+            
+            L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
+            
+            layerSuelos = L.layerGroup().addTo(map);
+            layerAgua = L.layerGroup().addTo(map);
+
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            
+            // Limpiar mapa
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            layerSuelos.clearLayers();
+            layerAgua.clearLayers();
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            // Obtener datos territoriales
+            const data = getTerritorialData(comuna);
+            
+            if (data) {
+                // Centrar mapa
+                map.setView(data.centro, data.zoom);
+                
+                // Actualizar indicadores
+                const ind = data.indicadores;
+                document.getElementById('stat-water').innerText = ind.agua_dga.split(' ')[0];
+                document.getElementById('stat-soil').innerText = ind.suelo_predominante.split(' ')[0];
+                
+                // Panel de indicadores detallado
+                document.getElementById('indicadores-panel').innerHTML = `
+                    <div class="bg-slate-50 rounded-xl p-3">
+                        <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Superficie Agrícola</p>
+                        <p class="font-bold text-slate-900">${ind.superficie_agricola_ha.toLocaleString()} ha</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-3">
+                        <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Predios Pequeños</p>
+                        <p class="font-bold text-slate-900">${ind.predios_pequenos.toLocaleString()}</p>
+                    </div>
+                    <div class="bg-andes-50 rounded-xl p-3 border border-andes-200">
+                        <p class="text-[8px] font-bold text-andes-600 uppercase mb-1">Productores INDAP</p>
+                        <p class="font-bold text-andes-900">${ind.productores_indap ? ind.productores_indap.toLocaleString() : 'N/D'}</p>
+                    </div>
+                `;
+                
+                // Capas GIS (solo Paine tiene polígonos detallados)
+                if (comuna === "Paine" && data.limite) {
+                    // Límite comunal
+                    geoJsonLayer = L.geoJSON(data.limite, {
+                        style: window.getLayerStyle('limite')
+                    }).addTo(map);
+                    
+                    // Suelos CIREN
+                    if (data.suelos_ciren) {
+                        L.geoJSON(data.suelos_ciren, {
+                            style: window.getLayerStyle('suelos')
+                        }).addTo(layerSuelos).bindPopup(`
+                            <div class="p-2">
+                                <p class="font-bold text-sm mb-1">CIREN - Capacidad de Uso</p>
+                                <p class="text-xs">${data.suelos_ciren.propiedades.descripcion}</p>
+                                <p class="text-[10px] text-slate-500 mt-2">Fuente: ${data.suelos_ciren.propiedades.fuente}</p>
+                            </div>
+                        `);
+                    }
+                    
+                    // Agua DGA
+                    if (data.agua_dga) {
+                        L.geoJSON(data.agua_dga, {
+                            style: window.getLayerStyle('agua')
+                        }).addTo(layerAgua).bindPopup(`
+                            <div class="p-2">
+                                <p class="font-bold text-sm mb-1">DGA - ${data.agua_dga.propiedades.estado}</p>
+                                <p class="text-xs">${data.agua_dga.propiedades.resolucion}</p>
+                                <p class="text-[10px] text-slate-500 mt-2">Fuente: ${data.agua_dga.propiedades.fuente}</p>
+                            </div>
+                        `);
+                    }
+                    
+                    map.fitBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                }
+            }
+
+            // Cargar productores desde simulador
+            const productores = (window.getProductos ? window.getProductos() : [])
+                .filter(p => p.ubicacion.includes(comuna) && (showDemo || p.demo === "NO"));
+            
+            document.getElementById('counter').innerText = productores.length;
+
+            productores.forEach(p => {
+                const icon = L.divIcon({ 
+                    className: p.demo === 'SI' ? 'pin-demo' : 'pin-verified', 
+                    iconSize: [12, 12] 
+                });
+                
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                
+                m.bindPopup(`
+                    <div style='font-family:Inter; width:220px;'>
+                        <img src="${p.img}" style='width:100%; height:110px; object-fit:cover; display:block; border-radius:8px;' onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400'">
+                        <div style='padding:12px 0;'>
+                            <p style='font-weight:800; font-size:14px; margin:0; color:#064E3B;'>${p.nombre}</p>
+                            <p style='font-size:10px; color:#888; text-transform:uppercase; margin-top:4px;'>${p.productor}</p>
+                            <a href='pasaporte.html?id=${p.id}' style='background:#059669; color:white; padding:8px 16px; border-radius:8px; font-size:10px; font-weight:700; text-transform:uppercase; text-decoration:none; display:inline-block; margin-top:12px;'>Ver Pasaporte</a>
+                        </div>
+                    </div>
+                `);
+                
+                markers.push(m);
+            });
+
+            // Lista lateral
+            document.getElementById('actor-list').innerHTML = productores.map(p => `
+                <div onclick="map.flyTo([${p.lat}, ${p.lon}], 15)" class="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=200'">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-xs text-slate-900 truncate">${p.nombre}</p>
+                        <p class="text-[10px] font-semibold text-andes-600">${p.productor}</p>
+                        ${p.demo === 'NO' ? '<span class="text-[8px] text-green-600">✓ VERIFICADO</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            setTimeout(() => { 
+                document.getElementById('loader').classList.add('hidden'); 
+                map.invalidateSize(); 
+            }, 800);
+        }
+
+        function toggleDemos() {
+            showDemo = !showDemo;
+            document.getElementById('demo-btn').innerText = showDemo ? "Demos: On" : "Demos: Off";
+            updateTerritory(document.getElementById('comuna-selector').value);
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>
