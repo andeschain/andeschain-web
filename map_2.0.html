@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Policy Command Center v2.0</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 50: '#F0FDF4', 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'mute': '#888888', 'blue': '#4E5AF0' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FFFFFF; color: #111111; overflow: hidden; height: 100vh; margin:0; }
+        #map-wrapper { flex: 1; position: relative; overflow: hidden; background: #f8fafc; margin: 0 24px 24px 24px; border-radius: 2.5rem; border: 1px solid #E2E8F0; z-index: 10; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        .fullscreen-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 4000 !important; margin:0 !important; border-radius:0 !important; }
+        .floating-hud { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); pointer-events: auto; }
+        .btn-fullscreen-map { position: absolute; top: 20px; right: 20px; z-index: 1000; background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s; border: 1px solid #eee; }
+        .pin-verified { background: #10B981 !important; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+        .blur-content { filter: blur(25px); pointer-events: none; transition: filter 0.5s ease; }
+        #auth-screen { background: #FFFFFF; transition: all 0.5s ease; z-index: 9999; }
+    </style>
+</head>
+<body class="font-sans antialiased text-fintual-text">
+
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="max-w-sm w-full text-center space-y-10">
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-16 h-16 bg-brand-900 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-xl rotate-3">A</div>
+                <h2 class="font-display font-800 text-3xl tracking-tighter text-brand-900 uppercase italic">AndesChain</h2>
+            </div>
+            <div class="space-y-6">
+                <input type="password" id="pass-input" placeholder="Password Institucional" class="w-full px-0 py-4 border-b border-slate-200 text-center text-xl focus:border-brand-500 outline-none transition-all font-display tracking-widest">
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-brand-600 transition-all shadow-xl">Desbloquear Análisis</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="blur-content h-screen flex flex-col">
+        <nav class="px-10 py-6 flex justify-between items-center bg-white z-[100]">
+            <div class="flex items-center gap-8 text-left leading-none">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-brand-900 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md transition-transform hover:rotate-12 cursor-pointer" onclick="location.reload()">A</div>
+                    <div class="flex flex-col">
+                        <span class="text-[9px] font-black text-brand-900 tracking-widest uppercase mb-1">Gobernanza Territorial</span>
+                        <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-2xl outline-none cursor-pointer bg-transparent text-slate-900 appearance-none">
+                            <option value="Paine">Paine</option>
+                            <option value="Buin">Buin</option>
+                            <option value="Pirque">Pirque</option>
+                            <option value="Chillán">Chillán</option>
+                            <option value="Valdivia">Valdivia</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-12 border-x border-slate-50 px-12">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Impacto DGA</p>
+                    <h4 id="stat-water" class="text-xl font-display font-800 text-blue-600 tracking-tighter italic">RESTRICCIÓN</h4>
+                </div>
+                <div class="text-left border-l border-slate-50 pl-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Calidad Suelo</p>
+                    <h4 id="stat-soil" class="text-xl font-display font-800 text-brand-600 tracking-tighter">CLASE I-III</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col text-right">
+                    <span class="text-[10px] font-bold text-brand-900 uppercase leading-none italic">AndesChain v2.0</span>
+                    <span class="text-[8px] font-bold text-brand-500 uppercase tracking-widest">Protocolo Activo</span>
+                </div>
+                <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 border border-brand-100"><i class="fas fa-university"></i></div>
+            </div>
+        </nav>
+
+        <div class="flex-1 relative flex flex-col overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-80 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display font-800 text-sm text-brand-900 uppercase tracking-tighter italic">Verificación Terreno</h2>
+                        <span id="counter" class="text-[10px] font-black bg-brand-50 text-brand-600 px-2 py-0.5 rounded-full">0 ACTORES</span>
+                    </div>
+                    <div id="actor-list" class="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[450px]"></div>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div class="btn-fullscreen-map" onclick="toggleFullscreen()" title="Pantalla Completa">
+                    <i class="fas fa-expand-alt"></i>
+                </div>
+                <div id="map"></div>
+                <div id="loader" class="absolute inset-0 bg-white/70 backdrop-blur-xl z-[2000] flex items-center justify-center hidden">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Sincronizando Capas IDE-Chile...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador_v1.3.2.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, waterLayer, soilLayer;
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === CLAVE) {
+                sessionStorage.setItem('auth_andes', 'true');
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('blur-content');
+                initMap();
+            }
+        }
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            soilLayer = L.layerGroup().addTo(map);
+            waterLayer = L.layerGroup().addTo(map);
+            
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').classList.remove('hidden');
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            soilLayer.clearLayers();
+            waterLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#064E3B', weight: 2.5, fillOpacity: 0 } }).addTo(map);
+                    
+                    const bbox = turf.bbox(geoData);
+
+                    // --- REPARACIÓN PROFESIONAL DE CAPAS (LÓGICA GEOMORFOLÓGICA) ---
+                    
+                    // 1. DGA: Acuífero Orgánico (Sigue el eje hídrico natural)
+                    // Creamos una línea sinoidal que cruza la comuna para simular el río/acuífero
+                    const riverLine = turf.lineString([
+                        [bbox[0], bbox[1] + (bbox[3]-bbox[1])*0.3],
+                        [bbox[0] + (bbox[2]-bbox[0])*0.5, bbox[1] + (bbox[3]-bbox[1])*0.6],
+                        [bbox[2], bbox[1] + (bbox[3]-bbox[1])*0.4]
+                    ]);
+                    const curvedRiver = turf.bezierSpline(riverLine);
+                    const aquifer = turf.intersect(geoData, turf.buffer(curvedRiver, 3, {units: 'kilometers'}));
+                    if (aquifer) L.geoJSON(aquifer, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.2, weight: 1, dashArray: '5,5' } }).addTo(waterLayer);
+
+                    // 2. CIREN: Zonificación de Suelos por Relieve
+                    // Clase I-II (Valle central): Polígono irregular central
+                    const valley = turf.intersect(geoData, turf.buffer(turf.center(geoData), (bbox[2]-bbox[0])*12, {units: 'kilometers'}));
+                    if (valley) L.geoJSON(valley, { style: { color: '#059669', fillColor: '#059669', fillOpacity: 0.45, weight: 0 } }).addTo(soilLayer);
+
+                    // Clase III-IV (Laderas): El resto de la comuna con menor opacidad
+                    const slopes = turf.difference(geoData, valley || turf.point([0,0]));
+                    if (slopes) L.geoJSON(slopes, { style: { color: '#A3E635', fillColor: '#A3E635', fillOpacity: 0.2, weight: 0 } }).addTo(soilLayer);
+
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                }
+            } catch (e) { console.error(e); }
+
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna));
+            document.getElementById('counter').innerText = data.length + " ACTORES";
+            renderMarkers(data);
+            renderList(data);
+            
+            setTimeout(() => { 
+                map.invalidateSize();
+                document.getElementById('loader').classList.add('hidden'); 
+            }, 800);
+        }
+
+        function renderMarkers(data) {
+            data.forEach(p => {
+                const icon = L.divIcon({ className: 'pin-verified', iconSize: [12, 12] });
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                m.bindPopup(`<div style='overflow:hidden; font-family:"Plus Jakarta Sans"; width:220px;'>
+                    <img src="${p.img}" style='width:100%; height:100px; object-fit:cover; display:block;'>
+                    <div style='padding:12px; text-align:left;'>
+                        <p style='font-weight:800; font-size:12px; margin:0;'>${p.nombre}</p>
+                        <p style='font-size:8px; color:#888; text-transform:uppercase;'>${p.productor}</p>
+                        <div style='margin-top:10px; padding:8px; background:#f8fafc; border-radius:8px;'>
+                             <p style='font-[7px] font-bold text-brand-600 uppercase mb-1'>Dato Técnico CIREN</p>
+                             <p style='font-size:10px; color:#444; margin:0;'>Suelo Clase I: Apto Riego</p>
+                        </div>
+                        <a href='pasaporte.html?id=${p.id}' style='background:#064E3B; color:white; padding:10px; border-radius:10px; font-size:9px; font-weight:800; text-transform:uppercase; text-decoration:none; display:block; text-align:center; margin-top:12px;'>Ver Pasaporte POD</a>
+                    </div>
+                </div>`, { padding: 0 });
+                markers.push(m);
+            });
+        }
+
+        function renderList(data) {
+            document.getElementById('actor-list').innerHTML = data.map(p => `
+                <div onclick="map.flyTo([${p.lat}, ${p.lon}], 15)" class="group flex items-center gap-3 p-3 rounded-2xl border border-black/5 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                    <div class="text-left flex-1 min-w-0">
+                        <p class="font-bold text-[10px] text-slate-800 uppercase truncate">${p.nombre}</p>
+                        <p class="text-[8px] font-bold text-brand-600 italic tracking-tighter">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        function toggleFullscreen() {
+            document.getElementById('map-wrapper').classList.toggle('fullscreen-mode');
+            setTimeout(() => map.invalidateSize(), 500);
+        }
+
+        window.onload = () => { if (sessionStorage.getItem('auth_andes') === 'true') validatePass(); };
+    </script>
+</body>
+</html>
