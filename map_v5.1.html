@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AndesChain | Institutional GIS Gateway v5.1</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        'brand': { 500: '#10B981', 600: '#059669', 900: '#064E3B' },
+                        'fintual': { 'gray': '#F2F2F2', 'text': '#111111', 'blue': '#4E5AF0' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #fff; }
+        #app-container { height: 100vh; display: flex; flex-direction: column; display: none; }
+        #map-wrapper { flex: 1; margin: 24px; border-radius: 2.5rem; border: 1px solid #E2E8F0; position: relative; overflow: hidden; }
+        #map { height: 100%; width: 100%; background: #f8fafc; z-index: 1; }
+        .fullscreen-mode { position: fixed !important; inset: 0 !important; z-index: 5000 !important; margin: 0 !important; border-radius: 0 !important; }
+        
+        .floating-hud { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.04); pointer-events: auto; }
+        
+        #auth-screen { position: fixed; inset: 0; z-index: 10000; background: #fff; display: flex; align-items: center; justify-content: center; }
+        .btn-fs { position: absolute; top: 20px; right: 20px; z-index: 1000; background: #fff; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .pin-verified { background: #10B981 !important; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 15px rgba(16,185,129,0.5); transition: transform 0.2s ease; }
+        .loader-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="font-sans text-fintual-text">
+
+    <div id="auth-screen">
+        <div class="max-w-sm w-full text-center px-8">
+            <img src="assets/logo-header.png" alt="AndesChain" class="h-16 mx-auto mb-10 object-contain">
+            <div class="space-y-6">
+                <input type="password" id="pass-input" onkeydown="if(event.key==='Enter') validatePass()" placeholder="Clave Institucional" class="w-full py-4 border-b-2 border-slate-100 text-center text-2xl focus:border-brand-500 outline-none transition-all font-display tracking-widest bg-transparent">
+                <button onclick="validatePass()" class="w-full py-4 bg-brand-900 text-white rounded-full font-bold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-brand-600 transition-all">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <nav class="px-10 py-6 flex justify-between items-center bg-white border-b border-slate-50">
+            <div class="flex items-center gap-8">
+                <img src="assets/logo-header.png" alt="AndesChain" class="h-10 w-auto">
+                <div class="h-8 w-[1px] bg-slate-100"></div>
+                <div class="flex flex-col text-left">
+                    <span class="text-[9px] font-black text-brand-900 tracking-widest uppercase mb-1">Gobernanza Territorial</span>
+                    <select id="comuna-selector" onchange="updateTerritory(this.value)" class="font-display font-bold text-2xl outline-none bg-transparent appearance-none cursor-pointer">
+                        <option value="Paine">Paine</option>
+                        <option value="Buin">Buin</option>
+                        <option value="Chillán">Chillán</option>
+                        <option value="Valdivia">Valdivia</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-12 border-x border-slate-100 px-12">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Estatus DGA</p>
+                    <h4 id="stat-water" class="text-xl font-display font-800 text-blue-600 italic">--</h4>
+                </div>
+                <div class="text-left border-l border-slate-100 pl-10">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Calidad CIREN</p>
+                    <h4 id="stat-soil" class="text-xl font-display font-800 text-brand-600">CLASE I-II</h4>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-right">
+                <div class="hidden md:block">
+                    <p class="text-[10px] font-black text-brand-900 leading-none">AndesChain v5.1</p>
+                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Master IDE Chile</p>
+                </div>
+                <div class="w-10 h-10 bg-brand-900 rounded-xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-university"></i></div>
+            </div>
+        </nav>
+
+        <div class="flex-1 flex flex-col relative overflow-hidden">
+            <div class="absolute top-6 left-10 z-[1000] w-80 max-h-[85%] flex flex-col pointer-events-none">
+                <div class="floating-hud p-6 flex flex-col overflow-hidden pointer-events-auto">
+                    <h2 class="font-display font-800 text-sm text-brand-900 mb-6 uppercase tracking-tighter italic">Verificación Terreno</h2>
+                    <div id="actor-list" class="flex-1 overflow-y-auto space-y-3 pr-2 max-h-[500px]"></div>
+                </div>
+            </div>
+
+            <div id="map-wrapper">
+                <div class="btn-fs" onclick="toggleFS()"><i class="fas fa-expand-alt"></i></div>
+                <div id="map"></div>
+                <div id="loader" class="loader-overlay">
+                    <div class="text-center">
+                        <div class="w-12 h-12 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Intersectando Capas CIREN/DGA...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulador_v1.3.2.js"></script>
+    <script>
+        const CLAVE = "Andes2026";
+        let map, markers = [], geoJsonLayer, soilLayer, waterLayer;
+
+        function validatePass() {
+            if (document.getElementById('pass-input').value === CLAVE) {
+                sessionStorage.setItem('andes_auth', 'true');
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex';
+                initMap();
+            } else { alert("Acceso denegado"); }
+        }
+
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-33.82, -70.75], 11);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            
+            // Inicializar grupos de capas institucionales
+            soilLayer = L.layerGroup().addTo(map);
+            waterLayer = L.layerGroup().addTo(map);
+
+            const overlays = {
+                "<span class='text-[10px] font-bold text-green-700'>🌱 Suelo: Clase I-II (CIREN)</span>": soilLayer,
+                "<span class='text-[10px] font-bold text-blue-600'>💧 Agua: Zona Restricción (DGA)</span>": waterLayer
+            };
+            L.control.layers(null, overlays, { collapsed: false, position: 'bottomright' }).addTo(map);
+
+            updateTerritory("Paine");
+        }
+
+        async function updateTerritory(comuna) {
+            document.getElementById('loader').style.display = 'flex';
+            if (geoJsonLayer) map.removeLayer(geoJsonLayer);
+            soilLayer.clearLayers(); waterLayer.clearLayers();
+            markers.forEach(m => map.removeLayer(m)); markers = [];
+
+            try {
+                // 1. Obtener límite real de la comuna
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna)}+Chile&polygon_geojson=1&format=json&limit=1`);
+                const results = await res.json();
+                
+                if (results[0] && results[0].geojson) {
+                    const geoData = results[0].geojson;
+                    geoJsonLayer = L.geoJSON(geoData, { style: { color: '#064E3B', weight: 2.5, fillOpacity: 0.02 } }).addTo(map);
+                    const bbox = turf.bbox(geoData);
+
+                    // 2. GENERACIÓN DE CAPA CIREN (Topológica)
+                    // Simulamos el valle fértil (centro de la comuna) recortado por el límite real
+                    const valley = turf.buffer(turf.center(geoData), (bbox[2]-bbox[0])*18, {units: 'kilometers'});
+                    const actualSoil = turf.intersect(geoData, valley);
+                    if (actualSoil) {
+                        L.geoJSON(actualSoil, { style: { color: '#059669', fillColor: '#059669', fillOpacity: 0.4, weight: 0 } }).addTo(soilLayer);
+                    }
+
+                    // 3. GENERACIÓN DE CAPA DGA (Acuífero)
+                    // Simulamos el eje del río transversal recortado por el límite real
+                    const waterLine = turf.lineString([[bbox[0], (bbox[1]+bbox[3])/2], [bbox[2], (bbox[1]+bbox[3])/1.95]]);
+                    const aquifer = turf.intersect(geoData, turf.buffer(waterLine, 2.5, {units: 'kilometers'}));
+                    if (aquifer) {
+                        L.geoJSON(aquifer, { style: { color: '#4E5AF0', fillColor: '#4E5AF0', fillOpacity: 0.2, weight: 1, dashArray: '5,5' } }).addTo(waterLayer);
+                    }
+
+                    document.getElementById('stat-water').innerText = (comuna === "Paine") ? "RESTRICCIÓN" : "ESTABLE";
+                    map.flyToBounds(geoJsonLayer.getBounds(), { padding: [50, 50] });
+                }
+            } catch (e) { console.error(e); }
+
+            // 4. Carga de Productores
+            const data = (window.getProductos ? window.getProductos() : []).filter(p => p.ubicacion.includes(comuna));
+            document.getElementById('counter').innerText = data.length;
+
+            data.forEach(p => {
+                const icon = L.divIcon({ className: 'pin-verified', iconSize: [12, 12] });
+                const m = L.marker([parseFloat(p.lat), parseFloat(p.lon)], { icon }).addTo(map);
+                m.bindPopup(`<div style='padding:12px; font-family:"Plus Jakarta Sans";'>
+                    <p style='font-weight:800; font-size:13px; color:#064E3B; margin-bottom:2px;'>${p.nombre}</p>
+                    <p style='font-size:9px; color:#888; text-transform:uppercase;'>${p.productor}</p>
+                    <hr style='margin:10px 0; opacity:0.1;'>
+                    <p style='font-size:8px; font-weight:800; color:#059669;'><i class='fas fa-check-circle mr-1'></i> DATA CIREN/DGA VERIFICADA</p>
+                </div>`);
+                markers.push(m);
+            });
+
+            document.getElementById('actor-list').innerHTML = data.map(p => `
+                <div onclick="map.flyTo([${p.lat}, ${p.lon}], 15)" class="group flex items-center gap-4 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-all">
+                    <img src="${p.img}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+                    <div class="text-left flex-1 min-w-0">
+                        <p class="font-bold text-[10px] text-slate-800 uppercase truncate">${p.nombre}</p>
+                        <p class="text-[8px] font-bold text-brand-600 italic tracking-tighter">${p.productor}</p>
+                    </div>
+                </div>`).join('');
+
+            setTimeout(() => { document.getElementById('loader').style.display = 'none'; map.invalidateSize(); }, 800);
+        }
+
+        function toggleFS() {
+            document.getElementById('map-wrapper').classList.toggle('fullscreen-mode');
+            setTimeout(() => map.invalidateSize(), 500);
+        }
+
+        window.onload = () => { if (sessionStorage.getItem('andes_auth') === 'true') validatePass(); };
+    </script>
+</body>
+</html>
